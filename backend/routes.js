@@ -53,4 +53,47 @@ module.exports = function routes(app, logger) {
       })
     })
   })
+
+  // POST /login (login user)
+
+  app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+
+    pool.query(
+      "SELECT * FROM db.users WHERE username = ?",
+      [username],
+      (err, result) => {
+        if (err || result.length === 0) {
+          logger.error("Error in POST /login: ", err);
+          res.status(400).send({
+            message: "Error logging in: Invalid username or password",
+            success: false,
+          })
+          return;
+        }
+        else {
+          const storedPassword = result[0]["password"];
+          bcrypt.compare(password, storedPassword, (err, result2) => {
+            if (result2 && !err) {
+              const {username, id} = result[0];
+              const JWT = jwt.makeJWT(result[0].id);
+              res.status(200).send({
+                message: "Login successful",
+                success: true,
+                username,
+                token: JWT,
+              });
+            }
+            else {
+              logger.error("Error in POST /login: ", err);
+              res.status(400).send({
+                message: "Error logging in: Invalid username or password",
+                success: false,
+              })
+            }
+          })
+        }
+      }
+    )
+  })
 }
