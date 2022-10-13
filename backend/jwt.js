@@ -30,14 +30,26 @@ const checkJWT = (token) => {
 }
 
 module.exports.verifyToken = (req) => {
-    const header = req.headers["authorization"];
-
+    const token = req.headers["authorization"].split(" ")?.[1];
     return new Promise((res, rej) => {
-        if (header) {
-            const bearer = header.split(" ");
-            const token = bearer[1];
+        if (token) {
             return res(checkJWT(token));
         }
-        else  return rej();
+        else return rej();
+    })
+}
+
+module.exports.isAdmin = (req) => {
+    return new Promise((res, rej) => {
+        this.verifyToken(req).then((result) => {
+            if (result.is_admin) {
+                res(true);
+            }
+            else {
+                res(false);
+            }
+        }).catch((err) => {
+            rej(err);
+        })
     })
 }

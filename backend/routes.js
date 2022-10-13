@@ -75,7 +75,7 @@ module.exports = function routes(app, logger) {
           const storedPassword = result[0]["password"];
           bcrypt.compare(password, storedPassword, (err, result2) => {
             if (result2 && !err) {
-              const {username, id} = result[0];
+              const { username, id } = result[0];
               const JWT = jwt.makeJWT(result[0].id);
               res.status(200).send({
                 message: "Login successful",
@@ -95,5 +95,61 @@ module.exports = function routes(app, logger) {
         }
       }
     )
+  })
+
+  // GET /users/check (check if user is logged in)
+
+  app.get("/users/check", async (req, res) => {
+    try {
+      const user = await jwt.verifyToken(req);
+      console.log("User: ", user);
+      if (user) {
+        res.status(200).send({
+          message: "Token is valid",
+          success: true,
+          username: user.username,
+        })
+      }
+      else {
+        res.status(400).send({
+          message: "Token is invalid",
+          success: false,
+        })
+      }
+    } catch (e) {
+      logger.error("Error in GET /users/check: ", e);
+      res.status(400).send({
+        message: "Something went wrong",
+        error: e,
+        success: false,
+      })
+    }
+  })
+
+  // GET /users/admin (check if user is admin)
+
+  app.get("/users/admin", async (req, res) => {
+    try {
+      const user = await jwt.verifyToken(req);
+      if (user.is_admin) {
+        res.status(200).send({
+          message: "User is admin",
+          success: true,
+        })
+      }
+      else {
+        res.status(200).send({
+          message: "User is not admin",
+          success: false,
+        })
+      }
+    } catch (e) {
+      logger.error("Error in GET /users/admin: ", e);
+      res.status(400).send({
+        message: "Something went wrong",
+        reason: e,
+        success: false,
+      })
+    }
   })
 }
