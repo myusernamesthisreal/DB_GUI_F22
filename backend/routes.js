@@ -180,6 +180,7 @@ module.exports = function routes(app, logger) {
         const user = await jwt.verifyToken(req);
         if (user.is_admin) {
           res.status(200).send({
+            admin: true,
             message: "User is admin",
             success: true,
             username: user.username,
@@ -187,8 +188,9 @@ module.exports = function routes(app, logger) {
         }
         else {
           res.status(200).send({
+            admin: false,
             message: "User is not admin",
-            success: false,
+            success: true,
             username: user.username,
           })
         }
