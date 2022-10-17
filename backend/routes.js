@@ -71,9 +71,9 @@ module.exports = function routes(app, logger) {
 
   app.post("/login",
     /**
-       * @param {import('express').Request} req
-       * @param {import('express').Response} res
-       */
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
     (req, res) => {
       const { username, password } = req.body;
 
@@ -136,59 +136,115 @@ module.exports = function routes(app, logger) {
 
   // GET /users/check (check if user is logged in)
 
-  app.get("/users/check", async (req, res) => {
-    try {
-      const user = await jwt.verifyToken(req);
-      console.log("User: ", user);
-      if (user) {
-        res.status(200).send({
-          message: "Token is valid",
-          success: true,
-          username: user.username,
-        })
-      }
-      else {
+  app.get("/users/check",
+    /**
+      * @param {import('express').Request} req
+      * @param {import('express').Response} res
+      */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        console.log("User: ", user);
+        if (user) {
+          res.status(200).send({
+            message: "Token is valid",
+            success: true,
+            username: user.username,
+          })
+        }
+        else {
+          res.status(400).send({
+            message: "Token is invalid",
+            success: false,
+          })
+        }
+      } catch (e) {
+        logger.error("Error in GET /users/check: ", e);
         res.status(400).send({
-          message: "Token is invalid",
+          message: "Something went wrong",
+          error: e,
           success: false,
         })
       }
-    } catch (e) {
-      logger.error("Error in GET /users/check: ", e);
-      res.status(400).send({
-        message: "Something went wrong",
-        error: e,
-        success: false,
-      })
-    }
-  })
+    })
 
   // GET /users/admin (check if user is admin)
 
-  app.get("/users/admin", async (req, res) => {
-    try {
-      const user = await jwt.verifyToken(req);
-      if (user.is_admin) {
-        res.status(200).send({
-          message: "User is admin",
-          success: true,
-          username: user.username,
-        })
-      }
-      else {
-        res.status(200).send({
-          message: "User is not admin",
+  app.get("/users/admin",
+    /**
+      * @param {import('express').Request} req
+      * @param {import('express').Response} res
+      */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        if (user.is_admin) {
+          res.status(200).send({
+            message: "User is admin",
+            success: true,
+            username: user.username,
+          })
+        }
+        else {
+          res.status(200).send({
+            message: "User is not admin",
+            success: false,
+            username: user.username,
+          })
+        }
+      } catch (e) {
+        logger.error("Error in GET /users/admin: ", e);
+        res.status(400).send({
+          message: "Something went wrong",
+          reason: e,
           success: false,
-          username: user.username,
         })
       }
-    } catch (e) {
-      logger.error("Error in GET /users/admin: ", e);
-      res.status(400).send({
-        message: "Something went wrong",
-        reason: e,
-        success: false,
-      })
-    }
-  })
+    })
+
+  //POST /displayname (change displayname)
+
+  app.post("/displayname",
+    /**
+      * @param {import('express').Request} req
+      * @param {import('express').Response} res
+      */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        const { displayName } = req.body;
+        pool.query(
+          "UPDATE db.users SET displayname = ? WHERE id = ?",
+          [displayName, user.id],
+          (err, result) => {
+            if (err) {
+              logger.error("Error in POST /displayname: ", err);
+              res.status(400).send({
+                message: "Error changing displayname",
+                success: false,
+              })
+            }
+            else {
+              res.status(200).send({
+                message: "Displayname changed successfully",
+                success: true,
+              })
+            }
+          }
+        )
+      } catch (e) {
+        logger.error("Error in POST /displayname: ", e);
+        if (e === "Invalid token") {
+          res.status(401).send({
+            message: "Unauthorized",
+            success: false,
+          })
+        } else
+        res.status(500).send({
+          message: "Something went wrong",
+          reason: e,
+          success: false,
+        })
+      }
+    })
 }

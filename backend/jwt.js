@@ -39,7 +39,7 @@ module.exports.verifyToken = (req) => {
         if (cookie) {
             return res(checkJWT(cookie));
         }
-        else return rej();
+        else return rej("Invalid token");
     })
 }
 
