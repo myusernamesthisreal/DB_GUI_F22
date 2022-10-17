@@ -1,4 +1,6 @@
 const pool = require('./db')
+const bcrypt = require('bcryptjs')
+const jwt = require("./jwt")
 
 module.exports = function routes(app, logger) {
   // GET /
@@ -6,93 +8,245 @@ module.exports = function routes(app, logger) {
     res.status(200).send('Go to 0.0.0.0:3000.');
   });
 
-  // POST /reset
-  app.post('/reset', (req, res) => {
-    // obtain a connection from our pool of connections
-    pool.getConnection(function (err, connection){
-      if (err){
-        console.log(connection);
-        // if there is an issue obtaining a connection, release the connection instance and log the error
-        logger.error('Problem obtaining MySQL connection', err)
-        res.status(400).send('Problem obtaining MySQL connection'); 
-      } else {
-        // if there is no issue obtaining a connection, execute query
-        connection.query('drop table if exists test_table', function (err, rows, fields) {
-          if (err) { 
-            // if there is an error with the query, release the connection instance and log the error
-            connection.release()
-            logger.error("Problem dropping the table test_table: ", err); 
-            res.status(400).send('Problem dropping the table'); 
-          } else {
-            // if there is no error with the query, execute the next query and do not release the connection yet
-            connection.query('CREATE TABLE `db`.`test_table` (`id` INT NOT NULL AUTO_INCREMENT, `value` VARCHAR(45), PRIMARY KEY (`id`), UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);', function (err, rows, fields) {
-              if (err) { 
-                // if there is an error with the query, release the connection instance and log the error
-                connection.release()
-                logger.error("Problem creating the table test_table: ", err);
-                res.status(400).send('Problem creating the table'); 
-              } else { 
-                // if there is no error with the query, release the connection instance
-                connection.release()
-                res.status(200).send('created the table'); 
+  // POST /users (create user)
+
+
+  app.post("/users",
+
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    (req, res) => {
+      const { username, password } = req.body;
+      const saltRounds = 10;
+      const error = (e) => {
+        logger.error("Error in POST /users: ", e);
+        if (e?.code === "ER_DUP_ENTRY") {
+          res.status(409).send({
+            message: "Username already exists",
+            success: false,
+          });
+        } else
+          res.status(400).send({
+            message: "Error creating user",
+            success: false,
+          })
+      }
+
+      bcrypt.genSalt(saltRounds, (err, salt) => {
+        if (err) {
+          error(err);
+          return;
+        }
+        bcrypt.hash(password, salt, (err, hash) => {
+          if (err) {
+            error(err);
+            return;
+          }
+
+          pool.query(
+            "INSERT INTO db.users (username, displayname, password) VALUES (?, ?, ?) ",
+            [username, username, hash],
+            (err, result) => {
+              if (err) {
+                error(err);
+                return;
               }
-            });
-          }
-        });
-      }
-    });
-  });
 
-  // POST /multplynumber
-  app.post('/multplynumber', (req, res) => {
-    console.log(req.body.product);
-    // obtain a connection from our pool of connections
-    pool.getConnection(function (err, connection){
-      if(err){
-        // if there is an issue obtaining a connection, release the connection instance and log the error
-        logger.error('Problem obtaining MySQL connection',err)
-        res.status(400).send('Problem obtaining MySQL connection'); 
-      } else {
-        // if there is no issue obtaining a connection, execute query and release connection
-        connection.query('INSERT INTO `db`.`test_table` (`value`) VALUES(\'' + req.body.product + '\')', function (err, rows, fields) {
-          connection.release();
-          if (err) {
-            // if there is an error with the query, log the error
-            logger.error("Problem inserting into test table: \n", err);
-            res.status(400).send('Problem inserting into table'); 
-          } else {
-            res.status(200).send(`added ${req.body.product} to the table!`);
-          }
-        });
-      }
-    });
-  });
+              const JWT = jwt.makeJWT(result.insertId);
+              res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                message: "User created successfully",
+                success: true,
+                token: JWT,
+                username,
+              });
+            }
+          )
+        })
+      })
+    })
 
-  // GET /checkdb
-  app.get('/values', (req, res) => {
-    // obtain a connection from our pool of connections
-    pool.getConnection(function (err, connection){
-      if(err){
-        // if there is an issue obtaining a connection, release the connection instance and log the error
-        logger.error('Problem obtaining MySQL connection',err)
-        res.status(400).send('Problem obtaining MySQL connection'); 
-      } else {
-        // if there is no issue obtaining a connection, execute query and release connection
-        connection.query('SELECT value FROM `db`.`test_table`', function (err, rows, fields) {
-          connection.release();
-          if (err) {
-            logger.error("Error while fetching values: \n", err);
-            res.status(400).json({
-              "data": [],
-              "error": "Error obtaining values"
+  // POST /login (login user)
+
+  app.post("/login",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    (req, res) => {
+      const { username, password } = req.body;
+
+      pool.query(
+        "SELECT * FROM db.users WHERE username = ?",
+        [username],
+        (err, result) => {
+          if (err || result.length === 0) {
+            logger.error("Error in POST /login: ", err);
+            res.status(400).send({
+              message: "Error logging in: Invalid username or password",
+              success: false,
             })
-          } else {
-            res.status(200).json({
-              "data": rows
-            });
+            return;
           }
+          else {
+            const storedPassword = result[0]["password"];
+            bcrypt.compare(password, storedPassword, (err, result2) => {
+              if (result2 && !err) {
+                const { username, id } = result[0];
+                const JWT = jwt.makeJWT(result[0].id);
+                res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                  message: "Login successful",
+                  success: true,
+                  username,
+                  token: JWT,
+                });
+              }
+              else {
+                logger.error("Error in POST /login: ", err);
+                res.status(400).send({
+                  message: "Error logging in: Invalid username or password",
+                  success: false,
+                })
+              }
+            })
+          }
+        }
+      )
+    })
+
+  //POST /logout (logout user)
+
+  app.post("/logout",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    (req, res) => {
+      if (req.cookies?.session) {
+        res.status(200).clearCookie("session").send({
+          message: "Logout successful",
+          success: true,
         });
+      } else res.status(400).send({
+        message: "You are not logged in",
+        success: false,
+      })
+    })
+
+  // GET /users/check (check if user is logged in)
+
+  app.get("/users/check",
+    /**
+      * @param {import('express').Request} req
+      * @param {import('express').Response} res
+      */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        console.log("User: ", user);
+        if (user) {
+          res.status(200).send({
+            message: "Token is valid",
+            success: true,
+            username: user.username,
+          })
+        }
+        else {
+          res.status(400).send({
+            message: "Token is invalid",
+            success: false,
+          })
+        }
+      } catch (e) {
+        logger.error("Error in GET /users/check: ", e);
+        res.status(400).send({
+          message: "Something went wrong",
+          error: e,
+          success: false,
+        })
       }
-    });
-  });
+    })
+
+  // GET /users/admin (check if user is admin)
+
+  app.get("/users/admin",
+    /**
+      * @param {import('express').Request} req
+      * @param {import('express').Response} res
+      */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        if (user.is_admin) {
+          res.status(200).send({
+            admin: true,
+            message: "User is admin",
+            success: true,
+            username: user.username,
+          })
+        }
+        else {
+          res.status(200).send({
+            admin: false,
+            message: "User is not admin",
+            success: true,
+            username: user.username,
+          })
+        }
+      } catch (e) {
+        logger.error("Error in GET /users/admin: ", e);
+        res.status(400).send({
+          message: "Something went wrong",
+          reason: e,
+          success: false,
+        })
+      }
+    })
+
+  //POST /displayname (change displayname)
+
+  app.post("/displayname",
+    /**
+      * @param {import('express').Request} req
+      * @param {import('express').Response} res
+      */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        const { displayName } = req.body;
+        pool.query(
+          "UPDATE db.users SET displayname = ? WHERE id = ?",
+          [displayName, user.id],
+          (err, result) => {
+            if (err) {
+              logger.error("Error in POST /displayname: ", err);
+              res.status(400).send({
+                message: "Error changing displayname",
+                success: false,
+              })
+            }
+            else {
+              res.status(200).send({
+                message: "Displayname changed successfully",
+                success: true,
+              })
+            }
+          }
+        )
+      } catch (e) {
+        logger.error("Error in POST /displayname: ", e);
+        if (e === "Invalid token") {
+          res.status(401).send({
+            message: "Unauthorized",
+            success: false,
+          })
+        } else
+        res.status(500).send({
+          message: "Something went wrong",
+          reason: e,
+          success: false,
+        })
+      }
+    })
 }

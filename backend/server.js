@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
 const { log, ExpressAPILogMiddleware } = require('@rama41222/node-logger');
+const cookieParser = require('cookie-parser');
 // const mysqlConnect = require('./db');
 const routes = require('./routes');
 
@@ -26,6 +27,7 @@ app.use(cors({
   origin: '*'
 }));
 app.use(ExpressAPILogMiddleware(logger, { request: true }));
+app.use(cookieParser());
 
 //include routes
 routes(app, logger);
