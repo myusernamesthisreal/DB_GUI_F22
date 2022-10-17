@@ -204,9 +204,9 @@ module.exports = function routes(app, logger) {
       }
     })
 
-  //POST /displayname (change displayname)
+  //PUT /displayname (change displayname)
 
-  app.post("/displayname",
+  app.put("/displayname",
     /**
       * @param {import('express').Request} req
       * @param {import('express').Response} res
