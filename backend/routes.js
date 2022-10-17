@@ -46,8 +46,8 @@ module.exports = function routes(app, logger) {
           }
 
           pool.query(
-            "INSERT INTO db.users (username, password) VALUES (?, ?) ",
-            [username, hash],
+            "INSERT INTO db.users (username, displayname, password) VALUES (?, ?, ?) ",
+            [username, username, hash],
             (err, result) => {
               if (err) {
                 error(err);
