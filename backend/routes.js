@@ -15,6 +15,12 @@ module.exports = function routes(app, logger) {
     const saltRounds = 10;
     const error = (e) => {
       logger.error("Error in POST /users: ", e);
+      if (e?.code === "ER_DUP_ENTRY") {
+        res.status(409).send({
+          message: "Username already exists",
+          success: false,
+        });
+      } else
       res.status(400).send({
         message: "Error creating user",
         success: false,
