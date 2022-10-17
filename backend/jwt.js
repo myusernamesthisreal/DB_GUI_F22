@@ -29,16 +29,23 @@ const checkJWT = (token) => {
     })
 }
 
+/**
+ * @param {import('express').Request} req
+ */
 module.exports.verifyToken = (req) => {
-    const token = req.headers["authorization"].split(" ")?.[1];
+    const cookie = req.cookies["session"];
+    console.log("Cookie: ", cookie);
     return new Promise((res, rej) => {
-        if (token) {
-            return res(checkJWT(token));
+        if (cookie) {
+            return res(checkJWT(cookie));
         }
         else return rej();
     })
 }
 
+/**
+ * @param {import('express').Request} req
+ */
 module.exports.isAdmin = (req) => {
     return new Promise((res, rej) => {
         this.verifyToken(req).then((result) => {

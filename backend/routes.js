@@ -10,98 +10,129 @@ module.exports = function routes(app, logger) {
 
   // POST /users (create user)
 
-  app.post("/users", (req, res) => {
-    const { username, password } = req.body;
-    const saltRounds = 10;
-    const error = (e) => {
-      logger.error("Error in POST /users: ", e);
-      if (e?.code === "ER_DUP_ENTRY") {
-        res.status(409).send({
-          message: "Username already exists",
-          success: false,
-        });
-      } else
-      res.status(400).send({
-        message: "Error creating user",
-        success: false,
-      })
-    }
 
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-      if (err) {
-        error(err);
-        return;
+  app.post("/users",
+
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    (req, res) => {
+      const { username, password } = req.body;
+      const saltRounds = 10;
+      const error = (e) => {
+        logger.error("Error in POST /users: ", e);
+        if (e?.code === "ER_DUP_ENTRY") {
+          res.status(409).send({
+            message: "Username already exists",
+            success: false,
+          });
+        } else
+          res.status(400).send({
+            message: "Error creating user",
+            success: false,
+          })
       }
-      bcrypt.hash(password, salt, (err, hash) => {
+
+      bcrypt.genSalt(saltRounds, (err, salt) => {
         if (err) {
           error(err);
           return;
         }
-
-        pool.query(
-          "INSERT INTO db.users (username, password) VALUES (?, ?) ",
-          [username, hash],
-          (err, result) => {
-            if (err) {
-              error(err);
-              return;
-            }
-
-            const JWT = jwt.makeJWT(result.insertId);
-            res.status(201).send({
-              message: "User created successfully",
-              success: true,
-              token: JWT,
-              username,
-            })
+        bcrypt.hash(password, salt, (err, hash) => {
+          if (err) {
+            error(err);
+            return;
           }
-        )
+
+          pool.query(
+            "INSERT INTO db.users (username, password) VALUES (?, ?) ",
+            [username, hash],
+            (err, result) => {
+              if (err) {
+                error(err);
+                return;
+              }
+
+              const JWT = jwt.makeJWT(result.insertId);
+              res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                message: "User created successfully",
+                success: true,
+                token: JWT,
+                username,
+              });
+            }
+          )
+        })
       })
     })
-  })
 
   // POST /login (login user)
 
-  app.post("/login", (req, res) => {
-    const { username, password } = req.body;
+  app.post("/login",
+    /**
+       * @param {import('express').Request} req
+       * @param {import('express').Response} res
+       */
+    (req, res) => {
+      const { username, password } = req.body;
 
-    pool.query(
-      "SELECT * FROM db.users WHERE username = ?",
-      [username],
-      (err, result) => {
-        if (err || result.length === 0) {
-          logger.error("Error in POST /login: ", err);
-          res.status(400).send({
-            message: "Error logging in: Invalid username or password",
-            success: false,
-          })
-          return;
+      pool.query(
+        "SELECT * FROM db.users WHERE username = ?",
+        [username],
+        (err, result) => {
+          if (err || result.length === 0) {
+            logger.error("Error in POST /login: ", err);
+            res.status(400).send({
+              message: "Error logging in: Invalid username or password",
+              success: false,
+            })
+            return;
+          }
+          else {
+            const storedPassword = result[0]["password"];
+            bcrypt.compare(password, storedPassword, (err, result2) => {
+              if (result2 && !err) {
+                const { username, id } = result[0];
+                const JWT = jwt.makeJWT(result[0].id);
+                res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                  message: "Login successful",
+                  success: true,
+                  username,
+                  token: JWT,
+                });
+              }
+              else {
+                logger.error("Error in POST /login: ", err);
+                res.status(400).send({
+                  message: "Error logging in: Invalid username or password",
+                  success: false,
+                })
+              }
+            })
+          }
         }
-        else {
-          const storedPassword = result[0]["password"];
-          bcrypt.compare(password, storedPassword, (err, result2) => {
-            if (result2 && !err) {
-              const { username, id } = result[0];
-              const JWT = jwt.makeJWT(result[0].id);
-              res.status(200).send({
-                message: "Login successful",
-                success: true,
-                username,
-                token: JWT,
-              });
-            }
-            else {
-              logger.error("Error in POST /login: ", err);
-              res.status(400).send({
-                message: "Error logging in: Invalid username or password",
-                success: false,
-              })
-            }
-          })
-        }
-      }
-    )
-  })
+      )
+    })
+
+  //POST /logout (logout user)
+
+  app.post("/logout",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    (req, res) => {
+      if (req.cookies?.session) {
+        res.status(200).clearCookie("session").send({
+          message: "Logout successful",
+          success: true,
+        });
+      } else res.status(400).send({
+        message: "You are not logged in",
+        success: false,
+      })
+    })
 
   // GET /users/check (check if user is logged in)
 
@@ -141,12 +172,14 @@ module.exports = function routes(app, logger) {
         res.status(200).send({
           message: "User is admin",
           success: true,
+          username: user.username,
         })
       }
       else {
         res.status(200).send({
           message: "User is not admin",
           success: false,
+          username: user.username,
         })
       }
     } catch (e) {
