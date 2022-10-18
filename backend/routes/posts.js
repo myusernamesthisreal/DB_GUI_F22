@@ -57,7 +57,7 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         pool.query(
-          "SELECT * FROM db.posts",
+          "SELECT *, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts",
           (err, result) => {
             if (err) {
               logger.error("Error in GET /posts: ", err);
@@ -94,7 +94,7 @@ module.exports = function routes(app, logger) {
       try {
         const { id } = req.params;
         pool.query(
-          "SELECT * FROM db.posts WHERE id = ?",
+          "SELECT *, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts WHERE id = ?",
           [id],
           (err, result) => {
             if (err) {
@@ -132,7 +132,7 @@ module.exports = function routes(app, logger) {
       try {
         const { id } = req.params;
         pool.query(
-          "SELECT * FROM db.posts WHERE author = ?",
+          "SELECT *, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts WHERE author = ?",
           [id],
           (err, result) => {
             if (err) {
@@ -143,6 +143,7 @@ module.exports = function routes(app, logger) {
               })
             }
             else {
+              pool.query()
               res.status(200).send({
                 success: true,
                 posts: result,
