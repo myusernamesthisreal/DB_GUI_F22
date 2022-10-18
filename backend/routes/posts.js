@@ -143,7 +143,6 @@ module.exports = function routes(app, logger) {
               })
             }
             else {
-              pool.query()
               res.status(200).send({
                 success: true,
                 posts: result,
@@ -191,7 +190,7 @@ module.exports = function routes(app, logger) {
                 })
               } else {
                 pool.query(
-                  "UPDATE db.posts SET body = ? WHERE id = ?",
+                  "UPDATE db.posts SET body = ?, edited = 1 WHERE id = ?",
                   [body, id],
                   (err, result) => {
                     if (err) {
