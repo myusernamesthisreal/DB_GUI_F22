@@ -104,10 +104,16 @@ module.exports = function routes(app, logger) {
                 success: false,
               })
             }
+            else if (result.length === 0) {
+              res.status(404).send({
+                message: "Post not found",
+                success: false,
+              });
+            }
             else {
               res.status(200).send({
                 success: true,
-                post: result,
+                post: result[0],
               })
             }
           }
@@ -182,6 +188,12 @@ module.exports = function routes(app, logger) {
                 success: false,
               })
             }
+            else if (result.length === 0) {
+              res.status(404).send({
+                message: "Post not found",
+                success: false,
+              })
+            }
             else {
               if (result[0].author !== user.id) {
                 res.status(401).send({
@@ -227,4 +239,72 @@ module.exports = function routes(app, logger) {
           })
       }
     })
+
+  //DELETE /posts/:id (delete post)
+  app.delete("/posts/:id",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        const { id } = req.params;
+        pool.query(
+          "SELECT * FROM db.posts WHERE id = ?",
+          [id],
+          (err, result) => {
+            if (err || result.length === 0) {
+              logger.error("Error in DELETE /posts/:id: ", err);
+              res.status(400).send({
+                message: "Error getting post",
+                success: false,
+              })
+            }
+            else {
+              if (result[0].author !== user.id) {
+                res.status(401).send({
+                  message: "You do not have permission to delete this post",
+                  success: false,
+                })
+              } else {
+                pool.query(
+                  "DELETE FROM db.posts WHERE id = ?",
+                  [id],
+                  (err, result) => {
+                    if (err) {
+                      logger.error("Error in DELETE /posts/:id: ", err);
+                      res.status(400).send({
+                        message: "Error deleting post",
+                        success: false,
+                      })
+                    }
+                    else {
+                      res.status(204).send({
+                        message: "Post deleted successfully",
+                        success: true,
+                      })
+                    }
+                  }
+                )
+              }
+            }
+          }
+        )
+      } catch (e) {
+        logger.error("Error in DELETE /posts/:id: ", e);
+        if (e === "Invalid token") {
+          res.status(401).send({
+            message: "Unauthorized",
+            success: false,
+          })
+        } else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e,
+            success: false,
+          })
+      }
+    }
+  )
 }

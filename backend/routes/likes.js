@@ -25,29 +25,27 @@ module.exports = function routes(app, logger) {
               message: "Post not found",
               success: false,
             });
-            return;
           }
-        
-        else pool.query(
-          "SELECT users.username, users.displayname, users.id FROM db.likes JOIN users ON users.id=likes.user WHERE post = ?",
-          [id],
-          (err, result) => {
-            if (err) {
-              logger.error("Error in GET /posts/:id/likes: ", err);
-              res.status(500).send({
-                message: "Error getting post likes",
-                success: false,
-              })
+          else pool.query(
+            "SELECT users.username, users.displayname, users.id FROM db.likes JOIN users ON users.id=likes.user WHERE post = ?",
+            [id],
+            (err, result) => {
+              if (err) {
+                logger.error("Error in GET /posts/:id/likes: ", err);
+                res.status(500).send({
+                  message: "Error getting post likes",
+                  success: false,
+                })
+              }
+              else {
+                res.status(200).send({
+                  success: true,
+                  likes: result,
+                })
+              }
             }
-            else {
-              res.status(200).send({
-                success: true,
-                likes: result,
-              })
-            }
-          }
-        )
-      })
+          )
+        })
       } catch (e) {
         logger.error("Error in GET /posts/:id/likes: ", e);
         res.status(500).send({
@@ -78,6 +76,12 @@ module.exports = function routes(app, logger) {
                 message: "Error getting post",
                 success: false,
               })
+            }
+            else if (result.length === 0) {
+              res.status(404).send({
+                message: "Post not found",
+                success: false,
+              });
             }
             else {
               if (result[0].author === user.id) {

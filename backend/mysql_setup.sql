@@ -33,7 +33,7 @@ CREATE TABLE `likes` (
   `user` bigint unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
-  FOREIGN KEY (`post`) REFERENCES `posts` (`id`),
+  FOREIGN KEY (`post`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`user`) REFERENCES `users` (`id`)
 );
 
