@@ -67,7 +67,7 @@ module.exports = function routes(app, logger) {
         const user = await jwt.verifyToken(req);
         const { id } = req.params;
         pool.query(
-          "SELECT id FROM db.posts WHERE id = ?",
+          "SELECT author FROM db.posts WHERE id = ?",
           [id],
           (err, result) => {
             if (err) {
@@ -90,7 +90,7 @@ module.exports = function routes(app, logger) {
                   success: false,
                 })
               } else {
-                pool.query("SELECT * FROM db.likes WHERE user = ? AND post = ?", [user.id, id], (err, result) => {
+                pool.query("SELECT id FROM db.likes WHERE user = ? AND post = ?", [user.id, id], (err, result) => {
                   if (err) {
                     logger.error("Error in POST /posts/:id/like: ", err);
                     res.status(400).send({
@@ -159,7 +159,7 @@ module.exports = function routes(app, logger) {
         const user = await jwt.verifyToken(req);
         const { id } = req.params;
         pool.query(
-          "SELECT id FROM db.posts WHERE id = ?",
+          "SELECT author FROM db.posts WHERE id = ?",
           [id],
           (err, result) => {
             if (err) {
@@ -168,6 +168,12 @@ module.exports = function routes(app, logger) {
                 message: "Error getting post",
                 success: false,
               })
+            }
+            else if (result.length === 0) {
+              res.status(404).send({
+                message: "Post not found",
+                success: false,
+              });
             }
             else {
               if (result[0].author === user.id) {
