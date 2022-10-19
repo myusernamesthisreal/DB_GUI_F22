@@ -59,6 +59,7 @@ module.exports =
                   success: true,
                   token: JWT,
                   username,
+                  id: result.insertId,
                 });
               }
             )
@@ -98,6 +99,7 @@ module.exports =
                     success: true,
                     username,
                     token: JWT,
+                    id,
                   });
                 }
                 else {

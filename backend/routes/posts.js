@@ -59,7 +59,7 @@ module.exports = function routes(app, logger) {
           res.status(200).send({
             message: "Posts fetched",
             success: true,
-            result: queryResult,
+            posts: queryResult,
           })
       } catch (e) {
         logger.error("Error in GET /posts: ", e);
@@ -88,7 +88,7 @@ module.exports = function routes(app, logger) {
         res.status(200).send({
           message: "Post fetched",
           success: true,
-          result: queryResult[0],
+          post: queryResult[0],
         })
       } catch (e) {
         logger.error("Error in GET /posts/:id: ", e);
@@ -115,15 +115,16 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const { id } = req.params;
+        const userQuery = await query("SELECT * FROM users WHERE id = ?", [id]);
+        if (userQuery.length === 0)
+          throw new Error("User not found");
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ?",
           [id]);
-        if (queryResult.length === 0)
-          throw new Error("User not found");
         res.status(200).send({
           message: "Posts fetched",
           success: true,
-          result: queryResult,
+          posts: queryResult,
         })
       } catch (e) {
         logger.error("Error in GET /users/:id/posts: ", e);
