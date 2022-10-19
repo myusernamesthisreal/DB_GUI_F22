@@ -38,7 +38,7 @@ module.exports.verifyToken = (req) => {
         if (cookie) {
             return res(checkJWT(cookie));
         }
-        else return rej("Invalid token");
+        else return rej(new Error("Invalid token"));
     })
 }
 
@@ -55,7 +55,7 @@ module.exports.isAdmin = (req) => {
                 res(false);
             }
         }).catch((err) => {
-            rej(err);
+            rej(new Error(err));
         })
     })
 }

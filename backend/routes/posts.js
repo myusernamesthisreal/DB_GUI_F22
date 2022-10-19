@@ -13,6 +13,8 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const { body } = req.body;
+        if (body.length > 150)
+          throw "Post is too long";
         pool.query(
           "INSERT INTO db.posts (body, author) VALUES (?, ?)",
           [body, user.id],
@@ -37,6 +39,11 @@ module.exports = function routes(app, logger) {
         if (e === "Invalid token") {
           res.status(401).send({
             message: "Unauthorized",
+            success: false,
+          })
+        } else if (e === "Post is too long") {
+          res.status(400).send({
+            message: "Post is too long",
             success: false,
           })
         } else
@@ -177,6 +184,9 @@ module.exports = function routes(app, logger) {
         const user = await jwt.verifyToken(req);
         const { id } = req.params;
         const { body } = req.body;
+
+        if (body.length > 150)
+          throw "Post is too long";
         pool.query(
           "SELECT * FROM db.posts WHERE id = ?",
           [id],

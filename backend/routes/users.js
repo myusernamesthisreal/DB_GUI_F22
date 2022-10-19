@@ -158,7 +158,7 @@ module.exports =
           logger.error("Error in GET /users/check: ", e);
           res.status(400).send({
             message: "Something went wrong",
-            error: e,
+            error: e.message,
             success: false,
           })
         }
@@ -193,7 +193,7 @@ module.exports =
           logger.error("Error in GET /users/admin: ", e);
           res.status(400).send({
             message: "Something went wrong",
-            reason: e,
+            reason: e.message,
             success: false,
           })
         }
