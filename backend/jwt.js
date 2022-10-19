@@ -34,12 +34,11 @@ const checkJWT = (token) => {
  */
 module.exports.verifyToken = (req) => {
     const cookie = req.cookies["session"];
-    console.log("Cookie: ", cookie);
     return new Promise((res, rej) => {
         if (cookie) {
             return res(checkJWT(cookie));
         }
-        else return rej("Invalid token");
+        else return rej(new Error("Invalid token"));
     })
 }
 
@@ -56,7 +55,7 @@ module.exports.isAdmin = (req) => {
                 res(false);
             }
         }).catch((err) => {
-            rej(err);
+            rej(new Error(err));
         })
     })
 }
