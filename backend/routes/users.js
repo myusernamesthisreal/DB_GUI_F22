@@ -156,11 +156,17 @@ module.exports =
           }
         } catch (e) {
           logger.error("Error in GET /users/check: ", e);
-          res.status(400).send({
-            message: "Something went wrong",
-            error: e.message,
-            success: false,
-          })
+          if (e.message === "Invalid token") {
+            res.status(401).send({
+              message: "Unauthorized",
+              success: false,
+            })
+          } else
+            res.status(500).send({
+              message: "Something went wrong",
+              reason: e.message,
+              success: false,
+            })
         }
       })
 
@@ -191,11 +197,17 @@ module.exports =
           }
         } catch (e) {
           logger.error("Error in GET /users/admin: ", e);
-          res.status(400).send({
-            message: "Something went wrong",
-            reason: e.message,
-            success: false,
-          })
+          if (e.message === "Invalid token") {
+            res.status(401).send({
+              message: "Unauthorized",
+              success: false,
+            })
+          } else
+            res.status(500).send({
+              message: "Something went wrong",
+              reason: e.message,
+              success: false,
+            })
         }
       })
 
@@ -230,7 +242,7 @@ module.exports =
           )
         } catch (e) {
           logger.error("Error in POST /displayname: ", e);
-          if (e === "Invalid token") {
+          if (e.message === "Invalid token") {
             res.status(401).send({
               message: "Unauthorized",
               success: false,
@@ -238,7 +250,7 @@ module.exports =
           } else
             res.status(500).send({
               message: "Something went wrong",
-              reason: e,
+              reason: e.message,
               success: false,
             })
         }
