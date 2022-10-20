@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
+import NavBar from './components/NavBar';
 
 // React functional component
 function App () {
@@ -70,9 +71,13 @@ function App () {
 
   return (
     <div className="App">
+      <NavBar />
       <header className="App-header">
+
+        
         <button onClick={fetchBase} style={{marginBottom: '1rem'}}> {`GET: http://${url}:8000/`} </button>
         <button onClick={reset}> Reset DB </button>
+
         <form onSubmit={handleSubmit}>
           <input type="text" value={number} onChange={handleChange}/>
           <br/>
