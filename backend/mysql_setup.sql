@@ -46,3 +46,13 @@ CREATE TABLE `reposts` (
   FOREIGN KEY (`post`) REFERENCES `posts` (`id`),
   FOREIGN KEY (`user`) REFERENCES `users` (`id`)
 );
+
+CREATE TABLE `follows` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `src` bigint unsigned NOT NULL,
+  `dst` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  FOREIGN KEY (`src`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`dst`) REFERENCES `users` (`id`)
+);
