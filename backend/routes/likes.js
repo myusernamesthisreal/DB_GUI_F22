@@ -1,7 +1,9 @@
 const pool = require('../db');
+const { promisify } = require("util");
 const jwt = require("../jwt");
 
 module.exports = function routes(app, logger) {
+  const query = promisify(pool.query).bind(pool);
 
   // GET /posts/:id/likes (get likes on a post)
   app.get("/posts/:id/likes",
@@ -12,42 +14,23 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const { id } = req.params;
-        pool.query("SELECT id FROM db.posts WHERE id = ?", [id], (err, result) => {
-          if (err) {
-            logger.error("Error in GET /posts/:id/likes: ", err);
-            res.status(500).send({
-              message: "Error getting likes",
-              success: false,
-            })
-          }
-          else if (result.length === 0) {
-            res.status(404).send({
-              message: "Post not found",
-              success: false,
-            });
-          }
-          else pool.query(
-            "SELECT users.username, users.displayname, users.id FROM db.likes JOIN users ON users.id=likes.user WHERE post = ?",
-            [id],
-            (err, result) => {
-              if (err) {
-                logger.error("Error in GET /posts/:id/likes: ", err);
-                res.status(500).send({
-                  message: "Error getting post likes",
-                  success: false,
-                })
-              }
-              else {
-                res.status(200).send({
-                  success: true,
-                  likes: result,
-                })
-              }
-            }
-          )
+        const queryResult = await query("SELECT id FROM db.posts WHERE id = ?", [id]);
+        if (queryResult.length === 0)
+          throw new Error("Post not found");
+        const likes = await query("SELECT users.id, users.username, users.displayname FROM likes JOIN users ON likes.user = users.id WHERE post = ?", [id]);
+        res.status(200).send({
+          message: "Likes fetched",
+          success: true,
+          likes,
         })
       } catch (e) {
         logger.error("Error in GET /posts/:id/likes: ", e);
+        if (e.message === "Post not found") {
+          res.status(404).send({
+            message: "Post not found",
+            success: false,
+          })
+        } else
         res.status(500).send({
           message: "Something went wrong",
           reason: e,
