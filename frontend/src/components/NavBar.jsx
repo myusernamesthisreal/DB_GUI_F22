@@ -2,10 +2,19 @@ import React from 'react';
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+
 function NavBar() {
     return (
       <>
-      <Breadcrumbs aria-label="breadcrumb">
+      <Box
+      m={1}
+ //margin
+      display="flex"
+      justifyContent="space-between"
+      //alignItems="flex-start"
+    >
+      <Breadcrumbs aria-label="breadcrumb" color="primary">
         <Link underline="hover" color="inherit" href="/">
           Feed
         </Link>
@@ -19,8 +28,9 @@ function NavBar() {
         <Link underline="hover" color="inherit" href="/">
           Weather
         </Link>
-        <Button variant="contained">Hello World</Button>
       </Breadcrumbs>
+      <Button variant="contained" color="primary">Sign In</Button>
+    </Box>
       </>
     );
   }
