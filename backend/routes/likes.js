@@ -1,7 +1,9 @@
 const pool = require('../db');
+const { promisify } = require("util");
 const jwt = require("../jwt");
 
 module.exports = function routes(app, logger) {
+  const query = promisify(pool.query).bind(pool);
 
   // GET /posts/:id/likes (get likes on a post)
   app.get("/posts/:id/likes",
@@ -12,47 +14,28 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const { id } = req.params;
-        pool.query("SELECT id FROM db.posts WHERE id = ?", [id], (err, result) => {
-          if (err) {
-            logger.error("Error in GET /posts/:id/likes: ", err);
-            res.status(500).send({
-              message: "Error getting likes",
-              success: false,
-            })
-          }
-          else if (result.length === 0) {
-            res.status(404).send({
-              message: "Post not found",
-              success: false,
-            });
-          }
-          else pool.query(
-            "SELECT users.username, users.displayname, users.id FROM db.likes JOIN users ON users.id=likes.user WHERE post = ?",
-            [id],
-            (err, result) => {
-              if (err) {
-                logger.error("Error in GET /posts/:id/likes: ", err);
-                res.status(500).send({
-                  message: "Error getting post likes",
-                  success: false,
-                })
-              }
-              else {
-                res.status(200).send({
-                  success: true,
-                  likes: result,
-                })
-              }
-            }
-          )
+        const queryResult = await query("SELECT id FROM db.posts WHERE id = ?", [id]);
+        if (queryResult.length === 0)
+          throw new Error("Post not found");
+        const likes = await query("SELECT users.id, users.username, users.displayname FROM likes JOIN users ON likes.user = users.id WHERE post = ?", [id]);
+        res.status(200).send({
+          message: "Likes fetched",
+          success: true,
+          likes,
         })
       } catch (e) {
         logger.error("Error in GET /posts/:id/likes: ", e);
-        res.status(500).send({
-          message: "Something went wrong",
-          reason: e,
-          success: false,
-        })
+        if (e.message === "Post not found") {
+          res.status(404).send({
+            message: "Post not found",
+            success: false,
+          })
+        } else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
       }
     })
 
@@ -66,80 +49,30 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const { id } = req.params;
-        pool.query(
-          "SELECT author FROM db.posts WHERE id = ?",
-          [id],
-          (err, result) => {
-            if (err) {
-              logger.error("Error in POST /posts/:id/like: ", err);
-              res.status(400).send({
-                message: "Error getting post",
-                success: false,
-              })
-            }
-            else if (result.length === 0) {
-              res.status(404).send({
-                message: "Post not found",
-                success: false,
-              });
-            }
-            else {
-              if (result[0].author === user.id) {
-                res.status(401).send({
-                  message: "You cannot like your own post",
-                  success: false,
-                })
-              } else {
-                pool.query("SELECT id FROM db.likes WHERE user = ? AND post = ?", [user.id, id], (err, result) => {
-                  if (err) {
-                    logger.error("Error in POST /posts/:id/like: ", err);
-                    res.status(400).send({
-                      message: "Error getting post",
-                      success: false,
-                    })
-                  }
-                  else {
-                    if (result.length > 0) {
-                      res.status(400).send({
-                        message: "You have already liked this post",
-                        success: false,
-                      })
-                    } else {
-                      pool.query(
-                        "INSERT INTO db.likes (post, user) VALUES (?, ?)",
-                        [id, user.id],
-                        (err, result) => {
-                          if (err) {
-                            logger.error("Error in POST /posts/:id/like: ", err);
-                            res.status(400).send({
-                              message: "Error liking post",
-                              success: false,
-                            })
-                          }
-                          else {
-                            res.status(201).send({
-                              message: "Post liked successfully",
-                              success: true,
-                            })
-                          }
-                        }
-                      )
-                    }
-                  }
-                }
-                )
-              }
-            }
-          }
-        )
+        const queryResult = await query("SELECT author FROM db.posts WHERE id = ?", [id]);
+        if (queryResult.length === 0)
+          throw new Error("Post not found");
+        if (queryResult[0].author === user.id)
+          throw new Error("Cannot like your own post");
+        await query("INSERT INTO db.likes (user, post) VALUES (?, ?)", [user.id, id]);
+        res.status(200).send({
+          message: "Post liked",
+          success: true,
+        })
       } catch (e) {
         logger.error("Error in POST /posts/:id/like: ", e);
-        if (e === "Invalid token") {
+        if (e.message === "Invalid token" || e.message === "Cannot like your own post") {
           res.status(401).send({
             message: "Unauthorized",
             success: false,
           })
-        } else
+        } else if (e.message === "Post not found") {
+          res.status(404).send({
+            message: "Post not found",
+            success: false,
+          })
+        }
+        else
           res.status(500).send({
             message: "Something went wrong",
             reason: e,
@@ -158,53 +91,87 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const { id } = req.params;
-        pool.query(
-          "SELECT author FROM db.posts WHERE id = ?",
-          [id],
-          (err, result) => {
-            if (err) {
-              logger.error("Error in DELETE /posts/:id/like: ", err);
-              res.status(400).send({
-                message: "Error getting post",
-                success: false,
-              })
-            }
-            else if (result.length === 0) {
-              res.status(404).send({
-                message: "Post not found",
-                success: false,
-              });
-            }
-            else {
-              if (result[0].author === user.id) {
-                res.status(401).send({
-                  message: "You cannot unlike your own post",
-                  success: false,
-                })
-              } else {
-                pool.query(
-                  "DELETE FROM db.likes WHERE post = ? AND user = ?",
-                  [id, user.id],
-                  (err, result) => {
-                    if (err) {
-                      logger.error("Error in DELETE /posts/:id/like: ", err);
-                      res.status(400).send({
-                        message: "Error unliking post",
-                        success: false,
-                      })
-                    }
-                    else {
-                      res.status(204).send();
-                    }
-                  }
-                )
-              }
-            }
-          }
-        )
+        const queryResult = await query("SELECT author FROM db.posts WHERE id = ?", [id]);
+        if (queryResult.length === 0)
+          throw new Error("Post not found");
+        await query("DELETE FROM db.likes WHERE user = ? AND post = ?", [user.id, id]);
+        res.status(204).send();
       } catch (e) {
         logger.error("Error in DELETE /posts/:id/like: ", e);
-        if (e === "Invalid token") {
+        if (e.message === "Invalid token") {
+          res.status(401).send({
+            message: "Unauthorized",
+            success: false,
+          })
+        } else if (e.message === "Post not found") {
+          res.status(404).send({
+            message: "Post not found",
+            success: false,
+          })
+        }
+        else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
+      }
+    }
+  )
+
+  // GET /users/:id/likes (get liked posts of a user)
+  app.get("/users/:id/likes",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        const queryResult = await query("SELECT id FROM db.users WHERE id = ?", [id]);
+        if (queryResult.length === 0)
+          throw new Error("User not found");
+        const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [id]);
+        res.status(200).send({
+          message: "Likes fetched",
+          success: true,
+          likes,
+        })
+      } catch (e) {
+        logger.error("Error in GET /users/:id/likes: ", e);
+        if (e.message === "User not found") {
+          res.status(404).send({
+            message: "User not found",
+            success: false,
+          })
+        } else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
+      }
+    }
+  )
+
+  // GET /users/likes (get liked posts of current user)
+  app.get("/users/likes",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [user.id]);
+        res.status(200).send({
+          message: "Likes fetched",
+          success: true,
+          likes,
+        })
+      } catch (e) {
+        logger.error("Error in GET /users/likes: ", e);
+        if (e.message === "Invalid token") {
           res.status(401).send({
             message: "Unauthorized",
             success: false,
@@ -212,7 +179,7 @@ module.exports = function routes(app, logger) {
         } else
           res.status(500).send({
             message: "Something went wrong",
-            reason: e,
+            reason: e.message,
             success: false,
           })
       }
