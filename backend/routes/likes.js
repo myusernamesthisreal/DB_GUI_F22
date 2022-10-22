@@ -31,11 +31,11 @@ module.exports = function routes(app, logger) {
             success: false,
           })
         } else
-        res.status(500).send({
-          message: "Something went wrong",
-          reason: e,
-          success: false,
-        })
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
       }
     })
 
@@ -110,6 +110,73 @@ module.exports = function routes(app, logger) {
           })
         }
         else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
+      }
+    }
+  )
+
+  // GET /users/:id/likes (get liked posts of a user)
+  app.get("/users/:id/likes",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        const queryResult = await query("SELECT id FROM db.users WHERE id = ?", [id]);
+        if (queryResult.length === 0)
+          throw new Error("User not found");
+        const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [id]);
+        res.status(200).send({
+          message: "Likes fetched",
+          success: true,
+          likes,
+        })
+      } catch (e) {
+        logger.error("Error in GET /users/:id/likes: ", e);
+        if (e.message === "User not found") {
+          res.status(404).send({
+            message: "User not found",
+            success: false,
+          })
+        } else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
+      }
+    }
+  )
+
+  // GET /users/likes (get liked posts of current user)
+  app.get("/users/likes",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [user.id]);
+        res.status(200).send({
+          message: "Likes fetched",
+          success: true,
+          likes,
+        })
+      } catch (e) {
+        logger.error("Error in GET /users/likes: ", e);
+        if (e.message === "Invalid token") {
+          res.status(401).send({
+            message: "Unauthorized",
+            success: false,
+          })
+        } else
           res.status(500).send({
             message: "Something went wrong",
             reason: e.message,
