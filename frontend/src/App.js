@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import NavBar from './components/NavBar';
+import SignIn from './components/SignIn'
 
 // React functional component
 function App () {
@@ -73,7 +74,7 @@ function App () {
     <div className="App">
       <NavBar />
       <header className="App-header">
-
+        <SignIn />
         
         <button onClick={fetchBase} style={{marginBottom: '1rem'}}> {`GET: http://${url}:8000/`} </button>
         <button onClick={reset}> Reset DB </button>
