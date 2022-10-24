@@ -61,9 +61,14 @@ module.exports = function routes(app, logger) {
         })
       } catch (e) {
         logger.error("Error in POST /posts/:id/like: ", e);
-        if (e.message === "Invalid token" || e.message === "Cannot like your own post") {
+        if (e.message === "Invalid token") {
           res.status(401).send({
             message: "Unauthorized",
+            success: false,
+          })
+        } else if (e.message === "Cannot like your own post") {
+          res.status(403).send({
+            message: "Cannot like your own post",
             success: false,
           })
         } else if (e.message === "Post not found") {

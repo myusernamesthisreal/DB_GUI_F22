@@ -14,6 +14,8 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const { body } = req.body;
+        if (!body)
+          throw new Error("Post body cannot be empty");
         if (body.length > 150)
           throw new Error("Post is too long");
         const queryResult = await query(
@@ -32,9 +34,9 @@ module.exports = function routes(app, logger) {
             message: "Unauthorized",
             success: false,
           })
-        } else if (e.message === "Post is too long") {
+        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long") {
           res.status(400).send({
-            message: "Post is too long",
+            message: e.message,
             success: false,
           })
         } else
