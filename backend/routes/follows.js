@@ -12,11 +12,11 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const src = await jwt.verifyToken(req);
-        pool.query("SELECT id FROM db.users WHERE id = ?", [id], (err, result) => {
+        pool.query("SELECT id FROM db.users WHERE id = ?", [src.id], (err, result) => {
           if (err) {
-            logger.error("Error in GET /users/:id/follows: ", err);
+            logger.error("Error in GET /users/:id/following: ", err);
             res.status(500).send({
-              message: "Error getting follows",
+              message: "Error getting users followed",
               success: false,
             })
           }
@@ -27,13 +27,13 @@ module.exports = function routes(app, logger) {
             });
           }
           else pool.query(
-            "SELECT users.username, users.displayname, users.id FROM db.users WHERE src = ?", //Fix if doesn't work
-            [id],
+            "SELECT users.username, users.displayname, users.id FROM db.follows JOIN users ON users.id = follows.dst WHERE src = ?", //Fix if doesn't work
+            [src.id],
             (err, result) => {
               if (err) {
-                logger.error("Error in GET /users/:id/follows: ", err);
+                logger.error("Error in GET /users/:id/following: ", err);
                 res.status(500).send({
-                  message: "Error getting user follows",
+                  message: "Error getting users followed",
                   success: false,
                 })
               }
@@ -47,7 +47,7 @@ module.exports = function routes(app, logger) {
           )
         })
       } catch (e) {
-        logger.error("Error in GET /users/:id/follows: ", e);
+        logger.error("Error in GET /users/:id/following: ", e);
         res.status(500).send({
           message: "Something went wrong",
           reason: e,
