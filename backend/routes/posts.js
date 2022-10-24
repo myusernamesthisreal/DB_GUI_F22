@@ -220,12 +220,18 @@ module.exports = function routes(app, logger) {
             message: "Post not found",
             success: false,
           })
-        } else if (e.message === "Invalid token" || e.message === "Unauthorized") {
+        } else if (e.message === "Invalid token") {
           res.status(401).send({
             message: "Unauthorized",
             success: false,
           })
-        } else
+        } else if (e.message === "Unauthorized") {
+          res.status(403).send({
+            message: "You can't delete other people's posts",
+            success: false,
+          })
+        }
+        else
           res.status(500).send({
             message: "Something went wrong",
             reason: e.message,
