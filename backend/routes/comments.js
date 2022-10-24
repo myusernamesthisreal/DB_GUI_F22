@@ -97,4 +97,48 @@ module.exports = function routes(app, logger) {
             }
         }
     )
+
+    // DELETE /posts/:id/comments/:commentid (delete comment)
+    app.delete("/comments/:commentid",
+        /**
+         * @param {import('express').Request} req
+         * @param {import('express').Response} res
+         */
+        async (req, res) => {
+            try {
+                const user = await jwt.verifyToken(req);
+                const { commentid } = req.params;
+                const commentResult = await query("SELECT author FROM db.comments WHERE id = ?", [commentid]);
+                if (commentResult.length === 0)
+                    throw new Error("Comment not found");
+                if (commentResult[0].author !== user.id)
+                    throw new Error("You cannot delete this comment");
+                await query("DELETE FROM db.comments WHERE id = ?", [commentid]);
+                res.status(204).send()
+            } catch (e) {
+                logger.error("Error in DELETE /posts/:id/comments/:commentid: ", e);
+                if (e.message === "Comment not found") {
+                    res.status(404).send({
+                        message: "Comment not found",
+                        success: false,
+                    })
+                } else if (e.message === "Invalid token") {
+                    res.status(401).send({
+                        message: "You must be logged in to delete a comment",
+                        success: false,
+                    })
+                } else if (e.message === "You cannot delete this comment") {
+                    res.status(403).send({
+                        message: "You cannot delete this comment",
+                        success: false,
+                    })
+                } else
+                    res.status(500).send({
+                        message: "Something went wrong",
+                        reason: e.message,
+                        success: false,
+                    })
+            }
+        }
+    )
 }
