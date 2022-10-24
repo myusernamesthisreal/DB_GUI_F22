@@ -55,7 +55,7 @@ module.exports = function routes(app, logger) {
         if (queryResult[0].author === user.id)
           throw new Error("Cannot like your own post");
         await query("INSERT INTO db.likes (user, post) VALUES (?, ?)", [user.id, id]);
-        res.status(200).send({
+        res.status(201).send({
           message: "Post liked",
           success: true,
         })
