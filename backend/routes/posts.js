@@ -57,7 +57,7 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const queryResult = await query(
-          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id");
+          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
           res.status(200).send({
             message: "Posts fetched",
             success: true,
@@ -121,7 +121,7 @@ module.exports = function routes(app, logger) {
         if (userQuery.length === 0)
           throw new Error("User not found");
         const queryResult = await query(
-          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ?",
+          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ? ORDER BY timestamp DESC",
           [id]);
         res.status(200).send({
           message: "Posts fetched",

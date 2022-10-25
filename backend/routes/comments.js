@@ -17,7 +17,7 @@ module.exports = function routes(app, logger) {
                 const queryResult = await query("SELECT id FROM db.posts WHERE id = ?", [id]);
                 if (queryResult.length === 0)
                     throw new Error("Post not found");
-                const comments = await query("SELECT users.id, users.username AS authorname, users.displayname AS authordisplayname, comments.* FROM comments JOIN users ON comments.author = users.id WHERE parent = ?", [id]);
+                const comments = await query("SELECT users.id, users.username AS authorname, users.displayname AS authordisplayname, comments.* FROM comments JOIN users ON comments.author = users.id WHERE parent = ? ORDER BY timestamp DESC", [id]);
                 res.status(200).send({
                     message: "Comments fetched",
                     success: true,
