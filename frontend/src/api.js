@@ -9,21 +9,49 @@ export class Api {
     async signup(username, password) {
         const body = { username, password };
         console.log(username, password)
-        try{
+        try {
             const res = await fetch(`${this.url}/users`,
-            {
-                method: "POST",
-                body: JSON.stringify(body),
-                headers: {
-                    "Content-Type": "application/json",
-                }
+                {
+                    method: "POST",
+                    body: JSON.stringify(body),
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+            return await res.json();
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
+    }
+
+    async login(username, password) {
+
+    }
+
+    async checkUser() {
+        try {
+            const res = await fetch(`${this.url}/users/check`, {
+                credentials: "include"
             })
             return await res.json();
         } catch (e) {
             console.error(e);
-            return {success: false}
+            return e;
         }
-        
+    }
 
+    async logOut() {
+        try {
+            const res = await fetch(`${this.url}/logout`, {
+                method: "POST",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
     }
 }
