@@ -94,7 +94,7 @@ module.exports =
                 if (result2 && !err) {
                   const { username, id } = result[0];
                   const JWT = jwt.makeJWT(result[0].id);
-                  res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                  res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "none", secure: true }).send({
                     message: "Login successful",
                     success: true,
                     username,
