@@ -54,7 +54,7 @@ module.exports =
                   return;
                 }
                 const JWT = jwt.makeJWT(result.insertId);
-                res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "none", secure: true }).send({
                   message: "User created successfully",
                   success: true,
                   token: JWT,
