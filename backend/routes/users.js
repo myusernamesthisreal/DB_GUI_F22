@@ -148,6 +148,7 @@ module.exports =
               message: "Token is valid",
               success: true,
               username: user.username,
+              id: user.id,
             })
           }
           else {
@@ -187,6 +188,7 @@ module.exports =
               message: "User is admin",
               success: true,
               username: user.username,
+              id: user.id,
             })
           }
           else {
@@ -195,6 +197,7 @@ module.exports =
               message: "User is not admin",
               success: true,
               username: user.username,
+              id: user.id,
             })
           }
         } catch (e) {
