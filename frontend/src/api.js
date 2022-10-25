@@ -27,7 +27,24 @@ export class Api {
     }
 
     async login(username, password) {
+        const body = {username, password };
+        console.log(username, password)
+        try {
+            const res = await fetch(`${this.url}/login`,
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                }
 
+            })
+            return await res.json();
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
     }
 
     async checkUser() {
