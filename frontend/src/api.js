@@ -7,11 +7,16 @@ export class Api {
     url = this.ec2 ? this.ec2_url : 'http://localhost:8000';
 
     async signup(username, password) {
+        const body = { username, password };
+        console.log(username, password)
         try{
             const res = await fetch(`${this.url}/users`,
             {
                 method: "POST",
-                body: { username, password },
+                body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json",
+                }
             })
             return await res.json();
         } catch (e) {

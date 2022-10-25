@@ -5,6 +5,11 @@ import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
 
 function logIn() {
+
+    const handleSignUp = async() => {
+        window.location.href="/signup";
+    }
+
     return (
     <>
     <Box sx={{ width: '50%', border: 1, p:2.5}}>
@@ -13,7 +18,7 @@ function logIn() {
             <TextField required id="password-box" label="Password" variant="standard" />
             <Button variant="contained" color="primary">Sign In</Button>
             
-            <Button variant="text" size="small">Don't have an account? Sign up</Button>
+            <Button variant="text" size="small" onClick={handleSignUp}>Don't have an account? Sign up</Button>
         </Stack>
     </Box>
 
