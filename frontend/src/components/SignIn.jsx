@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-import TextField from '@mui/material/TextField'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
+import { Typography, Button, Stack, Box, TextField } from '@mui/material'
 import { Api } from '../api'
 
 
@@ -24,6 +21,9 @@ function Login() {
         <>
             <Box sx={{ width: '50%', border: 1, p: 2.5, justifyContent: "center", marginX: "auto", marginTop: "5rem"}}>
                 <Stack direction="column" alignItems="stretch" justifyContent="flex-start" spacing={1.5}>
+                <Typography sx={{ color: "grey"}}>
+                        Sign In
+                </Typography>
                 <TextField required id="username-box" label="Username" type="standard" value={username} onChange={(e) => setUsername(e.target.value)} />
             <TextField required id="password-box"  label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <Button variant="contained" color="primary" onClick={handleLogIn}>Sign In</Button>
