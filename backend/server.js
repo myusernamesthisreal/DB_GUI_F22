@@ -24,7 +24,8 @@ const logger = log({ console: true, file: false, label: config.name });
 // specify middleware to use
 app.use(bodyParser.json());
 app.use(cors({
-  origin: '*'
+  origin: ['http://localhost:3000', 'http://localhost:8000'],
+  credentials: true,
 }));
 app.use(ExpressAPILogMiddleware(logger, { request: true }));
 app.use(cookieParser());

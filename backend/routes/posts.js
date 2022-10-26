@@ -14,6 +14,8 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const { body } = req.body;
+        if (!body)
+          throw new Error("Post body cannot be empty");
         if (body.length > 150)
           throw new Error("Post is too long");
         const queryResult = await query(
@@ -32,9 +34,9 @@ module.exports = function routes(app, logger) {
             message: "Unauthorized",
             success: false,
           })
-        } else if (e.message === "Post is too long") {
+        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long") {
           res.status(400).send({
-            message: "Post is too long",
+            message: e.message,
             success: false,
           })
         } else
@@ -55,7 +57,7 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const queryResult = await query(
-          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id");
+          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
           res.status(200).send({
             message: "Posts fetched",
             success: true,
@@ -119,7 +121,7 @@ module.exports = function routes(app, logger) {
         if (userQuery.length === 0)
           throw new Error("User not found");
         const queryResult = await query(
-          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ?",
+          "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ? ORDER BY timestamp DESC",
           [id]);
         res.status(200).send({
           message: "Posts fetched",
@@ -218,12 +220,18 @@ module.exports = function routes(app, logger) {
             message: "Post not found",
             success: false,
           })
-        } else if (e.message === "Invalid token" || e.message === "Unauthorized") {
+        } else if (e.message === "Invalid token") {
           res.status(401).send({
             message: "Unauthorized",
             success: false,
           })
-        } else
+        } else if (e.message === "Unauthorized") {
+          res.status(403).send({
+            message: "You can't delete other people's posts",
+            success: false,
+          })
+        }
+        else
           res.status(500).send({
             message: "Something went wrong",
             reason: e.message,

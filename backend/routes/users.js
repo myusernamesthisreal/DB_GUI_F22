@@ -54,10 +54,9 @@ module.exports =
                   return;
                 }
                 const JWT = jwt.makeJWT(result.insertId);
-                res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
                   message: "User created successfully",
                   success: true,
-                  token: JWT,
                   username,
                   id: result.insertId,
                 });
@@ -94,11 +93,10 @@ module.exports =
                 if (result2 && !err) {
                   const { username, id } = result[0];
                   const JWT = jwt.makeJWT(result[0].id);
-                  res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000 }).send({
+                  res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
                     message: "Login successful",
                     success: true,
                     username,
-                    token: JWT,
                     id,
                   });
                 }
@@ -148,6 +146,7 @@ module.exports =
               message: "Token is valid",
               success: true,
               username: user.username,
+              id: user.id,
             })
           }
           else {
@@ -187,6 +186,7 @@ module.exports =
               message: "User is admin",
               success: true,
               username: user.username,
+              id: user.id,
             })
           }
           else {
@@ -195,6 +195,7 @@ module.exports =
               message: "User is not admin",
               success: true,
               username: user.username,
+              id: user.id,
             })
           }
         } catch (e) {

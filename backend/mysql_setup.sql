@@ -27,6 +27,20 @@ CREATE TABLE `posts` (
   FOREIGN KEY (`author`) REFERENCES `users` (`id`)
 );
 
+CREATE TABLE `comments` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `parent` bigint unsigned NOT NULL,
+  `author` bigint unsigned NOT NULL,
+  `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `body` varchar(150) NOT NULL,
+  `is_pinned` boolean NOT NULL DEFAULT false,
+  `edited` boolean NOT NULL DEFAULT false,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  FOREIGN KEY (`author`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`parent`) REFERENCES `posts` (`id`) ON DELETE CASCADE
+);
+
 CREATE TABLE `likes` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `post` bigint unsigned NOT NULL,
@@ -43,6 +57,16 @@ CREATE TABLE `reposts` (
   `user` bigint unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
-  FOREIGN KEY (`post`) REFERENCES `posts` (`id`),
+  FOREIGN KEY (`post`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`user`) REFERENCES `users` (`id`)
+);
+
+CREATE TABLE `follows` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `src` bigint unsigned NOT NULL,
+  `dst` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  FOREIGN KEY (`src`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`dst`) REFERENCES `users` (`id`)
 );
