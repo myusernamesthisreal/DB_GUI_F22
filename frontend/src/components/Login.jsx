@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import { Api } from '../api'
 
 
-function Login() {
+export function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const api = new Api();

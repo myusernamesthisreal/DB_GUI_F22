@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
 import { Api } from '../api'
 
-const Signup = () => {
+export const Signup = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const api = new Api();
