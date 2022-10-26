@@ -54,10 +54,9 @@ module.exports =
                   return;
                 }
                 const JWT = jwt.makeJWT(result.insertId);
-                res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "none", secure: true }).send({
+                res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
                   message: "User created successfully",
                   success: true,
-                  token: JWT,
                   username,
                   id: result.insertId,
                 });
@@ -94,11 +93,10 @@ module.exports =
                 if (result2 && !err) {
                   const { username, id } = result[0];
                   const JWT = jwt.makeJWT(result[0].id);
-                  res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "none", secure: true }).send({
+                  res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
                     message: "Login successful",
                     success: true,
                     username,
-                    token: JWT,
                     id,
                   });
                 }
