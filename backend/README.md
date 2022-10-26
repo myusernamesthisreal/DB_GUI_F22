@@ -6,7 +6,7 @@
 
 #### GET /users/check
 
-Checks if the user is logged in.
+Checks if the user is logged in. Returns the user object if logged in, otherwise returns an error.
 
 Response body:
 
@@ -18,6 +18,12 @@ Response body:
   "id": 1
 }
 ```
+
+Error codes:
+
+- 401: Unauthorized (no token)
+
+---
 
 #### GET /users/admin
 
@@ -34,6 +40,12 @@ Response body:
   "id": 1
 }
 ```
+
+Error codes:
+
+- 401: Unauthorized (no token)
+
+---
 
 #### POST /users
 
@@ -59,6 +71,13 @@ Response body:
 }
 ```
 
+Error codes:
+
+- 400: Bad request (missing fields)
+- 409: Conflict (username already exists)
+
+---
+
 #### POST /login
 
 Logs in a user.
@@ -83,6 +102,12 @@ Response body:
 }
 ```
 
+Error codes:
+
+- 400: Bad request (missing fields, invalid username or password)
+
+---
+
 #### POST /logout
 
 Logs out a user.
@@ -95,6 +120,8 @@ Response body:
   "success": true
 }
 ```
+
+---
 
 #### PUT /displayname
 
@@ -119,9 +146,189 @@ Response body:
 }
 ```
 
+Error codes:
+
+- 400: Bad request (missing fields)
+- 401: Unauthorized (no token or wrong user)
+
+---
+
 ### Posts
+
+#### GET /posts
+
+Gets all posts.
+
+Response body:
+
+```json
+{
+  "message": "Posts fetched",
+  "posts": [
+    {
+        "id": 43,
+        "author": 46,
+        "timestamp": "2022-10-25T04:08:35.000Z",
+        "body": "body",
+        "is_pinned": 0,
+        "edited": 0,
+        "authorname": "author",
+        "authordisplayname": "author",
+        "likes": 0
+    }
+  ],
+  "success": true
+}
+```
+
+---
+
+#### GET /posts/:id
+
+Gets a post by id.
+
+Response body:
+
+```json
+{
+  "message": "Post fetched",
+  "post": {
+    "id": 43,
+    "author": 46,
+    "timestamp": "2022-10-25T04:08:35.000Z",
+    "body": "body",
+    "is_pinned": 0,
+    "edited": 0,
+    "authorname": "author",
+    "authordisplayname": "author",
+    "likes": 0
+  },
+  "success": true
+}
+```
+
+---
+
+#### GET /users/:id/posts
+
+Gets all posts by a user.
+
+Response body:
+
+```json
+{
+  "message": "Posts fetched",
+  "posts": [
+    {
+        "id": 43,
+        "author": 46,
+        "timestamp": "2022-10-25T04:08:35.000Z",
+        "body": "body",
+        "is_pinned": 0,
+        "edited": 0,
+        "authorname": "author",
+        "authordisplayname": "author",
+        "likes": 0
+    }
+  ],
+  "success": true
+}
+```
+
+---
+
+#### POST /posts
+
+Creates a new post.
+
+Request body:
+
+```json
+{
+  "body": "body"
+}
+```
+
+Response body:
+
+```json
+{
+  "message": "Post created successfully",
+  "post": {
+    "id": 43,
+    "author": 46,
+    "timestamp": "2022-10-25T04:08:35.000Z",
+    "body": "body",
+    "is_pinned": 0,
+    "edited": 0,
+    "authorname": "author",
+    "authordisplayname": "author",
+    "likes": 0
+  },
+  "success": true
+}
+```
+
+Error codes:
+
+- 400: Bad request (missing fields)
+- 401: Unauthorized (no token)
+
+---
+
+#### PUT /posts/:id
+
+Edits a post.
+
+Request body:
+
+```json
+{
+  "body": "body"
+}
+```
+
+Response body:
+
+```json
+{
+  "message": "Post edited successfully",
+  "post": {
+    "id": 43,
+    "author": 46,
+    "timestamp": "2022-10-25T04:08:35.000Z",
+    "body": "body",
+    "is_pinned": 0,
+    "edited": 1,
+    "authorname": "author",
+    "authordisplayname": "author",
+    "likes": 0
+  },
+  "success": true
+}
+```
+
+Error codes:
+
+- 400: Bad request (missing fields)
+- 401: Unauthorized (no token or wrong user)
+- 404: Not found (post not found)
+
+---
+
+#### DELETE /posts/:id
+
+Deletes a post.
+
+Responds with 204 No Content and empty body.
+
+Error codes:
+
+- 401: Unauthorized (no token or wrong user)
+- 404: Not found (post not found)
+
+---
 
 ### Comments
 
 ### Likes
-
