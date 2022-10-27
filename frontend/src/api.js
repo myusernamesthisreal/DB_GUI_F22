@@ -72,10 +72,38 @@ export class Api {
         }
     }
 
+    //to get list of accounts the user is following
+    async following() {
+        try {
+            const res = await fetch(`${this.url}/following`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //to get list of accounts following the user
+    async followers() {
+        try {
+            const res = await fetch(`${this.url}/followers`, {
+            method: "GET",
+            credentials: "include"
+        });
+        return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
     async follow() {
         try {
-            const res = await fetch(`${this.url}/follow`, {
-                method: "GET",
+            const res = await fetch(`${this.url}/follows`, {
+                method: "POST",
                 credentials: "include"
             });
             return await res.json();
