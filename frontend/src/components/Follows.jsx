@@ -30,8 +30,9 @@ function Follow() {
         <>
             <Box sx={{ width: '50%', border: 1, p: 2.5, justifyContent: "center", marginX: "auto", marginTop: "5rem"}}>
                 <Stack direction="column" alignItems="stretch" justifyContent="flex-start" spacing={1.5}>
-                <button required id="follow-button" label="Follow" type="standard" value={user} onChange={(e) => follow(e.target.value)} >Follow</button>
-                <button required id="get-followers-button" label="getFollowers" type="standard" value={user} onChange={(e) => follow(e.target.value)}>Get Followers</button>
+                <button required id="follow-btn" label="Follow" type="standard" value={user} onClick={(e) => follow(e.target.value)} >Follow</button>
+                <button required id="get-followers-btn" label="getFollowers" type="standard" value={user} onClick={(e) => followers(e.target.value)}>Your Followers</button>
+                <button required id="get-following-btn" label="getFollowing" type="standard" value={user} onClick={(e) => following(e.target.value)}>Accounts You Follow</button>
             <TextField required id="password-box"  label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <Button variant="contained" color="primary" onClick={handleLogIn}>Sign In</Button>
 
