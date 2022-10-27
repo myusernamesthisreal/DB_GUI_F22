@@ -71,4 +71,17 @@ export class Api {
             return e;
         }
     }
+
+    async follow() {
+        try {
+            const res = await fetch(`${this.url}/follow`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }
