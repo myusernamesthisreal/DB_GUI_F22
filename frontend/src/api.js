@@ -100,10 +100,25 @@ export class Api {
         }
     }
 
+    //lets user follow another account
     async follow() {
         try {
             const res = await fetch(`${this.url}/follows`, {
                 method: "POST",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //lets user unfollow another user they are following
+    async unfollow() {
+        try {
+            const res = await fetch(`${this.url}/unfollow`, {
+                method: "DELETE",
                 credentials: "include"
             });
             return await res.json();
