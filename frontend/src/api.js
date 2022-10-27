@@ -71,4 +71,17 @@ export class Api {
             return e;
         }
     }
+
+    async getPosts() {
+        try {
+            const res = await fetch(`${this.url}/posts`, {
+                method: "GET",
+                credentials: "include",
+            })
+            return await res.json();
+        } catch (e) {
+            console.log(e)
+            return e;
+        }
+    }
 }
