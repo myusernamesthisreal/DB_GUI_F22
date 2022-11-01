@@ -54,6 +54,9 @@ module.exports = function routes(app, logger) {
                     throw new Error("Post not found");
                 if (queryResult[0].author === user.id)
                     throw new Error("Cannot save your own post");
+                const saveResult = await query("SELECT id FROM db.saves WHERE post = ? AND user = ?", [id, user.id]);
+                if (saveResult.length > 0)
+                    throw new Error("Already saved");
                 await query("INSERT INTO db.saves (user, post) VALUES (?, ?)", [user.id, id]);
                 res.status(201).send({
                     message: "Post saved",
@@ -76,8 +79,12 @@ module.exports = function routes(app, logger) {
                         message: "Post not found",
                         success: false,
                     })
-                }
-                else
+                } else if (e.message === "Already saved") {
+                    res.status(409).send({
+                        message: "Already saved",
+                        success: false,
+                    })
+                } else
                     res.status(500).send({
                         message: "Something went wrong",
                         reason: e,
