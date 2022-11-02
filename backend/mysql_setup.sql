@@ -70,3 +70,22 @@ CREATE TABLE `follows` (
   FOREIGN KEY (`src`) REFERENCES `users` (`id`),
   FOREIGN KEY (`dst`) REFERENCES `users` (`id`)
 );
+
+CREATE TABLE `categories` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `post` bigint unsigned NOT NULL,
+  `categoryname` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  FOREIGN KEY (`post`) REFERENCES `posts` (`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `saves` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `post` bigint unsigned NOT NULL,
+  `user` bigint unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  FOREIGN KEY (`post`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user`) REFERENCES `users` (`id`)
+);

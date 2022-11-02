@@ -3,7 +3,7 @@ import { Typography, Button, Stack, Box, TextField } from '@mui/material'
 import { Api } from '../api'
 
 
-function Login() {
+export function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const api = new Api();
@@ -34,5 +34,3 @@ function Login() {
         </>
     );
 }
-
-export default Login

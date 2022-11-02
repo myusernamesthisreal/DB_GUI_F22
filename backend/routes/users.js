@@ -1,6 +1,7 @@
 const pool = require("../db");
 const bcrypt = require("bcryptjs");
 const jwt = require("../jwt");
+const promisify = require("util").promisify;
 
 module.exports =
   /**
@@ -8,6 +9,7 @@ module.exports =
    * @param {import("winston").Logger} logger 
    */
   (app, logger) => {
+    const query = promisify(pool.query).bind(pool);
 
     // POST /users (create user)
     app.post("/users",
@@ -256,6 +258,61 @@ module.exports =
               reason: e.message,
               success: false,
             })
+        }
+      })
+
+    //GET /users (get all users)
+    app.get("/users",
+      /**
+       * @param {import('express').Request} req
+       * @param {import('express').Response} res
+       */
+      async (req, res) => {
+        try {
+          const queryResult = await query("SELECT id, username, displayname, is_admin FROM db.users");
+          res.status(200).send({
+            message: "Users fetched successfully",
+            success: true,
+            users: queryResult,
+          });
+        } catch (e) {
+          logger.error("Error in GET /users: ", e);
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
+        }
+      })
+
+    //GET /users/:id (get user by id)
+    app.get("/users/:id",
+      /**
+       * @param {import('express').Request} req
+       * @param {import('express').Response} res
+       */
+      async (req, res) => {
+        try {
+          const queryResult = await query("SELECT id, username, displayname, is_admin FROM db.users WHERE id = ?", [req.params.id]);
+          if (queryResult.length === 0) throw new Error("User not found");
+          res.status(200).send({
+            message: "User fetched successfully",
+            success: true,
+            user: queryResult[0],
+          });
+        } catch (e) {
+          logger.error("Error in GET /users/:id: ", e);
+          if (e.message === "User not found") {
+            res.status(404).send({
+              message: "User not found",
+              success: false,
+            })
+          } else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
         }
       })
   }
