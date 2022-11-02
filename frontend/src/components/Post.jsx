@@ -4,7 +4,7 @@ import { blueGrey } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import { boxSizing } from '@mui/system';
+import Button from '@mui/material/Button'
 
 export const Post = (props) => {
     const [time, timestamp] = props.post.timestamp.split('T');
@@ -44,6 +44,7 @@ export const Post = (props) => {
                     }
                 />
             </ListItem>
+            <Button variant="outlined">Like</Button>
         </Box>
     </>
 
