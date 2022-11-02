@@ -18,14 +18,23 @@ module.exports = function routes(app, logger) {
           throw new Error("Post body cannot be empty");
         if (body.length > 150)
           throw new Error("Post is too long");
-        const queryResult = await query(
+        const insertQuery = await query(
           "INSERT INTO db.posts (body, author) VALUES (?, ?)",
           [body, user.id]);
-        const post = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [queryResult.insertId]);
+        const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [insertQuery.insertId]);
+        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        categoryResult.map(post => {
+          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
+          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
+          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+        })
+        queryResult.map(post => {
+          post.categories = post.categories ? post.categories : []
+        });
         res.status(201).send({
           message: "Post created",
           success: true,
-          post: post[0],
+          post: queryResult[0],
         })
       } catch (e) {
         logger.error("Error in POST /posts: ", e);
@@ -58,6 +67,15 @@ module.exports = function routes(app, logger) {
       try {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
+        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        categoryResult.map(post => {
+          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
+          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
+          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+        })
+        queryResult.map(post => {
+          post.categories = post.categories ? post.categories : []
+          });
           res.status(200).send({
             message: "Posts fetched",
             success: true,
@@ -85,6 +103,15 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?",
           [id]);
+        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        categoryResult.map(post => {
+          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
+          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
+          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+        })
+        queryResult.map(post => {
+          post.categories = post.categories ? post.categories : []
+        });
         if (queryResult.length === 0)
           throw new Error("Post not found");
         res.status(200).send({
@@ -123,6 +150,15 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ? ORDER BY timestamp DESC",
           [id]);
+        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        categoryResult.map(post => {
+          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
+          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
+          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+        })
+        queryResult.map(post => {
+          post.categories = post.categories ? post.categories : []
+        });
         res.status(200).send({
           message: "Posts fetched",
           success: true,
@@ -158,17 +194,26 @@ module.exports = function routes(app, logger) {
 
         if (body.length > 150)
           throw new Error("Post is too long");
-        const queryResult = await query("SELECT * FROM db.posts WHERE id = ?", [id]);
-        if (queryResult.length === 0)
+        const findPostQuery = await query("SELECT * FROM db.posts WHERE id = ?", [id]);
+        if (findPostQuery.length === 0)
           throw new Error("Post not found");
-        if (queryResult[0].author !== user.id)
+        if (findPostQuery[0].author !== user.id)
           throw new Error("Unauthorized");
         await query("UPDATE db.posts SET body = ?, edited = 1 WHERE id = ?", [body, id]);
-        const post = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [id]);
+        const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [id]);
+        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        categoryResult.map(post => {
+          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
+          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
+          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+        })
+        queryResult.map(post => {
+          post.categories = post.categories ? post.categories : []
+        });
         res.status(200).send({
           message: "Post edited",
           success: true,
-          post: post[0],
+          post: queryResult[0],
         })
       } catch (e) {
         logger.error("Error in PUT /posts/:id: ", e);
