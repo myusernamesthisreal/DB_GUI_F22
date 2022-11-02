@@ -22,25 +22,22 @@ export function User(props) {
     }, [])
 
 
-    // const returnSignIn = async () => {
-    //     window.location.href = "/SignIn"
-    // }
-
     return (
         <>
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "5rem" }}>
-                <p>{user?.username}</p>
-                {/* <Stack direction="column" alignItems="stretch" justifyContent="flex-start" spacing={1.5}>
-                    <Typography sx={{ color: "grey"}}>
-                        Sign Up
-                    </Typography>
-                    <TextField required id="username-box" label="Username" type="standard" value={username} onChange={(e) => setUsername(e.target.value)} />
-                    <TextField required id="password-box" label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>Sign Up</Button>
+            <h1>{user?.displayname}'s Profile</h1>
+            <p>Username: {user?.username}</p>
 
-                    <Button variant="text" size="small" onClick={returnSignIn}>Already have an account? Sign in</Button>
-                </Stack> */}
+            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                {/* List of all or first 10 posts from followed users --- WIP */}
+                
             </Box>
+
+            {/* Based on whether the user is viewing their own profile, display the button that will send them to the proper page --- WIP */}
+            {props.user?.username ? <Button variant="contained" color="primary" onClick={() => window.location.href="/users/saves"} >View Saved Posts</Button>
+                : <Button variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >View Saved Posts</Button>}
+
+            <p>{user?.id}</p>
+            <p>{user?.displayname}</p>
 
         </>
     );
