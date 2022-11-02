@@ -83,6 +83,7 @@ export class Api {
             console.log(e)
             return e;
         }
+    }
         
     async getUser(id) {
         try {
