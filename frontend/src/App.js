@@ -4,6 +4,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { NavBar, Login, Signup, Post, CreatePost } from './components';
 import Homepage from './components/Homepage';
+import { User } from './components/User';
 import { Api } from './api';
 
 // React functional component
@@ -29,6 +30,7 @@ function App () {
                 <Route path="/signup" element={<Signup />} />
                 <Route exact path="/" element={<Homepage user={user} />} />
                 <Route path="/make-post" element={<CreatePost />} />
+                <Route path="/user/:id" element={<User />} />
             </Routes>
         </Router>
     </div>

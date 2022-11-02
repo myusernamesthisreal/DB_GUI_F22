@@ -83,5 +83,17 @@ export class Api {
             console.log(e)
             return e;
         }
+        
+    async getUser(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
     }
 }
