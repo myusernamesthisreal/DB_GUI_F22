@@ -19,10 +19,14 @@ const Homepage = (props) => {
         handleLoad();
     }, []);
 
+    const handlePostClick = async () => {
+        window.location.href = "/make-post";
+    }
+
     return (
         <>
             <h1>Homepage</h1>
-            <Button variant="contained" sx={{ display: "flex-box" }}>Post</Button>
+            <Button variant="contained" sx={{ display: "flex-box" }} onClick={handlePostClick}>Post</Button>
             <p>{props.user?.id}</p>
             <p>{props.user?.username}</p>
             {
