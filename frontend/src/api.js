@@ -172,7 +172,21 @@ export class Api {
         }
     }
 
-    // get list of liked posts
+    // get list of liked posts of a user
+    async likes() {
+        try {
+            const res = await fetch(`${this.url}/likes`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    // get list of liked posts of current user
     async likes() {
         try {
             const res = await fetch(`${this.url}/likes`, {
