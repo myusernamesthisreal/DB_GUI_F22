@@ -1,5 +1,4 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom';
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
@@ -10,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { Api } from '../api';
 
 
-function NavBar(props) {
+export function NavBar(props) {
   const api = new Api();
 
   const handleLogOut = async () => {
@@ -47,4 +46,3 @@ function NavBar(props) {
   );
 }
 
-export default NavBar

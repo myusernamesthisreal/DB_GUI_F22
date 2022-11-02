@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import NavBar from './components/NavBar';
-import SignIn from './components/SignIn';
-import Signup from './components/Signup';
+import { NavBar, Login, Signup, Post, CreatePost } from './components';
 import Homepage from './components/Homepage';
+import { User } from './components/User';
 import { Api } from './api';
 
 // React functional component
@@ -27,9 +26,11 @@ function App () {
       <Router>
             <NavBar user={user} />
             <Routes>
-                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signin" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route exact path="/" element={<Homepage user={user} />} />
+                <Route path="/make-post" element={<CreatePost />} />
+                <Route path="/user/:id" element={<User />} />
             </Routes>
         </Router>
     </div>

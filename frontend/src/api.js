@@ -72,124 +72,22 @@ export class Api {
         }
     }
 
-    //to get list of accounts the user is following
-    async following() {
+    async getPosts() {
         try {
-            const res = await fetch(`${this.url}/following`, {
+            const res = await fetch(`${this.url}/posts`, {
                 method: "GET",
-                credentials: "include"
-            });
+                credentials: "include",
+            })
             return await res.json();
         } catch (e) {
-            console.error(e)
+            console.log(e)
             return e;
         }
     }
-
-    //to get list of accounts following the user
-    async followers() {
+        
+    async getUser(id) {
         try {
-            const res = await fetch(`${this.url}/followers`, {
-            method: "GET",
-            credentials: "include"
-        });
-        return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-    //lets user follow another account
-    async follow() {
-        try {
-            const res = await fetch(`${this.url}/follows`, {
-                method: "POST",
-                credentials: "include"
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-    //lets user unfollow another user they are following
-    async unfollow() {
-        try {
-            const res = await fetch(`${this.url}/unfollow`, {
-                method: "DELETE",
-                credentials: "include"
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-
-    // Likes API calls
-    //GET number of likes on post
-    async likes() {
-        try {
-            const res = await fetch(`${this.url}/likes`, {
-                method: "GET",
-                credentials: "include"
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-    // like a post
-    async likes() {
-        try {
-            const res = await fetch(`${this.url}/likes`, {
-                method: "POST",
-                credentials: "include"
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-    // unlike a post
-    async likes() {
-        try {
-            const res = await fetch(`${this.url}/likes`, {
-                method: "DELETE",
-                credentials: "include"
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-    // get list of liked posts of a user
-    async likes() {
-        try {
-            const res = await fetch(`${this.url}/likes`, {
-                method: "GET",
-                credentials: "include"
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-    // get list of liked posts of current user
-    async likes() {
-        try {
-            const res = await fetch(`${this.url}/likes`, {
+            const res = await fetch(`${this.url}/users/${id}`, {
                 method: "GET",
                 credentials: "include"
             });

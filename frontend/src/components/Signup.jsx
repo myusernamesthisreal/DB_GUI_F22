@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { Api } from '../api'
 
-const Signup = () => {
+export const Signup = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const api = new Api();
