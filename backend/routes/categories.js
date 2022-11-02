@@ -16,7 +16,7 @@ module.exports = function routes(app, logger) {
                 const queryResult = await query("SELECT DISTINCT categoryname FROM db.categories");
                 res.status(200).send({
                     success: true,
-                    categories: queryResult,
+                    categories: queryResult.map((row) => row.categoryname),
                 })
             } catch (e) {
                 logger.error("Error in GET /categories: ", e);
@@ -157,6 +157,11 @@ module.exports = function routes(app, logger) {
                 if (e.message === "Post not found") {
                     res.status(404).send({
                         message: "Post not found",
+                        success: false,
+                    });
+                } else if (e.message === "Forbidden") {
+                    res.status(403).send({
+                        message: "Forbidden",
                         success: false,
                     });
                 }

@@ -22,7 +22,7 @@ module.exports = function routes(app, logger) {
           "INSERT INTO db.posts (body, author) VALUES (?, ?)",
           [body, user.id]);
         const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [insertQuery.insertId]);
-        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
           post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
@@ -67,7 +67,7 @@ module.exports = function routes(app, logger) {
       try {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
-        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
           post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
@@ -103,7 +103,7 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?",
           [id]);
-        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
           post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
@@ -150,7 +150,7 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ? ORDER BY timestamp DESC",
           [id]);
-        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
           post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
@@ -201,7 +201,7 @@ module.exports = function routes(app, logger) {
           throw new Error("Unauthorized");
         await query("UPDATE db.posts SET body = ?, edited = 1 WHERE id = ?", [body, id]);
         const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [id]);
-        const categoryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN users ON posts.author = users.id JOIN categories ON posts.id = categories.post GROUP BY posts.id")
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
           post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
