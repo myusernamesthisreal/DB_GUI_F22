@@ -65,6 +65,10 @@ module.exports = function routes(app, logger) {
      */
     async (req, res) => {
       try {
+        const { category } = req.query;
+        if (typeof category === "string" && !category) {
+          throw new Error("Category must be a string");
+        }
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
         const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
@@ -75,19 +79,29 @@ module.exports = function routes(app, logger) {
         })
         queryResult.map(post => {
           post.categories = post.categories ? post.categories : []
-          });
-          res.status(200).send({
-            message: "Posts fetched",
-            success: true,
-            posts: queryResult,
-          })
+        });
+        let filterResults = queryResult;
+        if (category) {
+          filterResults = queryResult.filter(post => post.categories.includes(category));
+        }
+        res.status(200).send({
+          message: "Posts fetched",
+          success: true,
+          posts: filterResults,
+        })
       } catch (e) {
         logger.error("Error in GET /posts: ", e);
-        res.status(500).send({
-          message: "Something went wrong",
-          reason: e.message,
-          success: false,
-        })
+        if (e.message === "Category must be a string") {
+          res.status(400).send({
+            message: e.message,
+            success: false,
+          })
+        } else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e.message,
+            success: false,
+          })
       }
     })
 
@@ -127,11 +141,11 @@ module.exports = function routes(app, logger) {
             success: false,
           })
         } else
-        res.status(500).send({
-          message: "Something went wrong",
-          reason: e,
-          success: false,
-        })
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e,
+            success: false,
+          })
       }
     })
 
@@ -172,11 +186,11 @@ module.exports = function routes(app, logger) {
             success: false,
           })
         } else
-        res.status(500).send({
-          message: "Something went wrong",
-          reason: e,
-          success: false,
-        })
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e,
+            success: false,
+          })
       }
     })
 
@@ -231,7 +245,7 @@ module.exports = function routes(app, logger) {
           res.status(404).send({
             message: "Post not found",
             success: false,
-          }) 
+          })
         } else
           res.status(500).send({
             message: "Something went wrong",
