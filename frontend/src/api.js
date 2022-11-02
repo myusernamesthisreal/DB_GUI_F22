@@ -127,4 +127,50 @@ export class Api {
             return e;
         }
     }
+
+
+    // Likes API calls
+    //GET number of likes on post
+    async likes() {
+        try {
+            const res = await fetch(`${this.url}/likes`, {
+                method: "GET",
+                credentials: "none"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    // like a post
+    async likes() {
+        try {
+            const res = await fetch(`${this.url}/likes`, {
+                method: "POST",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    // unlike a post
+    async likes() {
+        try {
+            const res = await fetch(`${this.url}/likes`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    
 }
