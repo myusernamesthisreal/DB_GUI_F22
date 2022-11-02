@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { NavBar, Login, Signup } from './components';
+import { NavBar, Login, Signup, Post } from './components';
 import Homepage from './components/Homepage';
 import { Api } from './api';
 
@@ -28,6 +28,7 @@ function App () {
                 <Route path="/signin" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route exact path="/" element={<Homepage user={user} />} />
+                <Route path="/post" element={<Post />} />
             </Routes>
         </Router>
     </div>
