@@ -6,6 +6,7 @@ import NavBar from './components/NavBar';
 import SignIn from './components/SignIn';
 import Signup from './components/Signup';
 import Homepage from './components/Homepage';
+import { User } from './components/User';
 import { Api } from './api';
 
 // React functional component
@@ -30,6 +31,7 @@ function App () {
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route exact path="/" element={<Homepage user={user} />} />
+                <Route path="/user/:id" element={<User />} />
             </Routes>
         </Router>
     </div>
