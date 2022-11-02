@@ -131,6 +131,65 @@ module.exports = function routes(app, logger) {
     }
   )
 
+  // PATCH /posts/:id/likes (like/unlike post)
+  app.patch("/posts/:id/likes",
+    /**
+     * @param {import('express').Request} req
+     * @param {import('express').Response} res
+     */
+    async (req, res) => {
+      try {
+        const user = await jwt.verifyToken(req);
+        const { id } = req.params;
+        const queryResult = await query("SELECT author FROM db.posts WHERE id = ?", [id]);
+        if (queryResult.length === 0)
+          throw new Error("Post not found");
+        if (queryResult[0].author === user.id)
+          throw new Error("Cannot like your own post");
+        const likeResult = await query("SELECT id FROM db.likes WHERE post = ? AND user = ?", [id, user.id]);
+        if (likeResult.length > 0)
+          {
+            await query("DELETE FROM db.likes WHERE user = ? AND post = ?", [user.id, id]);
+            res.status(200).send({
+              message: "Post unliked",
+              success: true,
+            });
+          }
+        else
+          {
+            await query("INSERT INTO db.likes (user, post) VALUES (?, ?)", [user.id, id]);
+            res.status(201).send({
+              message: "Post liked",
+              success: true,
+            })
+          }
+      }
+      catch (e) {
+        logger.error("Error in PATCH /posts/:id/like: ", e);
+        if (e.message === "Invalid token") {
+          res.status(401).send({
+            message: "Unauthorized",
+            success: false,
+          })
+        } else if (e.message === "Cannot like your own post") {
+          res.status(403).send({
+            message: "Cannot like your own post",
+            success: false,
+          })
+        } else if (e.message === "Post not found") {
+          res.status(404).send({
+            message: "Post not found",
+            success: false,
+          })
+        } else
+          res.status(500).send({
+            message: "Something went wrong",
+            reason: e,
+            success: false,
+          })
+      }
+    });
+
   // GET /users/:id/likes (get liked posts of a user)
   app.get("/users/:id/likes",
     /**
