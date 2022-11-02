@@ -65,9 +65,9 @@ module.exports = function routes(app, logger) {
      */
     async (req, res) => {
       try {
-        const { category } = req.query;
-        if (typeof category === "string" && !category) {
-          throw new Error("Category must be a string");
+        const { categories } = req.query;
+        if (typeof categories === "string" && !categories) {
+          throw new Error("Categories must be strings");
         }
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
@@ -81,8 +81,15 @@ module.exports = function routes(app, logger) {
           post.categories = post.categories ? post.categories : []
         });
         let filterResults = queryResult;
-        if (category) {
-          filterResults = queryResult.filter(post => post.categories.includes(category));
+        if (categories) {
+          const catArray = categories.split(",").map(c => c.toLowerCase());
+          const validCategories = catArray.map((category) => {
+            if (typeof category !== "string") {
+              throw new Error("Categories must be strings");
+            }
+            return category;
+          });
+          filterResults = queryResult.filter(post => post.categories.some(cat => validCategories.includes(cat)));
         }
         res.status(200).send({
           message: "Posts fetched",
@@ -91,7 +98,7 @@ module.exports = function routes(app, logger) {
         })
       } catch (e) {
         logger.error("Error in GET /posts: ", e);
-        if (e.message === "Category must be a string") {
+        if (e.message === "Categories must be strings") {
           res.status(400).send({
             message: e.message,
             success: false,
