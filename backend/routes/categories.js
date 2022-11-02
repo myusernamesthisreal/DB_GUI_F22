@@ -13,10 +13,15 @@ module.exports = function routes(app, logger) {
          */
         async (req, res) => {
             try {
-                const queryResult = await query("SELECT DISTINCT categoryname FROM db.categories");
+                const queryResult = await query("SELECT categoryname,COUNT(*) FROM categories GROUP BY categoryname");
                 res.status(200).send({
                     success: true,
-                    categories: queryResult.map((row) => row.categoryname),
+                    categories: queryResult.map((row) => {
+                        return {
+                            name: row.categoryname,
+                            num_posts: row["COUNT(*)"],
+                        }
+                    }),
                 })
             } catch (e) {
                 logger.error("Error in GET /categories: ", e);
