@@ -135,7 +135,7 @@ export class Api {
         try {
             const res = await fetch(`${this.url}/likes`, {
                 method: "GET",
-                credentials: "none"
+                credentials: "include"
             });
             return await res.json();
         } catch (e) {
@@ -172,5 +172,17 @@ export class Api {
         }
     }
 
-    
+    // get list of liked posts
+    async likes() {
+        try {
+            const res = await fetch(`${this.url}/likes`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }
