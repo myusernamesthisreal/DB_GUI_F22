@@ -97,4 +97,17 @@ export class Api {
             return e;
         }
     }
+
+    async getUserPost(id) { //get posts for user id
+        try {
+            const res = await fetch(`${this.url}/users/${id}/posts`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }

@@ -2,22 +2,27 @@ import React, { useState } from 'react'
 import { useParams } from 'react-router-dom';
 import { Typography, Button, Stack, Box, TextField } from '@mui/material'
 import { Api } from '../api'
+import { Post } from "./"
 import { useEffect } from 'react';
 
 //id, userName, displayName
 
 export function User(props) {
     const [user, setUser] = useState(null);
+    const [posts, setPosts] = useState(null);
     const { id: userId } = useParams();
     const api = new Api();
 
     // if(id of user == user id of page)
-    const isUsersPage = true;
+    const isUsersPage = (props.user?.id === user?.id);
 
     const handleLoad = async () => {
         const res = await api.getUser(userId);
+        const usersPosts = await api.getUserPost(userId);
         console.log(res);
+        console.log(usersPosts);
         if (res.success) setUser(res.user);
+        if (usersPosts.success) setPosts(usersPosts.posts.slice(0,3));
     }
 
     useEffect(() => {
@@ -37,18 +42,10 @@ export function User(props) {
             <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
                 {/* List of all or first 10 posts --- WIP */}
                 <h2>Posts</h2>
-                <p>Post 1</p>
-                <p>Post 2</p>
-                <p>Post 3</p>
-                <Button variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/posts`} >View All Posts</Button>
-            </Box>
-
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                {/* List of all or first couple events --- WIP */}
-                <h2>Events</h2>
-                <p>Event 1</p>
-                <p>Event 2</p>
-                <Button variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/events`} >View All Events</Button>
+                {
+                    posts?.map((post, index) => <Post key={index} post={post} style={{margin:"1rem"}} />)
+                }
+                <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/posts`} >View All Posts</Button>
             </Box>
 
             <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
@@ -57,7 +54,7 @@ export function User(props) {
                 <p>User 1</p>
                 <p>User 2</p>
                 <p>User 3</p>
-                <Button variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/follows`} >View All Followed Users</Button>
+                <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/follows`} >View All Followed Users</Button>
             </Box>
 
             <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
@@ -66,7 +63,7 @@ export function User(props) {
                 <p>Saved Post 1</p>
                 <p>Saved Post 2</p>
                 <p>Saved Post 3</p>
-                <Button variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >View All Saved Posts</Button>
+                <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >View All Saved Posts</Button>
             </Box>
 
             {/* Only display this button if the user token/cookies match the user id of the page */}

@@ -30,7 +30,7 @@ function App () {
                 <Route path="/signup" element={<Signup />} />
                 <Route exact path="/" element={<Homepage user={user} />} />
                 <Route path="/make-post" element={<CreatePost />} />
-                <Route path="/user/:id" element={<User />} />
+                <Route path="/user/:id" element={<User user={user}/>} />
             </Routes>
         </Router>
     </div>
