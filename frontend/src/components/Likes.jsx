@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 import { Button } from '@mui/material'
 import { Api } from '../api'
 
-function Like() {
+export function Like(...isLiked) {
+    const [liked, likePost] = useState(false);
     const api = new Api();
     
     const handleLikes = async () => {
         const req = await api.like(id);
-        if (req.success) window.location.href="/";
+        if (req.success) {
+            likePost(!liked);
+        }
     }
 
     const handleGetLikes = async () => {
@@ -26,6 +29,11 @@ function Like() {
     }
 
     return <>
-        <Button variant="outlined" onClick={handleLikes}>Like</Button>
+        <Button variant="outlined" 
+            style={{ backgroundColor: liked ? 'blue' : '',
+                 color: liked ? 'white' : '', }}
+            onClick={handleLikes}>
+            Like
+        </Button>
     </>
 }
