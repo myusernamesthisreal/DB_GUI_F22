@@ -18,7 +18,7 @@ export const Post = (props) => {
         <Box sx={{justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor:'background.paper'}}>
             <ListItem alignItems="flex-start">
                 <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: blueGrey }}> {props.post.authorname}</Avatar>
+                    <Avatar src="https://i.imgur.com/KNE5lGg.jpg"/>
                 </ListItemAvatar>
                 <ListItemText
                     primary={
@@ -33,18 +33,21 @@ export const Post = (props) => {
                     secondary={
                         <React.Fragment>
                             <Typography
-                                sx={{ display: 'inline' }}
+                                sx={{ display: 'inline', overflow:"hidden" }}
                                 component="span"
                                 variant="body2"
                             >
                                 {dString}
                             </Typography> --
-                            {props.post.body}
+                            <Box sx={{overflow:"hidden"}}> {props.post.body} </Box>
                         </React.Fragment>
                     }
                 />
             </ListItem>
-            <Button variant="outlined">Like</Button>
+            <Button variant="outlined" size="small" onClick={() => props.user?.username ? window.location.href="/" : window.location.href="/Signup"}>Like</Button>
+            <Button variant="outlined" size="small">Repost</Button>
+            <Button variant="outlined" size="small">Bookmark</Button>
+            <Button variant="outlined" size="small">Comment</Button>
         </Box>
     </>
 
