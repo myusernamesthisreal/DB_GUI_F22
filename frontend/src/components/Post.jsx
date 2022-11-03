@@ -4,7 +4,7 @@ import { blueGrey } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import Button from '@mui/material/Button'
+import Button from '@mui/material/Button';
 import { Like } from './Likes';
 
 export const Post = (props) => {
