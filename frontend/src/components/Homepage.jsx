@@ -20,17 +20,17 @@ const Homepage = (props) => {
     }, []);
 
     const handlePostClick = async () => {
-        window.location.href = "/make-post";
+        props.user?.username ? window.location.href = "/make-post" : window.location.href = "/Signup";
     }
 
     return (
         <>
             <h1>Homepage</h1>
-            <Button variant="contained" sx={{ display: "flex-box" }} onClick={handlePostClick}>Post</Button>
+            {<Button variant="contained" sx={{ display: "flex-box" }} onClick={handlePostClick}>Post</Button>}
             <p>{props.user?.id}</p>
             <p>{props.user?.username}</p>
             {
-                posts.map((post, index) => <Post key={index} post={post} />)
+                posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
             }
         </>
     )
