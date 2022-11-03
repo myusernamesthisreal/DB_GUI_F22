@@ -30,12 +30,12 @@ export function Follow() {
 
     return (
         <>
-        <Button variant="outlined" 
-            style={{ backgroundColor: liked ? 'blue' : '',
-                 color: liked ? 'white' : '', }}
-            onClick={handleFollowing}>
-            Follow
-        </Button>
+            <Button variant="outlined" 
+                style={{ backgroundColor: liked ? 'blue' : '',
+                     color: liked ? 'white' : '', }}
+                onClick={handleFollowing}>
+                Follow
+            </Button>
         </>
     )
 }
