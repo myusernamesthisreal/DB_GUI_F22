@@ -64,6 +64,11 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
+      try {
+        const user = await jwt.verifyToken(req);
+        authenticated = user.id;
+      } catch (e) { }
       try {
         const { categories } = req.query;
         if (typeof categories === "string" && !categories) {
@@ -72,15 +77,30 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
         const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        let postsWithLikes = queryResult;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            return post;
+          })
+        }
+        else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            return post;
+          })
+        }
         categoryResult.map(post => {
-          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
-          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
-          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+          postsWithLikes[postsWithLikes.findIndex(p => p.id === post.id)].categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
         })
-        queryResult.map(post => {
+        postsWithLikes.map(post => {
           post.categories = post.categories ? post.categories : []
         });
-        let filterResults = queryResult;
+        let filterResults = postsWithLikes;
         if (categories) {
           const catArray = categories.split(",").map(c => c.toLowerCase());
           const validCategories = catArray.map((category) => {
@@ -89,7 +109,8 @@ module.exports = function routes(app, logger) {
             }
             return category;
           });
-          filterResults = queryResult.filter(post => post.categories.some(cat => validCategories.includes(cat)));
+
+          filterResults = postsWithLikes.filter(post => post.categories.some(cat => validCategories.includes(cat)));
         }
         res.status(200).send({
           message: "Posts fetched",
@@ -119,6 +140,11 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
+      try {
+        const user = await jwt.verifyToken(req);
+        authenticated = user.id;
+      } catch (e) { }
       try {
         const { id } = req.params;
         const queryResult = await query(
@@ -130,7 +156,24 @@ module.exports = function routes(app, logger) {
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
           queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
         })
-        queryResult.map(post => {
+
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        let postsWithLikes = queryResult;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            return post;
+          })
+        }
+        else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            return post;
+          })
+        }
+        postsWithLikes.map(post => {
           post.categories = post.categories ? post.categories : []
         });
         if (queryResult.length === 0)
@@ -138,7 +181,7 @@ module.exports = function routes(app, logger) {
         res.status(200).send({
           message: "Post fetched",
           success: true,
-          post: queryResult[0],
+          post: postsWithLikes[0],
         })
       } catch (e) {
         logger.error("Error in GET /posts/:id: ", e);
@@ -163,6 +206,11 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
+      try {
+        const user = await jwt.verifyToken(req);
+        authenticated = user.id;
+      } catch (e) { }
       try {
         const { id } = req.params;
         const userQuery = await query("SELECT * FROM users WHERE id = ?", [id]);
@@ -177,13 +225,28 @@ module.exports = function routes(app, logger) {
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
           queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
         })
-        queryResult.map(post => {
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        let postsWithLikes = queryResult;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            return post;
+          })
+        } else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            return post;
+          })
+        }
+        postsWithLikes.map(post => {
           post.categories = post.categories ? post.categories : []
         });
         res.status(200).send({
           message: "Posts fetched",
           success: true,
-          posts: queryResult,
+          posts: postsWithLikes,
         })
       } catch (e) {
         logger.error("Error in GET /users/:id/posts: ", e);
