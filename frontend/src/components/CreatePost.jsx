@@ -5,6 +5,7 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider"
 
 export function CreatePost(props) {
@@ -21,8 +22,11 @@ export function CreatePost(props) {
                         <Avatar src="https://i.imgur.com/KNE5lGg.jpg"/>
                     </ListItemAvatar>
                     <ListItemText>
-                        <Typography>{props.user?.username}</Typography>
-                        <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" />
+                        <Stack>
+                            <Typography>{`@${props.user?.username}`}</Typography>
+                            <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" />
+                            <TextField id="standar-basic" label="Enter Categories" variant="standard" />
+                        </Stack>
                     </ListItemText>
                 </ListItem>
             </Box>
