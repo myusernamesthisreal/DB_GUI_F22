@@ -5,8 +5,11 @@ import { Api } from '../api'
 function Like() {
     const api = new Api();
 
-    const handleLikes = async () => {
-        const req = await api.likes();
-        if (req.success) window.location.href="/";
+    const handleLikes = () => {
+        
     }
+
+    return <>
+        <Button variant="outlined" onClick={handleLikes}>Like</Button>
+    </>
 }
