@@ -110,4 +110,17 @@ export class Api {
             return e;
         }
     }
+
+    async getUserSaves(id) { //get saved posts for user id
+        try {
+            const res = await fetch(`${this.url}/users/${id}/saves`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }

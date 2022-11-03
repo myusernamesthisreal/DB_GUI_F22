@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 export function User(props) {
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState(null);
+    const [saves, setSaves] = useState(null);
     const { id: userId } = useParams();
     const api = new Api();
 
@@ -19,10 +20,13 @@ export function User(props) {
     const handleLoad = async () => {
         const res = await api.getUser(userId);
         const usersPosts = await api.getUserPost(userId);
+        const usersSaves = await api.getUserSaves(userId);
         console.log(res);
         console.log(usersPosts);
+        console.log(usersSaves);
         if (res.success) setUser(res.user);
         if (usersPosts.success) setPosts(usersPosts.posts.slice(0,3));
+        if (usersSaves.success) setSaves(usersSaves.saves.slice(0,3));
     }
 
     useEffect(() => {
@@ -57,14 +61,17 @@ export function User(props) {
                 <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/follows`} >View All Followed Users</Button>
             </Box>
 
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                {/* List of all or first 10 posts --- WIP */}
-                <h2>Saved Posts</h2>
-                <p>Saved Post 1</p>
-                <p>Saved Post 2</p>
-                <p>Saved Post 3</p>
-                <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >View All Saved Posts</Button>
-            </Box>
+            {isUsersPage ? 
+                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                    {/* List of all or first 10 posts --- WIP */}
+                    <h2>Saved Posts</h2>
+                    {
+                        saves?.map((post, index) => <Post key={index} post={post} style={{margin:"1rem"}} />)
+                    }
+                    <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >View All Saved Posts</Button>
+                </Box>
+                : null}
+            
 
             {/* Only display this button if the user token/cookies match the user id of the page */}
             {isUsersPage ? <Button variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >Edit Account</Button> : null}
