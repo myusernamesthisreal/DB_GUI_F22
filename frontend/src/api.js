@@ -28,7 +28,6 @@ export class Api {
 
     async login(username, password) {
         const body = {username, password };
-        console.log(username, password)
         try {
             const res = await fetch(`${this.url}/login`,
             {
@@ -90,6 +89,20 @@ export class Api {
             const res = await fetch(`${this.url}/users/${id}`, {
                 method: "GET",
                 credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    async makePost(body) {
+        try {
+            const res = await fetch(`${this.url}/posts`, {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({ body })
             });
             return await res.json();
         } catch (e) {
