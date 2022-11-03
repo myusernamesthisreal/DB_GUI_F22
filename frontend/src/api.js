@@ -98,11 +98,13 @@ export class Api {
     }
 
     async makePost(body) {
+        const data = { body };
+        console.log(data);
         try {
             const res = await fetch(`${this.url}/posts`, {
                 method: "POST",
                 credentials: "include",
-                body: JSON.stringify({ body })
+                body: JSON.stringify(data)
             });
             return await res.json();
         } catch (e) {
