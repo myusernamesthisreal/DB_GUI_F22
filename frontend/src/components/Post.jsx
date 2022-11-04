@@ -45,7 +45,7 @@ export const Post = (props) => {
                     }
                 />
             </ListItem>
-            <Like id={props.post.id} />
+            <Like id={props.post.liked} />
             <Button variant="outlined" size="small">Repost</Button>
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
