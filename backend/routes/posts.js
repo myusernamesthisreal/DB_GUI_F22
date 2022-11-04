@@ -16,6 +16,8 @@ module.exports = function routes(app, logger) {
         const { body, categories } = req.body;
         if (!body)
           throw new Error("Post body cannot be empty");
+        if (typeof body !== "string")
+          throw new Error("Post body must be a string");
         if (body.length > 150)
           throw new Error("Post is too long");
         const insertQuery = await query(
@@ -56,7 +58,7 @@ module.exports = function routes(app, logger) {
             message: "Unauthorized",
             success: false,
           })
-        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long" || e.message === "Categories must be an array of strings") {
+        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long" || e.message === "Categories must be an array of strings" || e.message === "Post body must be a string") {
           res.status(400).send({
             message: e.message,
             success: false,
