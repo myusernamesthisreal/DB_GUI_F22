@@ -13,7 +13,7 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const user = await jwt.verifyToken(req);
-        const { body } = req.body;
+        const { body, categories } = req.body;
         if (!body)
           throw new Error("Post body cannot be empty");
         if (body.length > 150)
@@ -21,7 +21,20 @@ module.exports = function routes(app, logger) {
         const insertQuery = await query(
           "INSERT INTO db.posts (body, author) VALUES (?, ?)",
           [body, user.id]);
-        const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [insertQuery.insertId]);
+        const postId = insertQuery.insertId;
+        if (categories) {
+          if (!Array.isArray(categories)) 
+            throw new Error("Categories must be an array of strings");
+          categories.map(c => {
+            if (typeof c !== "string")
+              throw new Error("Categories must be an array of strings");
+            return c.toLowerCase();
+          })
+          await query(
+            "INSERT INTO db.categories (post, categoryname) VALUES ?",
+            [categories.map(category => [postId, category])]);
+        }
+        const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [postId]);
         const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
           post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
@@ -43,7 +56,7 @@ module.exports = function routes(app, logger) {
             message: "Unauthorized",
             success: false,
           })
-        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long") {
+        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long" || e.message === "Categories must be an array of strings") {
           res.status(400).send({
             message: e.message,
             success: false,
