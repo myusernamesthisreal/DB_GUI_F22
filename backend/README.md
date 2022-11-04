@@ -174,7 +174,12 @@ Response body:
         "edited": 0,
         "authorname": "author",
         "authordisplayname": "author",
-        "likes": 0
+        "likes": 0,
+        "liked": false,
+        "categories": [
+            "test",
+            "test2"
+        ]
     }
   ],
   "success": true
@@ -193,15 +198,20 @@ Response body:
 {
   "message": "Post fetched",
   "post": {
-    "id": 43,
-    "author": 46,
-    "timestamp": "2022-10-25T04:08:35.000Z",
-    "body": "body",
-    "is_pinned": 0,
-    "edited": 0,
-    "authorname": "author",
-    "authordisplayname": "author",
-    "likes": 0
+      "id": 43,
+      "author": 46,
+      "timestamp": "2022-10-25T04:08:35.000Z",
+      "body": "body",
+      "is_pinned": 0,
+      "edited": 0,
+      "authorname": "author",
+      "authordisplayname": "author",
+      "likes": 0,
+      "liked": false,
+      "categories": [
+          "test",
+          "test2"
+      ]
   },
   "success": true
 }
@@ -228,7 +238,12 @@ Response body:
         "edited": 0,
         "authorname": "author",
         "authordisplayname": "author",
-        "likes": 0
+        "likes": 0,
+        "liked": false,
+        "categories": [
+            "test",
+            "test2"
+        ]
     }
   ],
   "success": true
@@ -239,13 +254,17 @@ Response body:
 
 #### POST /posts
 
-Creates a new post.
+Creates a new post. Body is required. Categories are optional.
 
 Request body:
 
 ```json
 {
-  "body": "body"
+  "body": "body",
+  "categories": [
+    "test",
+    "test2"
+  ]
 }
 ```
 
@@ -255,15 +274,20 @@ Response body:
 {
   "message": "Post created successfully",
   "post": {
-    "id": 43,
-    "author": 46,
-    "timestamp": "2022-10-25T04:08:35.000Z",
-    "body": "body",
-    "is_pinned": 0,
-    "edited": 0,
-    "authorname": "author",
-    "authordisplayname": "author",
-    "likes": 0
+      "id": 43,
+      "author": 46,
+      "timestamp": "2022-10-25T04:08:35.000Z",
+      "body": "body",
+      "is_pinned": 0,
+      "edited": 0,
+      "authorname": "author",
+      "authordisplayname": "author",
+      "likes": 0,
+      "liked": false,
+      "categories": [
+          "test",
+          "test2"
+      ]
   },
   "success": true
 }
@@ -276,15 +300,19 @@ Error codes:
 
 ---
 
-#### PUT /posts/:id
+#### PATCH /posts/:id
 
-Edits a post.
+Edits a post. Either body or categories can be edited. If no fields are provided, the post is not edited.
 
 Request body:
 
 ```json
 {
-  "body": "body"
+  "body": "body",
+  "categories": [
+    "test",
+    "test2"
+  ]
 }
 ```
 
@@ -294,15 +322,20 @@ Response body:
 {
   "message": "Post edited successfully",
   "post": {
-    "id": 43,
-    "author": 46,
-    "timestamp": "2022-10-25T04:08:35.000Z",
-    "body": "body",
-    "is_pinned": 0,
-    "edited": 1,
-    "authorname": "author",
-    "authordisplayname": "author",
-    "likes": 0
+      "id": 43,
+      "author": 46,
+      "timestamp": "2022-10-25T04:08:35.000Z",
+      "body": "body",
+      "is_pinned": 0,
+      "edited": 0,
+      "authorname": "author",
+      "authordisplayname": "author",
+      "likes": 0,
+      "liked": false,
+      "categories": [
+          "test",
+          "test2"
+      ]
   },
   "success": true
 }
