@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Api } from "../api";
 import { Post } from "./"
 import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 
 const Homepage = (props) => {
 
@@ -25,8 +26,11 @@ const Homepage = (props) => {
 
     return (
         <>
-            <h1>Homepage</h1>
-            {<Button variant="contained" sx={{ display: "flex-box" }} onClick={handlePostClick}>Post</Button>}
+            {
+                <Box sx={{ flexGrow: 1, display: "flex-box", textAlign:"right", margin:"2rem" }}>
+                    <Button variant="contained" onClick={handlePostClick}>Post</Button>
+                </Box>
+            }
             <p>{props.user?.id}</p>
             <p>{props.user?.username}</p>
             {
