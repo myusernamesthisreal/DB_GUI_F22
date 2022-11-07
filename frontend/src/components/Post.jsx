@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -6,11 +6,7 @@ import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import Button from '@mui/material/Button'
 
 export const Post = (props) => {
-    const [time, timestamp] = props.post.timestamp.split('T');
-    const [year, month, day] = time.split('-');
-    const date = new Date(year, month - 1, day);
-    const dString = date.toDateString();
-
+    const [time, setTime] = useState(props?.post.timestamp);
 
 
     return <>
@@ -36,7 +32,7 @@ export const Post = (props) => {
                                 component="span"
                                 variant="body2"
                             >
-                                {dString}
+                               {time ? new Date(time).toLocaleString("en-us") : null}
                             </Typography> --
                             <Box sx={{overflow:"hidden"}}> {props.post.body} </Box>
                         </React.Fragment>
