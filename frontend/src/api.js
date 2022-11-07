@@ -153,4 +153,19 @@ export class Api {
             return e;
         }
     }
+
+
+    //Repost calls
+    //get reposts
+    async getReposts() {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/reposts`, {
+                method: "GET",
+                credentials: "include"
+            });
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }
