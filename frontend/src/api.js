@@ -158,7 +158,7 @@ export class Api {
 
     //Repost calls
     //get reposts
-    async getReposts() {
+    async getReposts(id) {
         try {
             const res = await fetch(`${this.url}/posts/${id}/reposts`, {
                 method: "GET",
@@ -172,7 +172,7 @@ export class Api {
     }
 
     //post repost
-    async postRepost() {
+    async postRepost(id) {
         try {
             const res = await fetch(`${this.url}/posts/${id}/reposts`, {
                 method: "POST",
@@ -186,7 +186,7 @@ export class Api {
     }
 
     //un-repost post
-    async deleteRepost() {
+    async deleteRepost(id) {
         try {
             const res = await fetch(`${this.url}/posts/${id}/reposts`, {
                 method: "DELETE",
@@ -200,7 +200,7 @@ export class Api {
     }
 
     //patch repost
-    async patchRepost() {
+    async patchRepost(id) {
         try {
             const res = await fetch(`${this.url}/post/${id}/reposts`, {
                 method: "PATCH",
@@ -214,7 +214,7 @@ export class Api {
     }
 
     //get a user's reposts
-    async getUserReposts() {
+    async getUserReposts(id) {
         try {
             const res = await fetch(`${this.url}/post/${id}/reposts`, {
                 method: "GET",
