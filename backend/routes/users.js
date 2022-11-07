@@ -29,7 +29,7 @@ module.exports =
           const salt = await genSalt(saltRounds);
           const hashedPassword = await hash(password, salt);
           const result = await query("INSERT INTO users (username, displayname, password) VALUES (?, ?, ?)", [username, username, hashedPassword]);
-          const token = await jwt.makeJWT(result.insertId);
+          const token = jwt.makeJWT(result.insertId);
           res.status(201).cookie("session", token, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
             message: "User created successfully",
             success: true,
@@ -70,7 +70,7 @@ module.exports =
           if (existingUser.length === 0) throw new Error("User does not exist");
           const match = await compare(password, existingUser[0].password);
           if (!match) throw new Error("Incorrect password");
-          const token = await jwt.makeJWT(existingUser[0].id);
+          const token = jwt.makeJWT(existingUser[0].id);
           res.status(200).cookie("session", token, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
             message: "Logged in successfully",
             success: true,
