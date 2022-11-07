@@ -4,4 +4,5 @@ export * from './Signup';
 export * from './Post';
 export * from './CreatePost';
 export * from './Likes';
-export * from './Follows'
+export * from './Follows';
+export * from './Repost'
