@@ -3,11 +3,11 @@ import { Button } from '@mui/material'
 import { Api } from '../api'
 
 export function Like(props) {
-    const [liked, likePost] = useState(props.liked);
+    const [liked, likePost] = useState(props.post.liked);
     const api = new Api();
     
     const handleLikes = async () => {
-        const req = await api.like(props.id);
+        const req = await api.like(props.post.id);
         if (req.success) {
             likePost(!liked);
         }
