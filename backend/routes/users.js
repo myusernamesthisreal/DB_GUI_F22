@@ -10,62 +10,50 @@ module.exports =
    */
   (app, logger) => {
     const query = promisify(pool.query).bind(pool);
-
+    const genSalt = promisify(bcrypt.genSalt).bind(bcrypt);
+    const hash = promisify(bcrypt.hash).bind(bcrypt);
+    const compare = promisify(bcrypt.compare).bind(bcrypt);
     // POST /users (create user)
     app.post("/users",
       /**
        * @param {import('express').Request} req
        * @param {import('express').Response} res
        */
-      (req, res) => {
-        const { username, password } = req.body;
-        const saltRounds = 10;
-        const error =
-          /**
-           * @param {import("mysql").MysqlError} e 
-           */
-          (e) => {
-            logger.error("Error in POST /users: ", e);
-            if (e?.code === "ER_DUP_ENTRY") {
-              res.status(409).send({
-                message: "Username already exists",
-                success: false,
-              });
-            } else
-              res.status(400).send({
-                message: "Error creating user",
-                success: false,
-              })
+      async (req, res) => {
+        try {
+          const { username, password } = req.body;
+          if (!username || !password) throw new Error("Missing username or password");
+          const checkExisting = await query("SELECT id FROM users WHERE username = ?", [username]);
+          if (checkExisting.length > 0) throw new Error("Username already exists");
+          const saltRounds = 10;
+          const salt = await genSalt(saltRounds);
+          const hashedPassword = await hash(password, salt);
+          const result = await query("INSERT INTO users (username, displayname, password) VALUES (?, ?, ?)", [username, username, hashedPassword]);
+          const token = await jwt.makeJWT(result.insertId);
+          res.status(201).cookie("session", token, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
+            message: "User created successfully",
+            success: true,
+            username,
+            id: result.insertId,
+          });
+        } catch (err) {
+          if (err.message === "Username already exists") {
+            res.status(409).send({
+              message: err.message,
+              success: false,
+            });
+          } else if (err.message === "Missing username or password") {
+            res.status(400).send({
+              message: err.message,
+              success: false,
+            });
+          } else {
+            logger.error(err);
+            console.log(err.message);
+            res.status(500).send({ message: "Internal Server Error" });
           }
-        bcrypt.genSalt(saltRounds, (err, salt) => {
-          if (err) {
-            error(err);
-            return;
-          }
-          bcrypt.hash(password, salt, (err, hash) => {
-            if (err) {
-              error(err);
-              return;
-            }
-            pool.query(
-              "INSERT INTO db.users (username, displayname, password) VALUES (?, ?, ?) ",
-              [username, username, hash],
-              (err, result) => {
-                if (err) {
-                  error(err);
-                  return;
-                }
-                const JWT = jwt.makeJWT(result.insertId);
-                res.status(201).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
-                  message: "User created successfully",
-                  success: true,
-                  username,
-                  id: result.insertId,
-                });
-              }
-            )
-          })
-        })
+        }
+
       })
 
     // POST /login (login user)
@@ -74,45 +62,37 @@ module.exports =
        * @param {import('express').Request} req
        * @param {import('express').Response} res
        */
-      (req, res) => {
-        const { username, password } = req.body;
-
-        pool.query(
-          "SELECT * FROM db.users WHERE username = ?",
-          [username],
-          (err, result) => {
-            if (err || result.length === 0) {
-              logger.error("Error in POST /login: ", err);
-              res.status(400).send({
-                message: "Error logging in: Invalid username or password",
-                success: false,
-              })
-              return;
-            }
-            else {
-              const storedPassword = result[0]["password"];
-              bcrypt.compare(password, storedPassword, (err, result2) => {
-                if (result2 && !err) {
-                  const { username, id } = result[0];
-                  const JWT = jwt.makeJWT(result[0].id);
-                  res.status(200).cookie("session", JWT, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
-                    message: "Login successful",
-                    success: true,
-                    username,
-                    id,
-                  });
-                }
-                else {
-                  logger.error("Error in POST /login: ", err);
-                  res.status(400).send({
-                    message: "Error logging in: Invalid username or password",
-                    success: false,
-                  })
-                }
-              })
-            }
-          }
-        )
+      async (req, res) => {
+        try {
+          const { username, password } = req.body;
+          if (!username || !password) throw new Error("Missing username or password");
+          const existingUser = await query("SELECT id, password FROM users WHERE username = ?", [username]);
+          if (existingUser.length === 0) throw new Error("User does not exist");
+          const match = await compare(password, existingUser[0].password);
+          if (!match) throw new Error("Incorrect password");
+          const token = await jwt.makeJWT(existingUser[0].id);
+          res.status(200).cookie("session", token, { httpOnly: true, path: "/", maxAge: 604800000, sameSite: "lax", secure: process.env.PRODUCTION }).send({
+            message: "Logged in successfully",
+            success: true,
+            username,
+            id: existingUser[0].id,
+          });
+        } catch (err) {
+          logger.error(err);
+          console.log(err.message);
+          if (err.message === "User does not exist" || err.message === "Incorrect password") {
+            res.status(401).send({
+              message: err.message,
+              success: false,
+            });
+          } else if (err.message === "Missing username or password") {
+            res.status(400).send({
+              message: err.message,
+              success: false,
+            });
+          } else
+            res.status(500).send({ message: "Internal Server Error" });
+        }
       })
 
     //POST /logout (logout user)
@@ -226,25 +206,15 @@ module.exports =
         try {
           const user = await jwt.verifyToken(req);
           const { displayName } = req.body;
-          pool.query(
+          const queryResult = await query(
             "UPDATE db.users SET displayname = ? WHERE id = ?",
-            [displayName, user.id],
-            (err, result) => {
-              if (err) {
-                logger.error("Error in POST /displayname: ", err);
-                res.status(400).send({
-                  message: "Error changing displayname",
-                  success: false,
-                })
-              }
-              else {
-                res.status(200).send({
-                  message: "Displayname changed successfully",
-                  success: true,
-                })
-              }
-            }
+            [displayName, user.id]
           )
+          if (queryResult.affectedRows !== 1) throw new Error("Something went wrong");
+          res.status(200).send({
+            message: "Displayname changed successfully",
+            success: true,
+          })
         } catch (e) {
           logger.error("Error in POST /displayname: ", e);
           if (e.message === "Invalid token") {
@@ -308,11 +278,11 @@ module.exports =
               success: false,
             })
           } else
-          res.status(500).send({
-            message: "Something went wrong",
-            reason: e.message,
-            success: false,
-          })
+            res.status(500).send({
+              message: "Something went wrong",
+              reason: e.message,
+              success: false,
+            })
         }
       })
   }
