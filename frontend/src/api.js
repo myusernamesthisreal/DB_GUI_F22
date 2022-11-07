@@ -8,7 +8,6 @@ export class Api {
 
     async signup(username, password) {
         const body = { username, password };
-        console.log(username, password)
         try {
             const res = await fetch(`${this.url}/users`,
                 {
@@ -97,8 +96,8 @@ export class Api {
         }
     }
 
-    async makePost(body) {
-        const data = { body };
+    async makePost(body, categories) {
+        const data = { body, categories };
         try {
             const res = await fetch(`${this.url}/posts`, {
                 method: "POST",

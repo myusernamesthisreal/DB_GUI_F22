@@ -14,8 +14,9 @@ export function CreatePost(props) {
     const [text, setText] = useState("");
     const [categories, setCategories] = useState("");
 
+
     const handleNewPost = async () => {
-        const req = await api.makePost(text);
+        const req = await api.makePost(text, categories);
         if (req.success) window.location.href = "/";
     }
     //textbox, comma delimited no spaces, call split on commas and store in array. 
@@ -32,13 +33,16 @@ export function CreatePost(props) {
                         <Stack>
                             <Typography>{`@${props.user?.username}`}</Typography>
                             <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" onChange={(e) => setText(e.target.value)}/>
-                            <TextField id="standar-basic" label="Enter Categories" variant="standard" onChange={(e) => setCategories(e.target.value)} />
+                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" onChange={(e) => setCategories(e.target.value.split(','))} />
                         </Stack>
                     </ListItemText>
                     <ListItemButton variant="contained" size="small" onClick={ handleNewPost }>
                         <ListItemText primary="Post" />
                     </ListItemButton>
                 </ListItem>
+                <ListItemButton variant="contained" size="small">
+                    <ListItemText primary="Cancel" />
+                </ListItemButton>
             </Box>
         </>
     );
