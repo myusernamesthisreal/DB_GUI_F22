@@ -7,7 +7,7 @@ import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import ListItemButton from '@mui/material/Button';
-import Divider from "@mui/material/Divider"
+
 
 export function CreatePost(props) {
     const api = new Api();

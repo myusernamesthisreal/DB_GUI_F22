@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { NavBar, Login, Signup, CreatePost, Homepage } from './components';
 import { User } from './components/User';
