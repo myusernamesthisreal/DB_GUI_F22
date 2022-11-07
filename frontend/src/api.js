@@ -202,7 +202,7 @@ export class Api {
     //patch repost
     async patchRepost(id) {
         try {
-            const res = await fetch(`${this.url}/post/${id}/reposts`, {
+            const res = await fetch(`${this.url}/posts/${id}/reposts`, {
                 method: "PATCH",
                 credentials: "include"
             });
@@ -216,7 +216,7 @@ export class Api {
     //get a user's reposts
     async getUserReposts(id) {
         try {
-            const res = await fetch(`${this.url}/post/${id}/reposts`, {
+            const res = await fetch(`${this.url}/users/${id}/reposts`, {
                 method: "GET",
                 credentials: "include"
             });
