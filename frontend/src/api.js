@@ -148,6 +148,7 @@ export class Api {
                 method: "GET",
                 credentials: "include"
             });
+            return await res.json();
         } catch (e) {
             console.error(e)
             return e;
@@ -163,6 +164,77 @@ export class Api {
                 method: "GET",
                 credentials: "include"
             });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //post repost
+    async postRepost() {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/reposts`, {
+                method: "POST",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //un-repost post
+    async deleteRepost() {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/reposts`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //patch repost
+    async patchRepost() {
+        try {
+            const res = await fetch(`${this.url}/post/${id}/reposts`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get a user's reposts
+    async getUserReposts() {
+        try {
+            const res = await fetch(`${this.url}/post/${id}/reposts`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get the current user's reposts
+    async getCurrentUserReposts() {
+        try {
+            const res = await fetch(`${this.url}/users/reposts`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
         } catch (e) {
             console.error(e)
             return e;
