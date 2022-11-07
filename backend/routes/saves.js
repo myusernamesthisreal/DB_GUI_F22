@@ -5,7 +5,7 @@ const jwt = require("../jwt");
 module.exports = function routes(app, logger) {
     const query = promisify(pool.query).bind(pool);
 
-    // GET /posts/:id/savedPosts (get user's saved posts)
+    // GET /posts/:id/saves (get saves on a post)
     app.get("/posts/:id/saves",
         /**
          * @param {import('express').Request} req
@@ -63,7 +63,7 @@ module.exports = function routes(app, logger) {
                     success: true,
                 })
             } catch (e) {
-                logger.error("Error in POST /posts/:id/saves: ", e);
+                logger.error("Error in POST /posts/:id/save: ", e);
                 if (e.message === "Invalid token") {
                     res.status(401).send({
                         message: "Unauthorized",
@@ -130,6 +130,65 @@ module.exports = function routes(app, logger) {
             }
         }
     )
+
+    // PATCH /posts/:id/saves (save/unsave post)
+    app.patch("/posts/:id/saves",
+        /**
+         * @param {import('express').Request} req
+         * @param {import('express').Response} res
+         */
+        async (req, res) => {
+            try {
+                const user = await jwt.verifyToken(req);
+                const { id } = req.params;
+                const queryResult = await query("SELECT author FROM db.posts WHERE id = ?", [id]);
+                if (queryResult.length === 0)
+                    throw new Error("Post not found");
+                if (queryResult[0].author === user.id)
+                    throw new Error("Cannot save your own post");
+                const saveResult = await query("SELECT id FROM db.saves WHERE post = ? AND user = ?", [id, user.id]);
+                if (saveResult.length > 0)
+                {
+                    await query("DELETE FROM db.saves WHERE user = ? AND post = ?", [user.id, id]);
+                    res.status(200).send({
+                        message: "Post unsaved",
+                        success: true,
+                    });
+                }
+                else
+                {
+                    await query("INSERT INTO db.saves (user, post) VALUES (?, ?)", [user.id, id]);
+                    res.status(201).send({
+                        message: "Post saved",
+                        success: true,
+                    })
+                }
+            }
+            catch (e) {
+                logger.error("Error in PATCH /posts/:id/save: ", e);
+                if (e.message === "Invalid token") {
+                    res.status(401).send({
+                        message: "Unauthorized",
+                        success: false,
+                    })
+                } else if (e.message === "Cannot save your own post") {
+                    res.status(403).send({
+                        message: "Cannot save your own post",
+                        success: false,
+                    })
+                } else if (e.message === "Post not found") {
+                    res.status(404).send({
+                        message: "Post not found",
+                        success: false,
+                    })
+                } else
+                    res.status(500).send({
+                        message: "Something went wrong",
+                        reason: e,
+                        success: false,
+                    })
+            }
+        });
 
     // GET /users/:id/saves (get saved posts of a user)
     app.get("/users/:id/saves",

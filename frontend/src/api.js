@@ -150,7 +150,7 @@ export class Api {
             });
         } catch (e) {
             console.error(e)
-            return e;S
+            return e;
         }
     }
 }

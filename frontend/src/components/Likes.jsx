@@ -3,7 +3,7 @@ import { Button } from '@mui/material'
 import { Api } from '../api'
 
 export function Like(props) {
-    const [liked, likePost] = useState(false);
+    const [liked, likePost] = useStat(props.liked);
     const api = new Api();
     
     const handleLikes = async () => {
