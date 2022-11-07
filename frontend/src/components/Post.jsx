@@ -3,8 +3,9 @@ import Avatar from '@mui/material/Avatar'
 import { blueGrey } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import Button from '@mui/material/Button'
+import { Like } from './Likes';
 
 export const Post = (props) => {
     const [time, timestamp] = props.post.timestamp.split('T');
@@ -44,7 +45,7 @@ export const Post = (props) => {
                     }
                 />
             </ListItem>
-            <Button variant="outlined" size="small" onClick={() => props.user?.username ? window.location.href="/" : window.location.href="/Signup"}>Like</Button>
+            <Like post={props.post} />
             <Button variant="outlined" size="small">Repost</Button>
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
