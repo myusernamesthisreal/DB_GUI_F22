@@ -13,15 +13,30 @@ module.exports = function routes(app, logger) {
     async (req, res) => {
       try {
         const user = await jwt.verifyToken(req);
-        const { body } = req.body;
+        const { body, categories } = req.body;
         if (!body)
           throw new Error("Post body cannot be empty");
+        if (typeof body !== "string")
+          throw new Error("Post body must be a string");
         if (body.length > 150)
           throw new Error("Post is too long");
         const insertQuery = await query(
           "INSERT INTO db.posts (body, author) VALUES (?, ?)",
           [body, user.id]);
-        const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [insertQuery.insertId]);
+        const postId = insertQuery.insertId;
+        if (categories) {
+          if (!Array.isArray(categories))
+            throw new Error("Categories must be an array of strings");
+          categories.map(c => {
+            if (typeof c !== "string")
+              throw new Error("Categories must be an array of strings");
+            return c.toLowerCase();
+          })
+          await query(
+            "INSERT INTO db.categories (post, categoryname) VALUES ?",
+            [categories.map(category => [postId, category])]);
+        }
+        const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [postId]);
         const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
           post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
@@ -43,7 +58,7 @@ module.exports = function routes(app, logger) {
             message: "Unauthorized",
             success: false,
           })
-        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long") {
+        } else if (e.message === "Post body cannot be empty" || e.message === "Post is too long" || e.message === "Categories must be an array of strings" || e.message === "Post body must be a string") {
           res.status(400).send({
             message: e.message,
             success: false,
@@ -64,6 +79,11 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
+      try {
+        const user = await jwt.verifyToken(req);
+        authenticated = user.id;
+      } catch (e) { }
       try {
         const { categories } = req.query;
         if (typeof categories === "string" && !categories) {
@@ -72,15 +92,30 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
         const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        let postsWithLikes = queryResult;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            return post;
+          })
+        }
+        else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            return post;
+          })
+        }
         categoryResult.map(post => {
-          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
-          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
-          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+          postsWithLikes[postsWithLikes.findIndex(p => p.id === post.id)].categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
         })
-        queryResult.map(post => {
+        postsWithLikes.map(post => {
           post.categories = post.categories ? post.categories : []
         });
-        let filterResults = queryResult;
+        let filterResults = postsWithLikes;
         if (categories) {
           const catArray = categories.split(",").map(c => c.toLowerCase());
           const validCategories = catArray.map((category) => {
@@ -89,7 +124,8 @@ module.exports = function routes(app, logger) {
             }
             return category;
           });
-          filterResults = queryResult.filter(post => post.categories.some(cat => validCategories.includes(cat)));
+
+          filterResults = postsWithLikes.filter(post => post.categories.some(cat => validCategories.includes(cat)));
         }
         res.status(200).send({
           message: "Posts fetched",
@@ -119,6 +155,11 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
+      try {
+        const user = await jwt.verifyToken(req);
+        authenticated = user.id;
+      } catch (e) { }
       try {
         const { id } = req.params;
         const queryResult = await query(
@@ -130,7 +171,24 @@ module.exports = function routes(app, logger) {
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
           queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
         })
-        queryResult.map(post => {
+
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        let postsWithLikes = queryResult;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            return post;
+          })
+        }
+        else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            return post;
+          })
+        }
+        postsWithLikes.map(post => {
           post.categories = post.categories ? post.categories : []
         });
         if (queryResult.length === 0)
@@ -138,7 +196,7 @@ module.exports = function routes(app, logger) {
         res.status(200).send({
           message: "Post fetched",
           success: true,
-          post: queryResult[0],
+          post: postsWithLikes[0],
         })
       } catch (e) {
         logger.error("Error in GET /posts/:id: ", e);
@@ -163,6 +221,11 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
+      try {
+        const user = await jwt.verifyToken(req);
+        authenticated = user.id;
+      } catch (e) { }
       try {
         const { id } = req.params;
         const userQuery = await query("SELECT * FROM users WHERE id = ?", [id]);
@@ -177,13 +240,28 @@ module.exports = function routes(app, logger) {
           delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
           queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
         })
-        queryResult.map(post => {
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        let postsWithLikes = queryResult;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            return post;
+          })
+        } else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            return post;
+          })
+        }
+        postsWithLikes.map(post => {
           post.categories = post.categories ? post.categories : []
         });
         res.status(200).send({
           message: "Posts fetched",
           success: true,
-          posts: queryResult,
+          posts: postsWithLikes,
         })
       } catch (e) {
         logger.error("Error in GET /users/:id/posts: ", e);
@@ -201,8 +279,8 @@ module.exports = function routes(app, logger) {
       }
     })
 
-  //PUT /posts/:id (edit post)
-  app.put("/posts/:id",
+  //PATCH /posts/:id (edit post)
+  app.patch("/posts/:id",
     /**
      * @param {import('express').Request} req
      * @param {import('express').Response} res
@@ -211,16 +289,32 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const { id } = req.params;
-        const { body } = req.body;
-
-        if (body.length > 150)
-          throw new Error("Post is too long");
+        const { body, categories } = req.body;
         const findPostQuery = await query("SELECT * FROM db.posts WHERE id = ?", [id]);
         if (findPostQuery.length === 0)
           throw new Error("Post not found");
         if (findPostQuery[0].author !== user.id)
           throw new Error("Unauthorized");
-        await query("UPDATE db.posts SET body = ?, edited = 1 WHERE id = ?", [body, id]);
+        if (body) {
+          if (body.length > 150)
+            throw new Error("Post is too long");
+          if (typeof body !== "string")
+            throw new Error("Body is not a string");
+          await query("UPDATE db.posts SET body = ?, edited = 1 WHERE id = ?", [body, id]);
+        }
+        if (categories) {
+          if (!Array.isArray(categories))
+            throw new Error("Categories must be an array of strings");
+          categories.map(c => {
+            if (typeof c !== "string")
+              throw new Error("Categories must be an array of strings");
+            return c.toLowerCase();
+          })
+          await query("DELETE FROM categories WHERE post = ?", [id]);
+          if (categories.length > 0)
+            await query("INSERT INTO categories (post, categoryname) VALUES ?",
+              [categories.map(c => [id, c])]);
+        }
         const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [id]);
         const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
         categoryResult.map(post => {
@@ -237,13 +331,13 @@ module.exports = function routes(app, logger) {
           post: queryResult[0],
         })
       } catch (e) {
-        logger.error("Error in PUT /posts/:id: ", e);
+        logger.error("Error in PATCH /posts/:id: ", e);
         if (e === "Invalid token" || e.message === "Unauthorized") {
           res.status(401).send({
             message: "Unauthorized",
             success: false,
           })
-        } else if (e.message === "Post is too long") {
+        } else if (e.message === "Post is too long" || e.message === "Categories must be an array of strings" || e.message === "Body is not a string") {
           res.status(400).send({
             message: "Post is too long",
             success: false,
