@@ -37,19 +37,15 @@ module.exports = function routes(app, logger) {
             [categories.map(category => [postId, category])]);
         }
         const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [postId]);
-        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
-        categoryResult.map(post => {
-          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
-          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
-          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+        let postsWithCategories = queryResult.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
         })
-        queryResult.map(post => {
-          post.categories = post.categories ? post.categories : []
-        });
         res.status(201).send({
           message: "Post created",
           success: true,
-          post: queryResult[0],
+          post: postsWithCategories[0],
         })
       } catch (e) {
         logger.error("Error in POST /posts: ", e);
@@ -91,7 +87,7 @@ module.exports = function routes(app, logger) {
         }
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id ORDER BY timestamp DESC");
-        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
 
         const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
         const likes = likesResult.map(like => like.post);
@@ -119,12 +115,10 @@ module.exports = function routes(app, logger) {
             return post;
           })
         }
-        categoryResult.map(post => {
-          postsWithLikes[postsWithLikes.findIndex(p => p.id === post.id)].categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
+        postsWithLikes = postsWithLikes.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
         })
-        postsWithLikes.map(post => {
-          post.categories = post.categories ? post.categories : []
-        });
         let filterResults = postsWithLikes;
         if (categories) {
           const catArray = categories.split(",").map(c => c.toLowerCase());
@@ -175,12 +169,7 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?",
           [id]);
-        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
-        categoryResult.map(post => {
-          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
-          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
-          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
-        })
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
 
         const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
         const likes = likesResult.map(like => like.post);
@@ -208,9 +197,10 @@ module.exports = function routes(app, logger) {
             return post;
           })
         }
-        postsWithLikes.map(post => {
-          post.categories = post.categories ? post.categories : []
-        });
+        postsWithLikes = postsWithLikes.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
+        })
         if (queryResult.length === 0)
           throw new Error("Post not found");
         res.status(200).send({
@@ -254,12 +244,8 @@ module.exports = function routes(app, logger) {
         const queryResult = await query(
           "SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE author = ? ORDER BY timestamp DESC",
           [id]);
-        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
-        categoryResult.map(post => {
-          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
-          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
-          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
-        })
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
         const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
         const likes = likesResult.map(like => like.post);
 
@@ -286,9 +272,10 @@ module.exports = function routes(app, logger) {
             return post;
           })
         }
-        postsWithLikes.map(post => {
-          post.categories = post.categories ? post.categories : []
-        });
+        postsWithLikes = postsWithLikes.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
+        })
         res.status(200).send({
           message: "Posts fetched",
           success: true,
@@ -347,19 +334,15 @@ module.exports = function routes(app, logger) {
               [categories.map(c => [id, c])]);
         }
         const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [id]);
-        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
-        categoryResult.map(post => {
-          post.categories = post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"].split(",");
-          delete post["GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',')"];
-          queryResult[queryResult.findIndex(p => p.id === post.id)] = post;
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+        let postsWithCategories = queryResult.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
         })
-        queryResult.map(post => {
-          post.categories = post.categories ? post.categories : []
-        });
         res.status(200).send({
           message: "Post edited",
           success: true,
-          post: queryResult[0],
+          post: postsWithCategories[0],
         })
       } catch (e) {
         logger.error("Error in PATCH /posts/:id: ", e);
