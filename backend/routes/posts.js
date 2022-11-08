@@ -96,16 +96,26 @@ module.exports = function routes(app, logger) {
         const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
         const likes = likesResult.map(like => like.post);
 
+        const repostsResult = await query("SELECT post FROM reposts WHERE user = ?", [authenticated]);
+        const reposts = repostsResult.map(repost => repost.post);
+
+        const savesResult = await query("SELECT post FROM saves WHERE user = ?", [authenticated]);
+        const saves = savesResult.map(save => save.post);
+
         let postsWithLikes = queryResult;
         if (authenticated) {
           postsWithLikes = postsWithLikes.map(post => {
             post.liked = likes.includes(post.id);
+            post.reposted = reposts.includes(post.id);
+            post.saved = saves.includes(post.id);
             return post;
           })
         }
         else {
           postsWithLikes = postsWithLikes.map(post => {
             post.liked = false;
+            post.reposted = false;
+            post.saved = false;
             return post;
           })
         }
@@ -175,16 +185,26 @@ module.exports = function routes(app, logger) {
         const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
         const likes = likesResult.map(like => like.post);
 
+        const repostsResult = await query("SELECT post FROM reposts WHERE user = ?", [authenticated]);
+        const reposts = repostsResult.map(repost => repost.post);
+
+        const savesResult = await query("SELECT post FROM saves WHERE user = ?", [authenticated]);
+        const saves = savesResult.map(save => save.post);
+
         let postsWithLikes = queryResult;
         if (authenticated) {
           postsWithLikes = postsWithLikes.map(post => {
             post.liked = likes.includes(post.id);
+            post.reposted = reposts.includes(post.id);
+            post.saved = saves.includes(post.id);
             return post;
           })
         }
         else {
           postsWithLikes = postsWithLikes.map(post => {
             post.liked = false;
+            post.reposted = false;
+            post.saved = false;
             return post;
           })
         }
@@ -243,15 +263,26 @@ module.exports = function routes(app, logger) {
         const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
         const likes = likesResult.map(like => like.post);
 
+        const repostsResult = await query("SELECT post FROM reposts WHERE user = ?", [authenticated]);
+        const reposts = repostsResult.map(repost => repost.post);
+
+        const savesResult = await query("SELECT post FROM saves WHERE user = ?", [authenticated]);
+        const saves = savesResult.map(save => save.post);
+
         let postsWithLikes = queryResult;
         if (authenticated) {
           postsWithLikes = postsWithLikes.map(post => {
             post.liked = likes.includes(post.id);
+            post.reposted = reposts.includes(post.id);
+            post.saved = saves.includes(post.id);
             return post;
           })
-        } else {
+        }
+        else {
           postsWithLikes = postsWithLikes.map(post => {
             post.liked = false;
+            post.reposted = false;
+            post.saved = false;
             return post;
           })
         }
