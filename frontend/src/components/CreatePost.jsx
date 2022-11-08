@@ -28,7 +28,7 @@ export function CreatePost(props) {
 
     return (
         <>
-            <Box sx={{ justifyContent: "center", borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
+            <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "3.5rem", bgcolor: 'background.paper', p: "1rem" }}>
                 <ListItem alignItems="flex-start">
                     <ListItemAvatar>
                         <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
