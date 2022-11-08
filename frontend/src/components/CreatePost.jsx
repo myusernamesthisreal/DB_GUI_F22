@@ -19,8 +19,12 @@ export function CreatePost(props) {
         const req = await api.makePost(text, categories);
         if (req.success) window.location.href = "/";
     }
-    //textbox, comma delimited no spaces, call split on commas and store in array. 
-
+   
+    const handleCancelClick = async () => {
+        if (window.confirm("Do you want to cancel this post?")) {
+            window.location.href = "/";
+        } 
+    }
 
     return (
         <>
@@ -40,7 +44,7 @@ export function CreatePost(props) {
                         <ListItemText primary="Post" />
                     </ListItemButton>
                 </ListItem>
-                <ListItemButton variant="contained" size="small">
+                <ListItemButton variant="contained" size="small" onClick={ handleCancelClick }>
                     <ListItemText primary="Cancel" />
                 </ListItemButton>
             </Box>
