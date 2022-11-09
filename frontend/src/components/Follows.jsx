@@ -26,7 +26,8 @@ export function Follow() {
         if (req.success) window.location.href="/";
     }
 
-    const handleFollow = async () => {
+    //follow & unfollow no longer needed with patch function
+    /*const handleFollow = async () => {
         const req = await api.follow(props.id);
         if (req.success) {
             setFollow(!follow);
@@ -38,7 +39,7 @@ export function Follow() {
         if (req.success) {
             setFollow(!follow);
         }
-    }
+    }*/
 
     const handlePatchFollow = async () => {
         const req = await api.patchFollow(props.id);
