@@ -6,6 +6,7 @@ import { NavBar, Login, Signup, Post, CreatePost } from './components';
 import Homepage from './components/Homepage';
 import { User } from './components/User';
 import { Api } from './api';
+import UserPosts from './components/UserPosts';
 
 // React functional component
 function App () {
@@ -31,6 +32,7 @@ function App () {
                 <Route exact path="/" element={<Homepage user={user} />} />
                 <Route path="/make-post" element={<CreatePost />} />
                 <Route path="/users/:id" element={<User user={user}/>} />
+                <Route path="/users/:id/posts" element={<UserPosts user={user}/>} />
             </Routes>
         </Router>
     </div>

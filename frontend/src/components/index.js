@@ -4,3 +4,6 @@ export * from './Signup';
 export * from './Post';
 export * from './CreatePost';
 export * from './Likes'
+export * from './User'
+export * from './UserPreview'
+export * from './UserPosts'

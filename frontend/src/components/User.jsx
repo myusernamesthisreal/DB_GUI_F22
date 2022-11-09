@@ -20,6 +20,8 @@ export function User(props) {
 
     // if(id of user == user id of page)
     const isUsersPage = (props.user?.id === user?.id);
+    const [loaded, setLoaded] = useState(false);
+    const [error, setError] = useState(false);
 
     const handleLoad = async () => {
         const res = await api.getUser(userId);
@@ -33,17 +35,29 @@ export function User(props) {
         console.log(usersFollowing);
         console.log(usersFollowers);
         if (res.success) setUser(res.user);
+        else setError(true);
         if (usersPosts.success) setPosts(usersPosts.posts.slice(0,3));
+        else setError(true);
         if (usersSaves.success) setSaves(usersSaves.saves.slice(0,3));
-        //if (usersFollowing.success) setSaves(usersFollowing.follows.slice(0,3));
-        //if (usersFollowers.success) setSaves(usersFollowers.follows.slice(0,3));
+        else setError(true);
+        setLoaded(true);
+        if (usersFollowing.success) setFollowing(usersFollowing.following.slice(0,3));
+        setLoaded(true);
+        if (usersFollowers.success) setFollowers(usersFollowers.followers.slice(0,3));
+        setLoaded(true);
+        
     }
 
     useEffect(() => {
         handleLoad();
     }, [])
 
+    if (error) return (
+        <>
+        An error occurred...</>
+    )
 
+    if (loaded)
     return (
         <>
             <h1>{user?.displayname}'s Profile</h1>
@@ -53,7 +67,7 @@ export function User(props) {
                 <p>Insert Info Here (about me, location, etc)</p>
             </Box>
 
-            <UserPreview/>
+            <UserPreview user={user}/>
 
             {/* Only display follow/unfollow button if the user is logged in and is on another user's page */}
             {/* (!isUsersPage | props.user?.username) ?  <Follow/> : null*/}
@@ -70,24 +84,18 @@ export function User(props) {
             <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
                 {/* List of all or first 10 followed users --- WIP */}
                 <h2>Following</h2>
-                <p>User 1</p>
-                <p>User 2</p>
-                <p>User 3</p>
-                {/*
-                    follows?.map((post, index) => <Post key={index} post={post} style={{margin:"1rem"}} />)
-                */}
+                {
+                    following?.map((fUser, index) => <UserPreview user={fUser} />)
+                }
                 <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/following`} >View All Following Users</Button>
             </Box>
 
             <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
                 {/* List of all or first 10 followed users --- WIP */}
                 <h2>Followers</h2>
-                <p>User 1</p>
-                <p>User 2</p>
-                <p>User 3</p>
-                {/*
-                    follows?.map((post, index) => <Post key={index} post={post} style={{margin:"1rem"}} />)
-                */}
+                {
+                    followers?.map((fUser, index) => <UserPreview user={fUser} />)
+                }
                 <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/followers`} >View All Followed Users</Button>
             </Box>
 
@@ -112,4 +120,9 @@ export function User(props) {
 
         </>
     );
+
+    return (
+        <>
+        Loading...</>
+    )
 }

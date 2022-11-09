@@ -13,16 +13,16 @@ export const UserPreview = (props) => {
         <Box sx={{justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor:'background.paper'}}>
             <ListItem alignItems="flex-start">
                 <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: blueGrey }}> {props.post.authorname}</Avatar>
+                    <Avatar sx={{ bgcolor: blueGrey }}> {props.user?.displayname}</Avatar>
                 </ListItemAvatar>
                 <ListItemText
                     primary={
                         <React.Fragment>
                             <Typography sx={{ display: 'inline' }} onClick={() => window.location.href=`/users/${props.user?.id}`}>
-                                {props.post.authordisplayname}
+                                {props.user?.displayname}
                             </Typography> @
                             <Typography sx={{ display: 'inline' }} variant="body2">
-                                {props.post.authorname}
+                                {props.user?.username}
                             </Typography>
                         </React.Fragment>}
                     // secondary={
