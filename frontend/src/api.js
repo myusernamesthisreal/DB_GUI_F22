@@ -199,6 +199,20 @@ export class Api {
         }
     }
 
+    //get users following a given user
+    async getFollowersGivenID(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/followers`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
     
     //Repost calls
     //get reposts
