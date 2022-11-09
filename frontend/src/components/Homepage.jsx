@@ -27,18 +27,9 @@ export const Homepage = (props) => {
 
     return (
         <>
-            {
-                <>
-                    <Box sx={{ display:"inline", textAlign:"left", margin:"1rem", width:"50%"}}>
-                        <Typography>{props.user?.username}</Typography>
-                    </Box>
-                    <Box sx={{ flexGrow: 1, textAlign: "right", margin: "1rem"}}>
-                        <Button variant="contained" onClick={handlePostClick}>Post</Button>
-                    </Box>
-                </>
-            }
-            <p>{props.user?.id}</p>
-            <p>{props.user?.username}</p>
+            <Box sx={{ flexGrow: 1, textAlign: "right", margin: "1rem" }}>
+                <Button variant="contained" onClick={handlePostClick}>Post</Button>
+            </Box>
             {
                 posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
             }

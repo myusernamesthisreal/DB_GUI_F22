@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { Button } from '@mui/material'
 import { Api } from '../api'
+import RepeatIcon from '@mui/icons-material/Repeat';
+import RepeatOnIcon from '@mui/icons-material/RepeatOn';
+import RepeatOn from '@mui/icons-material/RepeatOn';
+
 
 export function Repost(props) {
     const [repost, setRepost] = useState(props.post.repost);
@@ -43,11 +47,9 @@ export function Repost(props) {
     */
 
     return <>
-        <Button variant="outlined" 
-            style={{ backgroundColor: repost ? 'blue' : '',
-                 color: repost ? 'white' : '', }}
+        <Button color="primary"
             onClick={handlePatchRepost}>
-            Repost
+            {repost ? <RepeatOnIcon /> : <RepeatIcon/>}
         </Button>
     </>
 }

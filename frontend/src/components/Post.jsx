@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Like } from './Likes';
 import { Repost } from './Repost';
@@ -45,6 +45,7 @@ export const Post = (props) => {
                                     {time ? new Date(time).toLocaleString("en-us") : null}
                                 </Typography> --
                                 <Box sx={{ overflow: "hidden" }}> {props.post.body} </Box>
+                                {props.post.categories.map((category, index) => <Chip sx={{marginRight: "0.5rem", marginTop: "0.5rem"}} label={`${category}`}/>)}
                             </React.Fragment>
                         }
                     />
