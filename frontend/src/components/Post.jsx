@@ -4,6 +4,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import Button from '@mui/material/Button';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 
@@ -51,6 +53,18 @@ export const Post = (props) => {
             <Repost post={props.post} />
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
+            <Popup trigger={<Button>...</Button>} position="right center">
+                <list>
+                    <ul>
+                        <li>
+                            <Button>Edit post</Button>
+                        </li>
+                        <li>
+                            <Button>Delete post</Button>
+                        </li>
+                    </ul>
+                </list>
+            </Popup>
         </Box>
     </>
 
