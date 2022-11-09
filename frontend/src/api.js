@@ -105,9 +105,64 @@ export class Api {
                 body: JSON.stringify(data),
                 headers: {
                     "Content-Type": "application/json",
-                }
+                }});
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //Likes calls
+    //like/unlike a post
+    async like(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/likes`, {
+                method: "PATCH",
+                credentials: "include"
             });
             return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get number of likes on post
+    async getLikes(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/likes`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get posts liked by a user
+    async getLikedPosts(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/likes`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get posts liked by current user
+    async getUserLikedPosts() {
+        try {
+            const res = await fetch(`${this.url}/users/likes`, {
+                method: "GET",
+                credentials: "include"
+            });
         } catch (e) {
             console.error(e)
             return e;
