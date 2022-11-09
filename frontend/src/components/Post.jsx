@@ -51,8 +51,8 @@ export const Post = (props) => {
                     />
                 </Link>
             </ListItem>
-            {props.user.id === props.post.author ? null : <Like post={props.post} />}
-            {props.user.id === props.post.author ? null : <Repost post={props.post} />}
+            {props.user?.id === props.post.author ? null : <Like post={props.post} />}
+            {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
         </Box>
