@@ -355,4 +355,34 @@ export class Api {
             return e;
         }
     }
+
+
+    //EditPost calls -- off of posts.jsx
+    //edit post
+    async editPost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //delete post
+    async deletePost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }
