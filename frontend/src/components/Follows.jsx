@@ -2,40 +2,72 @@ import React, { useState } from 'react'
 import { Button, Stack, Box } from '@mui/material'
 import { Api } from '../api'
 
-function Follow() {
-    const [user, setUser] = useState("");
+export function Follow() {
+    const [follow, setFollow] = useState(false);
     const api = new Api();
 
-    const handleFollowing = async () => {
-        const req = await api.following(user);
+    const handleGetFollowingCurrent = async () => {
+        const req = await api.getFollowingCurrent();
         if (req.success) window.location.href="/";
     }
 
-    const handleFollowers = async () => {
-        const req = await api.followers(user);
+    const handleGetFollowingGivenID = async () => {
+        const req = await api.getFollowingGivenID(props.id);
         if (req.success) window.location.href="/";
     }
 
-    const handleFollow = async () => {
-        const req = await api.follow(user);
+    const handleGetFollowersCurrent = async () => {
+        const req = await api.getFollowersCurrent();
         if (req.success) window.location.href="/";
+    }
+
+    const handleGetFollowersGivenID = async () => {
+        const req = await api.getFollowersGivenID(props.id);
+        if (req.success) window.location.href="/";
+    }
+
+    //follow & unfollow no longer needed with patch function
+    /*const handleFollow = async () => {
+        const req = await api.follow(props.id);
+        if (req.success) {
+            setFollow(!follow);
+        }
     }
 
     const handleUnfollow = async () => {
-        const req = await api.unfollow(user);
-        if (req.success) window.location.href="/";
+        const req = await api.unfollow(props.id);
+        if (req.success) {
+            setFollow(!follow);
+        }
+    }*/
+
+    const handlePatchFollow = async () => {
+        const req = await api.patchFollow(props.id);
+        if (req.success) {
+            setFollow(!follow);
+        }
     }
 
     return (
         <>
-            <Box sx={{ width: '50%', border: 1, p: 2.5, justifyContent: "left", marginX: "auto", marginTop: "5rem"}}>
-                <Stack direction="column" alignItems="stretch" justifyContent="flex-start" spacing={1.5}>
-                    <Button required id="follow-btn" label="Follow" type="standard" value={user} onClick={(e) => follow(e.target.value)} >Follow</Button>
-                    <Button required id="unfollow-btn" label="Unfollow" type="standard" value={user} onClick={(e) => unfollow(e.target.value)} >Unfollow</Button>
-                    <Button required id="get-followers-btn" label="getFollowers" type="standard" value={user} onClick={(e) => followers(e.target.value)}>Your Followers</Button>
-                    <Button required id="get-following-btn" label="getFollowing" type="standard" value={user} onClick={(e) => following(e.target.value)}>Accounts You Follow</Button>
-                </Stack>
-            </Box>
+            <Button variant="outlined" 
+                style={{ backgroundColor: follow ? 'blue' : '',
+                     color: follow ? 'white' : '', }}
+                onClick={handlePatchFollow}>
+                <b>{follow ? 'Unfollow' : 'Follow'}</b>
+            </Button>
+            <Button variant="outlined" 
+                style={{ backgroundColor: 'gray',
+                     color: 'black' }}
+                onClick={handleGetFollowingCurrent}>
+                Following
+            </Button>
+            <Button variant="outlined" 
+                style={{ backgroundColor: 'gray',
+                color: 'black' }}
+                onClick={handleGetFollowersCurrent}>
+                Followers
+            </Button>
         </>
     )
 }

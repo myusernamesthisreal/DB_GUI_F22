@@ -3,8 +3,9 @@ import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import Button from '@mui/material/Button'
+import Button from '@mui/material/Button';
 import { Like } from './Likes';
+import { Repost } from './Repost';
 
 export const Post = (props) => {
     const [time, setTime] = useState("");
@@ -47,7 +48,7 @@ export const Post = (props) => {
                 />
             </ListItem>
             <Like post={props.post} />
-            <Button variant="outlined" size="small">Repost</Button>
+            <Repost post={props.post} />
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
         </Box>
