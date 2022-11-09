@@ -1,25 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar'
-import { blueGrey } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
-import Button from '@mui/material/Button'
+import Button from '@mui/material/Button';
 import { Like } from './Likes';
+import { Repost } from './Repost';
 
 export const Post = (props) => {
-    const [time, timestamp] = props.post.timestamp.split('T');
-    const [year, month, day] = time.split('-');
-    const date = new Date(year, month - 1, day);
-    const dString = date.toDateString();
+    const [time, setTime] = useState("");
+    useEffect(() => {
+        const t = Date.parse(props?.post.timestamp);
 
+        const tzOffset = new Date().getTimezoneOffset() * 60000;
+        setTime(new Date(t - tzOffset).toLocaleString("en-us"));
+    }, []);
 
 
     return <>
-        <Box sx={{justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor:'background.paper'}}>
+        <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
             <ListItem alignItems="flex-start">
                 <ListItemAvatar>
-                    <Avatar src="https://i.imgur.com/KNE5lGg.jpg"/>
+                    <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
                 </ListItemAvatar>
                 <ListItemText
                     primary={
@@ -34,19 +36,19 @@ export const Post = (props) => {
                     secondary={
                         <React.Fragment>
                             <Typography
-                                sx={{ display: 'inline', overflow:"hidden" }}
+                                sx={{ display: 'inline', overflow: "hidden" }}
                                 component="span"
                                 variant="body2"
                             >
-                                {dString}
+                                {time ? new Date(time).toLocaleString("en-us") : null}
                             </Typography> --
-                            <Box sx={{overflow:"hidden"}}> {props.post.body} </Box>
+                            <Box sx={{ overflow: "hidden" }}> {props.post.body} </Box>
                         </React.Fragment>
                     }
                 />
             </ListItem>
             <Like post={props.post} />
-            <Button variant="outlined" size="small">Repost</Button>
+            <Repost post={props.post} />
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
         </Box>
