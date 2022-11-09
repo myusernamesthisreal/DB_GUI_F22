@@ -242,6 +242,19 @@ export class Api {
     }
 
     //mark user as followed/unfollowed
+    async patchFollow(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/follows`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
     
     //Repost calls
     //get reposts
