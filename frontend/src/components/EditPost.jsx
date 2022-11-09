@@ -17,13 +17,13 @@ export function EditPost(props) {
     const [categories, setCategories] = useState("");
 
 
-    const handleNewPost = async () => {
-        const req = await api.makePost(text, categories);
+    const handleEditPost = async () => {
+        const req = await api.Post(text, categories);
         if (req.success) window.location.href = "/";
     }
 
-    const handleCancelClick = async () => {
-        if (window.confirm("Do you want to cancel this post?")) {
+    const handleCancelEdit = async () => {
+        if (window.confirm("Do you want to cancel this edit?")) {
             window.location.href = "/";
         }
     }
@@ -33,10 +33,10 @@ export function EditPost(props) {
             <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "3.5rem", bgcolor: 'background.paper', p: "1rem" }}>
                 <Box sx={{ display: "flex" }} >
                     <IconButton sx={{ justifyContent: "start" }}>
-                        <CancelIcon sx={{ display: "block", marginLeft: "8px" }} onClick={handleCancelClick}></CancelIcon>
+                        <CancelIcon sx={{ display: "block", marginLeft: "8px" }} onClick={handleCancelEdit}></CancelIcon>
                     </IconButton>
                     <Box sx={{ flexGrow: 1 }} />
-                    <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleNewPost}>
+                    <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleEditPost}>
                         <ListItemText primary="Post" />
                     </Button>
                 </Box>
@@ -47,8 +47,8 @@ export function EditPost(props) {
                     <ListItemText>
                         <Stack>
                             <Typography>{`@${props.user?.username}`}</Typography>
-                            <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" onChange={(e) => setText(e.target.value)} />
-                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" onChange={(e) => setCategories(e.target.value.split(','))} />
+                            <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" defaultValue={`${props.user?.text}`} onChange={(e) => setText(e.target.value)} />
+                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" defaultValue={`${props.user?.categories}`} onChange={(e) => setCategories(e.target.value.split(','))} />
                         </Stack>
                     </ListItemText>
 
