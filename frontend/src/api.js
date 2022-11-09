@@ -156,6 +156,20 @@ export class Api {
     }
 
 
+    //Follows calls
+    //get users current user is following
+    async getFollowing() {
+        try {
+            const res = await fetch(`${this.url}/users/following`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
     //Repost calls
     //get reposts
     async getReposts(id) {
