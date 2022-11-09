@@ -7,3 +7,4 @@ export * from './Likes';
 export * from './Follows';
 export * from './Repost'
 export * from './Homepage';
+export * from './EditPost.jsx'
