@@ -213,6 +213,20 @@ export class Api {
         }
     }
 
+    //follow a user
+    async follow(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/follow`, {
+                method: "POST",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
     
     //Repost calls
     //get reposts
