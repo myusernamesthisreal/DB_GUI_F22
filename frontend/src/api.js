@@ -227,6 +227,21 @@ export class Api {
         }
     }
 
+    //unfollow a user
+    async unfollow(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/unfollow`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //mark user as followed/unfollowed
     
     //Repost calls
     //get reposts
