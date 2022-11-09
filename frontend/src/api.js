@@ -184,6 +184,22 @@ export class Api {
             return e;
         }
     }
+
+    //get users following the current user
+    async getFollowersCurrent() {
+        try {
+            const res = await fetch(`${this.url}/users/followers`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    
     //Repost calls
     //get reposts
     async getReposts(id) {
