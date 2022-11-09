@@ -6,3 +6,4 @@ export * from './CreatePost';
 export * from './Likes';
 export * from './Follows';
 export * from './Repost'
+export * from './Homepage';

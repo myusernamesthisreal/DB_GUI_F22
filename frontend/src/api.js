@@ -8,7 +8,6 @@ export class Api {
 
     async signup(username, password) {
         const body = { username, password };
-        console.log(username, password)
         try {
             const res = await fetch(`${this.url}/users`,
                 {
@@ -28,7 +27,6 @@ export class Api {
 
     async login(username, password) {
         const body = {username, password };
-        console.log(username, password)
         try {
             const res = await fetch(`${this.url}/login`,
             {
@@ -91,6 +89,23 @@ export class Api {
                 method: "GET",
                 credentials: "include"
             });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    async makePost(body, categories) {
+        const data = { body, categories };
+        try {
+            const res = await fetch(`${this.url}/posts`, {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json",
+                }});
             return await res.json();
         } catch (e) {
             console.error(e)
