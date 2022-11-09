@@ -5,10 +5,10 @@ import { Post } from "./";
 
 
 
-export const UserPosts = (props) => {
+export const UserSaves = (props) => {
 
     const [user, setUser] = useState(null);
-    const [posts, setPosts] =useState(null);
+    const [saves, setSaves] =useState(null);
     const { id: userId } = useParams();
     const api = new Api();
 
@@ -17,12 +17,12 @@ export const UserPosts = (props) => {
 
     const handleLoad = async () => {
         const res = await api.getUser(userId);
-        const usersPosts = await api.getUserPost(userId);
+        const usersSaves = await api.getUserSaves(userId);
         console.log(res);
-        console.log(usersPosts);
+        console.log(usersSaves);
         if (res.success) setUser(res.user);
         else setError(true);
-        if (usersPosts.success) setPosts(usersPosts.posts);
+        if (usersSaves.success) setSaves(usersSaves.saves);
         else setError(true);
         setLoaded(true);
     }
@@ -39,9 +39,9 @@ export const UserPosts = (props) => {
     
     if (loaded)
     return <>
-        <h1>{user?.displayname}'s Posts</h1>
+        <h1>{user?.displayname}'s Saved Posts</h1>
         {
-            posts?.map((post, index) => <Post key={index} post={post} style={{margin:"1rem"}} />)
+            saves?.map((post, index) => <Post key={index} post={post} style={{margin:"1rem"}} />)
         }
     </>
 
@@ -54,4 +54,4 @@ export const UserPosts = (props) => {
 
 }
 
-export default UserPosts;
+export default UserSaves;

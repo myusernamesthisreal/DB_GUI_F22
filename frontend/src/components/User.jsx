@@ -1,11 +1,8 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import { Typography, Button, Stack, Box, TextField } from '@mui/material'
 import { Api } from '../api'
-import { Post, UserPreview } from "./"
-import { Follow } from "./"
-import { useEffect } from 'react';
-//import follows from '../../../backend/routes/follows';
+import { Post, UserPreview, Follow } from "./"
 
 //id, userName, displayName
 
@@ -40,12 +37,11 @@ export function User(props) {
         else setError(true);
         if (usersSaves.success) setSaves(usersSaves.saves.slice(0,3));
         else setError(true);
-        setLoaded(true);
         if (usersFollowing.success) setFollowing(usersFollowing.following.slice(0,3));
-        setLoaded(true);
+        else setError(true);
         if (usersFollowers.success) setFollowers(usersFollowers.followers.slice(0,3));
+        else setError(true);
         setLoaded(true);
-        
     }
 
     useEffect(() => {
@@ -54,7 +50,8 @@ export function User(props) {
 
     if (error) return (
         <>
-        An error occurred...</>
+            An error occurred...
+        </>
     )
 
     if (loaded)
@@ -118,6 +115,8 @@ export function User(props) {
 
     return (
         <>
-        Loading...</>
+            <br/>
+            Loading...
+        </>
     )
 }

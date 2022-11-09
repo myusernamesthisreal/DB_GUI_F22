@@ -58,7 +58,8 @@ export function NavBar(props) {
                   'aria-labelledby': 'basic-button',
                 }}
               >
-                {props.user?.username ? <MenuItem onClick={() => window.location.href=`/user/${props.user?.id}`}>My Profile</MenuItem>
+                <MenuItem onClick={() => window.location.href=`/`}>Homepage</MenuItem>
+                {props.user?.username ? <MenuItem onClick={() => window.location.href=`/users/${props.user?.id}`}>My Profile</MenuItem>
                                       : <MenuItem onClick={() => window.location.href=`/signin`}>My Profile</MenuItem>}
               </Menu>
 

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Api } from "../api";
-import { Post } from "./";
+import { UserPreview } from "./";
 
 
 
-export const UserPosts = (props) => {
+export const UserFollowing = (props) => {
 
     const [user, setUser] = useState(null);
-    const [posts, setPosts] =useState(null);
+    const [following, setFollowing] = useState(null);
     const { id: userId } = useParams();
     const api = new Api();
 
@@ -17,12 +17,12 @@ export const UserPosts = (props) => {
 
     const handleLoad = async () => {
         const res = await api.getUser(userId);
-        const usersPosts = await api.getUserPost(userId);
+        const usersFollowing = await api.getUserFollowing(userId);
         console.log(res);
-        console.log(usersPosts);
+        console.log(usersFollowing);
         if (res.success) setUser(res.user);
         else setError(true);
-        if (usersPosts.success) setPosts(usersPosts.posts);
+        if (usersFollowing.success) setFollowing(usersFollowing.following);
         else setError(true);
         setLoaded(true);
     }
@@ -36,12 +36,12 @@ export const UserPosts = (props) => {
             An error occurred...
         </>
     )
-    
+
     if (loaded)
     return <>
-        <h1>{user?.displayname}'s Posts</h1>
+        <h2>Following</h2>
         {
-            posts?.map((post, index) => <Post key={index} post={post} style={{margin:"1rem"}} />)
+            following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
         }
     </>
 
@@ -54,4 +54,4 @@ export const UserPosts = (props) => {
 
 }
 
-export default UserPosts;
+export default UserFollowing;
