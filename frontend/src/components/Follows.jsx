@@ -50,24 +50,20 @@ export function Follow() {
     return (
         <>
             <Button variant="outlined" 
-                style={{ backgroundColor: liked ? 'blue' : '',
-                     color: liked ? 'white' : '', }}
+                style={{ backgroundColor: follow ? 'blue' : '',
+                     color: follow ? 'white' : '', }}
                 onClick={handlePatchFollow}>
                 <b>{follow ? 'Unfollow' : 'Follow'}</b>
-                {follow
-                        ? onClick={handleUnfollow}
-                        : onClick={handleFollow}
-                }
             </Button>
             <Button variant="outlined" 
-                style={{ backgroundColor: liked ? 'blue' : '',
-                     color: liked ? 'white' : '', }}
+                style={{ backgroundColor: 'gray',
+                     color: 'black' }}
                 onClick={handleGetFollowingCurrent}>
                 Following
             </Button>
             <Button variant="outlined" 
-                style={{ backgroundColor: liked ? 'blue' : '',
-                     color: liked ? 'white' : '', }}
+                style={{ backgroundColor: 'gray',
+                color: 'black' }}
                 onClick={handleGetFollowersCurrent}>
                 Followers
             </Button>
