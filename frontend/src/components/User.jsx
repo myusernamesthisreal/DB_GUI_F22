@@ -61,13 +61,8 @@ export function User(props) {
     return (
         <>
             <h1>{user?.displayname}'s Profile</h1>
-            <p>Username: {user?.username}</p>
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                <h2>Bio</h2>
-                <p>Insert Info Here (about me, location, etc)</p>
-            </Box>
+            <p>@{user?.username}</p>
 
-            <UserPreview user={user}/>
 
             {/* Only display follow/unfollow button if the user is logged in and is on another user's page */}
             {/* (!isUsersPage | props.user?.username) ?  <Follow/> : null*/}
@@ -85,7 +80,7 @@ export function User(props) {
                 {/* List of all or first 10 followed users --- WIP */}
                 <h2>Following</h2>
                 {
-                    following?.map((fUser, index) => <UserPreview user={fUser} />)
+                    following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
                 }
                 <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/following`} >View All Following Users</Button>
             </Box>
@@ -94,7 +89,7 @@ export function User(props) {
                 {/* List of all or first 10 followed users --- WIP */}
                 <h2>Followers</h2>
                 {
-                    followers?.map((fUser, index) => <UserPreview user={fUser} />)
+                    followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
                 }
                 <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/followers`} >View All Followed Users</Button>
             </Box>

@@ -25,10 +25,7 @@ export function NavBar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(open ? false :event.currentTarget);
   };
 
 
@@ -44,24 +41,24 @@ export function NavBar(props) {
               color="inherit"
               aria-label="menu"
               sx={{ mr: 2 }}
+              onClick={handleClick}
             >
               <MenuIcon
                 id="basic-button"
                 aria-controls={open ? 'basic-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}
+                
               ></MenuIcon>
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
                 open={open}
-                onClose={handleClose}
                 MenuListProps={{
                   'aria-labelledby': 'basic-button',
                 }}
               >
-                {props.user?.username ? <MenuItem onClick={() => window.location.href=`/users/${props.user?.id}`}>My Profile</MenuItem>
+                {props.user?.username ? <MenuItem onClick={() => window.location.href=`/user/${props.user?.id}`}>My Profile</MenuItem>
                                       : <MenuItem onClick={() => window.location.href=`/signin`}>My Profile</MenuItem>}
               </Menu>
 
