@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Api } from "../api";
-import { Post } from "./"
-import Button from '@mui/material/Button'
+import { Post } from "./";
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
-const Homepage = (props) => {
+export const Homepage = (props) => {
 
 
     const api = new Api();
@@ -25,8 +27,16 @@ const Homepage = (props) => {
 
     return (
         <>
-            <h1>Homepage</h1>
-            {<Button variant="contained" sx={{ display: "flex-box" }} onClick={handlePostClick}>Post</Button>}
+            {
+                <>
+                    <Box sx={{ display:"inline", textAlign:"left", margin:"1rem", width:"50%"}}>
+                        <Typography>{props.user?.username}</Typography>
+                    </Box>
+                    <Box sx={{ flexGrow: 1, textAlign: "right", margin: "1rem"}}>
+                        <Button variant="contained" onClick={handlePostClick}>Post</Button>
+                    </Box>
+                </>
+            }
             <p>{props.user?.id}</p>
             <p>{props.user?.username}</p>
             {
@@ -36,4 +46,3 @@ const Homepage = (props) => {
     )
 }
 
-export default Homepage;
