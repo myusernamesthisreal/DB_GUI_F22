@@ -19,7 +19,7 @@ export const Post = (props) => {
 
 
     return <>
-        <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
+        <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
             <ListItem alignItems="flex-start">
                 <ListItemAvatar>
                     <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
@@ -59,3 +59,6 @@ export const Post = (props) => {
     </>
 
 }
+
+//left side of post list of categorie with a check box next to the category name with the number of posts in 
+//when clicked on check mark, call api to refresh and set posts to new post response 

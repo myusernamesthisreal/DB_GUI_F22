@@ -355,4 +355,17 @@ export class Api {
             return e;
         }
     }
+
+    async getAllCatgories() {
+        try{
+            const res = await fetch(`${this.url}/categories`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }
