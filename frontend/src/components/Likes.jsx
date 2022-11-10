@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Button } from '@mui/material'
 import { Api } from '../api'
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export function Like(props) {
     const [liked, likePost] = useState(props.post.liked);
     const api = new Api();
-    
+
     const handleLikes = async () => {
         const req = await api.like(props.post.id);
         if (req.success) {
@@ -32,11 +34,9 @@ export function Like(props) {
     */
 
     return <>
-        <Button variant="outlined" 
-            style={{ backgroundColor: liked ? 'blue' : '',
-                 color: liked ? 'white' : '', }}
-            onClick={handleLikes}>
-            Like
+        <Button
+            onClick={handleLikes} color="primary" >
+            {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </Button>
     </>
 }
