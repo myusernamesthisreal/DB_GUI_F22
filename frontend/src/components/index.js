@@ -2,4 +2,14 @@ export * from './NavBar';
 export * from './Login';
 export * from './Signup';
 export * from './Post';
-export * from './CreatePost'
+export * from './CreatePost';
+export * from './Likes'
+export * from './User'
+export * from './UserPreview'
+export * from './UserPosts'
+export * from './UserFollowing'
+export * from './UserFollowers'
+export * from './UserSaves'
+export * from './Follows';
+export * from './Repost'
+export * from './Homepage';
