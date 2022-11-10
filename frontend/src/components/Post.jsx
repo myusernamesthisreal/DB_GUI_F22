@@ -19,7 +19,7 @@ export const Post = (props) => {
 
 
     return <>
-        <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
+        <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
             <ListItem alignItems="flex-start">
                 <ListItemAvatar>
                     <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />

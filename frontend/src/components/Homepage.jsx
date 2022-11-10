@@ -7,6 +7,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography'
+import { useWindowWidth } from "@react-hook/window-size"
 
 export const Homepage = (props) => {
 
@@ -14,6 +15,7 @@ export const Homepage = (props) => {
     const api = new Api();
     const [posts, setPosts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const screenWidth = useWindowWidth();
 
     const handleLoad = async () => {
         const data = await api.getPosts();
@@ -28,27 +30,33 @@ export const Homepage = (props) => {
         handleLoad();
     }, []);
 
-    
-
-
     const handlePostClick = async () => {
         props.user?.username ? window.location.href = "/make-post" : window.location.href = "/Signup";
     }
 
     return (
-        <Box sx={{display:"flex"}}>
-            <FormGroup>
-                {categories.map((category, index) => <FormControlLabel control={<Checkbox/>} label={`${category.name}`}/>)}
-            </FormGroup>
-            <Box sx={{ flexGrow: 1, textAlign: "right", margin: "1rem" }}>
-                <Button variant="contained" onClick={handlePostClick}>Post</Button>
+        <>
+
+            <Box sx={{ display: "flex", marginTop: "1rem" }}>
+
+                {screenWidth > 420 ? <Box sx={{ marginLeft: "2rem" }}>
+                    <Button variant="contained" sx={{ width: "100%", marginBottom: "1rem" }} onClick={handlePostClick}>Post</Button>
+                    <Typography sx={{ color: "black", fontSize: 24, fontWeight: "bold", textAlign: "left" }}>
+                        Filter:
+                    </Typography>
+
+                    <FormGroup>
+                        {categories.map((category, index) => <FormControlLabel control={<Checkbox />} label={`${category.name} (${category.num_posts})`} />)}
+                    </FormGroup>
+                </Box> : null}
+
+                <Box sx={{ display: "block", width: "100%" }}>
+                    {
+                        posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                    }
+                </Box>
             </Box>
-            <Box sx={{display: "block", maxWidth:"60%"}}>
-            {
-                posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
-            }
-            </Box>
-        </Box>
+        </>
     )
 }
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Api } from '../api'
-import CloseIcon from '@mui/icons-material/Close';
 import { Alert, Button, TextField, Stack, Box, Snackbar, IconButton, Typography } from '@mui/material'
 
 export const Signup = () => {
