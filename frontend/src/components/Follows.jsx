@@ -42,7 +42,7 @@ export function Follow(props) {
     }*/
 
     const handlePatchFollow = async () => {
-        const req = await api.patchFollow(props.id);
+        const req = await api.patchFollow(props.user.id);
         if (req.success) {
             setFollow(!follow);
         }
