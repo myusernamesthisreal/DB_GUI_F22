@@ -60,7 +60,9 @@ export const Post = (props) => {
             <Button variant="outlined" size="small">Comment</Button>
             {props.user?.id !== props.post.author ? null :
                 <Popup post={props.post} trigger={<Button>...</Button>} position="right center">
-                    <Button>Edit post</Button>
+                    <Link>
+                        <Button>Edit post</Button>
+                    </Link>
                     <Button>Delete post</Button>
                 </Popup>
             }
