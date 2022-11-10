@@ -407,4 +407,20 @@ export class Api {
             return e;
         }
     }
+
+
+    //edit post calls
+    // edit post
+    async patchPost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }
