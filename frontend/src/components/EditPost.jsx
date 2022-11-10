@@ -22,6 +22,11 @@ export function EditPost(props) {
         if (req.success) window.location.href = "/";
     }
 
+    const handleDeletePost = async () => {
+        const req = await api.deletePost(props.post.id);
+        if (req.success) window.location.href = "/";
+    }
+
     const handleCancelEdit = async () => {
         if (window.confirm("Do you want to cancel this edit?")) {
             window.location.href = "/";
@@ -37,6 +42,9 @@ export function EditPost(props) {
                     </IconButton>
                     <Box sx={{ flexGrow: 1 }} />
                     <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleEditPost}>
+                        <ListItemText primary="Post" />
+                    </Button>
+                    <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleDeletePost}>
                         <ListItemText primary="Post" />
                     </Button>
                 </Box>
