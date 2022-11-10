@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { NavBar, Login, Signup, Post, CreatePost, HomePage, UserPosts, UserFollowing, UserFollowers, UserSaves } from './components';
+import { NavBar, Login, Signup, CreatePost, Homepage, UserPosts, UserFollowing, UserFollowers, UserSaves } from './components';
 import { User } from './components/User';
 import { Api } from './api';
 
