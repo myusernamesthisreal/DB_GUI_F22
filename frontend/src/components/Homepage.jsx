@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
-export const Homepage = (props) => {
+export function Homepage(props) {
 
 
     const api = new Api();
