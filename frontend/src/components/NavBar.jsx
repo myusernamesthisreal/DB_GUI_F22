@@ -36,7 +36,7 @@ export function NavBar(props) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              News
+              Cimate App
             </Typography>
             {props.user?.username ? <Button color="inherit" onClick={handleLogOut} >Log Out</Button> : <Button color="inherit" onClick={() => window.location.href="/signin"} >Sign In</Button>}
           </Toolbar>
