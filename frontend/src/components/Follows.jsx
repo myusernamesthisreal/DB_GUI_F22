@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, Stack, Box } from '@mui/material'
 import { Api } from '../api'
 
-export function Follow() {
+export function Follow(props) {
     const [follow, setFollow] = useState(false);
     const api = new Api();
 

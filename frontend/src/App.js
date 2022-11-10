@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { NavBar, Login, Signup, CreatePost, Homepage } from './components';
+import { NavBar, Login, Signup, CreatePost, Homepage, UserPosts, UserFollowing, UserFollowers, UserSaves } from './components';
 import { User } from './components/User';
 import { Api } from './api';
 
@@ -28,7 +28,11 @@ function App () {
                 <Route path="/signup" element={<Signup />} />
                 <Route exact path="/" element={<Homepage user={user} />} />
                 <Route path="/make-post" element={<CreatePost user={user}/>} />
-                <Route path="/user/:id" element={<User />} />
+                <Route path="/users/:id" element={<User user={user}/>} />
+                <Route path="/users/:id/posts" element={<UserPosts user={user}/>} />
+                <Route path="/users/:id/following" element={<UserFollowing user={user}/>} />
+                <Route path="/users/:id/followers" element={<UserFollowers user={user}/>} />
+                <Route path="/users/:id/saves" element={<UserSaves user={user}/>} />
             </Routes>
         </Router>
     </div>
