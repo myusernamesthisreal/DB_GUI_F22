@@ -8,6 +8,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { Like } from './Likes';
 import { Repost } from './Repost';
+import { EditPost } from './EditPost';
 import { Link } from "react-router-dom"
 
 export const Post = (props) => {
@@ -57,18 +58,12 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
-            <Popup trigger={<Button>...</Button>} position="right center">
-                <list>
-                    <ul>
-                        <li>
-                            <Button>Edit post</Button>
-                        </li>
-                        <li>
-                            <Button>Delete post</Button>
-                        </li>
-                    </ul>
-                </list>
-            </Popup>
+            {props.user?.id !== props.post.author ? null :
+                <Popup post={props.post} trigger={<Button>...</Button>} position="right center">
+                    <Button>Edit post</Button>
+                    <Button>Delete post</Button>
+                </Popup>
+            }
         </Box>
     </>
 
