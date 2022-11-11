@@ -61,9 +61,8 @@ export const Post = (props) => {
             {props.user?.id !== props.post.author ? null :
                 <Popup post={props.post} trigger={<Button>...</Button>} position="right center">
                     <Link>
-                        <Button>Edit post</Button>
+                        <Button>Edit or delete post</Button>
                     </Link>
-                    <Button>Delete post</Button>
                 </Popup>
             }
         </Box>
