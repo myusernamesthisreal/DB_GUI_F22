@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
-import { Typography, Button, Stack, Box, TextField, Drawer, Toolbar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material'
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import { Typography, Button, Stack, Box, Tabs, Tab } from '@mui/material'
 import { Api } from '../api'
 import { Post, UserPreview, Follow } from "./"
 
@@ -35,13 +33,13 @@ export function User(props) {
         console.log(usersFollowers);
         if (res.success) setUser(res.user);
         else setError(true);
-        if (usersPosts.success) setPosts(usersPosts.posts.slice(0,3));
+        if (usersPosts.success) setPosts(usersPosts.posts.slice(0, 3));
         else setError(true);
-        if (usersSaves.success) setSaves(usersSaves.posts.slice(0,3));
+        if (usersSaves.success) setSaves(usersSaves.posts.slice(0, 3));
         else setError(true);
-        if (usersFollowing.success) setFollowing(usersFollowing.following.slice(0,3));
+        if (usersFollowing.success) setFollowing(usersFollowing.following.slice(0, 3));
         else setError(true);
-        if (usersFollowers.success) setFollowers(usersFollowers.followers.slice(0,3));
+        if (usersFollowers.success) setFollowers(usersFollowers.followers.slice(0, 3));
         else setError(true);
         setLoaded(true);
     }
@@ -49,6 +47,12 @@ export function User(props) {
     useEffect(() => {
         handleLoad();
     }, [])
+
+    const [tabIndex, setTabIndex] = useState(0);
+
+    const handleTabChange = (event, newTabIndex) => {
+        setTabIndex(newTabIndex);
+    };
 
     if (error) return (
         <>
@@ -59,100 +63,81 @@ export function User(props) {
     const drawerWidth = 240;
 
     if (loaded)
-    return (
-        <>
-            <h1>{user?.displayname}'s Profile</h1>
-            <p>@{user?.username}</p>
-            
-            {/* <Drawer
-                variant="permanent"
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-                }}
-            >
-                <Toolbar />
-                <Box sx={{ overflow: 'auto' }}>
-                    <List>
-                        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                            <ListItem key={text} disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                    <Divider />
-                    <List>
-                        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                            <ListItem key={text} disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
+        return (
+            <>
+                <h1>{user?.displayname}'s Profile</h1>
+                <p>@{user?.username}</p>
+
+                <Box>
+                    <Box>
+                        <Tabs
+                            value={tabIndex}
+                            onChange={handleTabChange}
+                            centered
+                            orientation="horizontal"
+                        >
+                            <Tab label="Posts" />
+                            <Tab label="Following" />
+                            <Tab label="Followers" />
+                            {isUsersPage ? <Tab label="Saved Posts" /> : null}
+                        </Tabs>
+                        <Box sx={{ marginX: "4rem" }}>
+                            {tabIndex === 0 ?
+                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                                    <h2>Posts</h2>
+                                    {
+                                        posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                    }
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/posts`} >View All Posts</Button>
+                                </Box> : null
+                            }
+                            {tabIndex === 1 && (
+                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                                    <h2>Following</h2>
+                                    {
+                                        following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                    }
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/following`} >View All Following Users</Button>
+                                </Box>
+                            )}
+                            {tabIndex === 2 && (
+                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                                    {/* List of all or first 10 followed users --- WIP */}
+                                    <h2>Followers</h2>
+                                    {
+                                        followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                    }
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/followers`} >View All Followed Users</Button>
+                                </Box>
+                            )}
+                            {tabIndex === 3 && (
+                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                                    {/* List of all or first 10 posts --- WIP */}
+                                    <h2>Saved Posts</h2>
+                                    {
+                                        saves.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                    }
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >View All Saved Posts</Button>
+                                </Box>
+                            )}
+                        </Box>
+                    </Box>
                 </Box>
-            </Drawer> */}
 
-            {/* Only display follow/unfollow button if the user is logged in and is on another user's page */}
-            {/* (!isUsersPage | props.user?.username) ?  <Follow/> : null*/}
 
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                {/* List of all or first 10 posts --- WIP */}
-                <h2>Posts</h2>
-                {
-                    posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
-                }
-                <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/posts`} >View All Posts</Button>
-            </Box>
 
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                {/* List of all or first 10 followed users --- WIP */}
-                <h2>Following</h2>
-                {
-                    following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
-                }
-                <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/following`} >View All Following Users</Button>
-            </Box>
+                {/* Only display follow/unfollow button if the user is logged in and is on another user's page */}
+                {/* (!isUsersPage | props.user?.username) ?  <Follow/> : null*/}
 
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                {/* List of all or first 10 followed users --- WIP */}
-                <h2>Followers</h2>
-                {
-                    followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
-                }
-                <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/followers`} >View All Followed Users</Button>
-            </Box>
+                {/* Only display this button if the user token/cookies match the user id of the page */}
+                {isUsersPage ? <Button variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >Edit Account</Button> : null}
 
-            {isUsersPage ? 
-                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                    {/* List of all or first 10 posts --- WIP */}
-                    <h2>Saved Posts</h2>
-                    {
-                        saves.map((post, index) => <Post key={index} post={post} user={props.user} />)
-                    }
-                    <Button style={{marginTop:"1rem"}} variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >View All Saved Posts</Button>
-                </Box>
-                : null}
-            
-
-            {/* Only display this button if the user token/cookies match the user id of the page */}
-            {isUsersPage ? <Button variant="contained" color="primary" onClick={() => window.location.href=`/users/${user?.id}/saves`} >Edit Account</Button> : null}
-
-        </>
-    );
+            </>
+        );
 
     return (
         <>
-            <br/>
+            <br />
             Loading...
         </>
     )
