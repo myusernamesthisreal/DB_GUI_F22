@@ -84,7 +84,7 @@ export class Api {
     }
 
     async getPostById(id) {
-        try{
+        try {
             const res = await fetch(`${this.url}/posts/${id}`, {
                 method: "GET",
                 credentials: "include",
@@ -124,20 +124,15 @@ export class Api {
 
     async makePost(body, categories) {
         const data = { body, categories };
-        try {
-            const res = await fetch(`${this.url}/posts`, {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
+        const res = await fetch(`${this.url}/posts`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
     }
 
     async getAllCatgories() {

@@ -45,7 +45,8 @@ export const Signup = () => {
                     <Snackbar
                         open={open}
                         autoHideDuration={6000}
-                        onClose={handleClose}>
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: "top", horizontal: "left" }}>
                             <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords must match!</Alert>
                     </Snackbar>
 
