@@ -34,7 +34,7 @@ export function NavBar(props) {
     <>
 
       <Box sx={{ flexGrow: 1, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <AppBar position="relative">
+        <AppBar position="static">
           <Toolbar>
             <IconButton
               size="large"
