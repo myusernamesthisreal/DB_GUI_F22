@@ -5,6 +5,8 @@ import { Api } from '../api'
 
 export const PostPage = (props) => {
     const [post, setPost] = useState(null);
+    const [comments, setComments] = useState([]);
+
     const api = new Api();
     const { id: postId } = useParams();
 
@@ -13,7 +15,13 @@ export const PostPage = (props) => {
         if (res.success) {
             setPost(res.post);
         } 
+
+        const getComments = await api.getPostComments(postId);
+        if (getComments.success) {
+            setComments(getComments.comments);
+        }
     }
+
 
     useEffect(() => {
         handleLoad();
@@ -23,6 +31,7 @@ export const PostPage = (props) => {
     if (post != null) {
         return <>
         <Post post={post} user={props.user} />
+        {comments.map((comment, index) => <div>{comment.body}</div>)};
     </>
     }
     return <>
