@@ -24,7 +24,7 @@ export const Post = (props) => {
                 <ListItemAvatar>
                     <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
                 </ListItemAvatar>
-                <Link style={{textDecoration:"none", color: "inherit"}} to={`/user/${props.post.author}`}>
+                <Link style={{textDecoration:"none", color: "inherit"}} to={`/users/${props.post.author}`}>
                     <ListItemText
                         primary={
                             <React.Fragment>
@@ -59,6 +59,3 @@ export const Post = (props) => {
     </>
 
 }
-
-//left side of post list of categorie with a check box next to the category name with the number of posts in 
-//when clicked on check mark, call api to refresh and set posts to new post response 

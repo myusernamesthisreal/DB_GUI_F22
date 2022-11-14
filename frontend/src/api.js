@@ -356,9 +356,48 @@ export class Api {
         }
     }
 
-    async getAllCatgories() {
-        try{
-            const res = await fetch(`${this.url}/categories`, {
+    async getUserPost(id) { //get posts for user id
+        try {
+            const res = await fetch(`${this.url}/users/${id}/posts`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    async getUserSaves(id) { //get saved posts for user id
+        try {
+            const res = await fetch(`${this.url}/users/${id}/saves`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    async getUserFollowers(id) { //get followers for user id
+        try {
+            const res = await fetch(`${this.url}/users/${id}/followers`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    async getUserFollowing(id) { //get following for user id
+        try {
+            const res = await fetch(`${this.url}/users/${id}/following`, {
                 method: "GET",
                 credentials: "include"
             });
