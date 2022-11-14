@@ -9,20 +9,43 @@ export function Homepage(props) {
 
     const api = new Api();
     const [posts, setPosts] = useState([]);
+    const [allPosts, setAllPosts] = useState([]);
     const [categories, setCategories] = useState([]);
     const screenWidth = useWindowWidth();
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
+    const [checked, setChecked] = useState({});
+    const [updatingFilter, setUpdatingFilter] = useState(false);
 
     const handleLoad = async () => {
         const data = await api.getPosts();
         console.log(data);
         const cats = await api.getAllCatgories();
-        if (data.success) setPosts(data.posts);
+        if (data.success) {
+            setPosts(data.posts);
+            setAllPosts(data.posts);
+        }
         else setError(true);
         if (cats.success) setCategories(cats.categories);
         else setError(true);
         setLoaded(true);
+    }
+
+    const handleCheckboxChange = async (c) => {
+        const newChecked = checked;
+        newChecked[c.name] = !checked[c.name];
+        setChecked(newChecked);
+        setUpdatingFilter(true);
+
+        const catsToCheck = Object.keys(newChecked).filter(k => newChecked[k] === true);
+        if (catsToCheck.length > 0) {
+            const res = await api.getAllPostsByCategories(catsToCheck);
+            if (res.success)
+                setPosts(res.posts);
+            else setError(true);
+        }
+        else setPosts(allPosts);
+        setUpdatingFilter(false);
     }
 
     useEffect(() => {
@@ -48,14 +71,14 @@ export function Homepage(props) {
                             Filter:
                         </Typography>
                         <FormGroup>
-                            {categories.map((category, index) => <FormControlLabel control={<Checkbox />} label={`${category.name} (${category.num_posts})`} />)}
+                            {categories.map((category, index) => <FormControlLabel control={<Checkbox disabled={updatingFilter} onChange={() => handleCheckboxChange(category)} checked={checked[category.name]} />} label={`${category.name} (${category.num_posts})`} />)}
                         </FormGroup>
                     </Box> : null}
                     <Box sx={{ display: "block", width: "100%" }}>
-                            {
-                                posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
-                            }
-                        </Box>
+                        {
+                            posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                        }
+                    </Box>
                 </Box>
             </>
         )
