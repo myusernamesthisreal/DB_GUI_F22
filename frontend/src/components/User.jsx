@@ -64,7 +64,7 @@ export function User(props) {
             <h1>{user?.displayname}'s Profile</h1>
             <p>@{user?.username}</p>
             
-            <Drawer
+            {/* <Drawer
                 variant="permanent"
                 sx={{
                     width: drawerWidth,
@@ -100,7 +100,7 @@ export function User(props) {
                         ))}
                     </List>
                 </Box>
-            </Drawer>
+            </Drawer> */}
 
             {/* Only display follow/unfollow button if the user is logged in and is on another user's page */}
             {/* (!isUsersPage | props.user?.username) ?  <Follow/> : null*/}
