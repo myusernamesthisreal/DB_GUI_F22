@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Api } from "../api";
 import { Post } from "./";
-import { Button, Box, FormGroup, FormControlLabel, Typography } from "@mui/material";
+import { Button, Box, FormGroup, FormControlLabel, Typography, Checkbox } from "@mui/material";
 import { useWindowWidth } from "@react-hook/window-size"
 
 export function Homepage(props) {
@@ -17,7 +17,10 @@ export function Homepage(props) {
     const handleLoad = async () => {
         const data = await api.getPosts();
         console.log(data);
+        const cats = await api.getAllCatgories();
         if (data.success) setPosts(data.posts);
+        else setError(true);
+        if (cats.success) setCategories(cats.categories);
         else setError(true);
         setLoaded(true);
     }
@@ -47,12 +50,12 @@ export function Homepage(props) {
                         <FormGroup>
                             {categories.map((category, index) => <FormControlLabel control={<Checkbox />} label={`${category.name} (${category.num_posts})`} />)}
                         </FormGroup>
-                    </Box> :
-                        <Box sx={{ display: "block", width: "100%" }}>
+                    </Box> : null}
+                    <Box sx={{ display: "block", width: "100%" }}>
                             {
                                 posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
                             }
-                        </Box>}
+                        </Box>
                 </Box>
             </>
         )
