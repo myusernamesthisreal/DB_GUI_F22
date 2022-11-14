@@ -26,18 +26,18 @@ export class Api {
     }
 
     async login(username, password) {
-        const body = { username, password };
+        const body = {username, password };
         try {
             const res = await fetch(`${this.url}/login`,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                }
 
-                })
+            })
             return await res.json();
         } catch (e) {
             console.error(e);
@@ -82,7 +82,7 @@ export class Api {
             return e;
         }
     }
-
+        
     async getUser(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}`, {
@@ -105,23 +105,10 @@ export class Api {
                 body: JSON.stringify(data),
                 headers: {
                     "Content-Type": "application/json",
-                }
-            });
+                }});
             return await res.json();
         } catch (e) {
             console.error(e)
-            return e;
-        }
-    }
-
-    async getAllCatgories() {
-        try {
-            const res = await fetch(`${this.url}/categories`, {
-                credentials: "include"
-            });
-            return res.json();
-        } catch (e) {
-            console.error(e);
             return e;
         }
     }
@@ -283,7 +270,7 @@ export class Api {
         }
     }
 
-
+    
     //Repost calls
     //get reposts
     async getReposts(id) {
@@ -411,21 +398,6 @@ export class Api {
     async getUserFollowing(id) { //get following for user id
         try {
             const res = await fetch(`${this.url}/users/${id}/following`, {
-                method: "GET",
-                credentials: "include"
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
-    }
-
-
-    async getAllPostsByCategories(data) {
-        const query = data.join(',');
-        try {
-            const res = await fetch(`${this.url}/posts?categories=${query}`, {
                 method: "GET",
                 credentials: "include"
             });
