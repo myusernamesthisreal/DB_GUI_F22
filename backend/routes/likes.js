@@ -203,10 +203,18 @@ module.exports = function routes(app, logger) {
         if (queryResult.length === 0)
           throw new Error("User not found");
         const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [id]);
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
+        let withCategories = likes;
+
+        withCategories = withCategories.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
+        })
         res.status(200).send({
           message: "Likes fetched",
           success: true,
-          likes,
+          likes: withCategories,
         })
       } catch (e) {
         logger.error("Error in GET /users/:id/likes: ", e);
@@ -235,10 +243,18 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [user.id]);
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
+        let withCategories = likes;
+
+        withCategories = withCategories.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
+        })
         res.status(200).send({
           message: "Likes fetched",
           success: true,
-          likes,
+          likes: withCategories,
         })
       } catch (e) {
         logger.error("Error in GET /users/likes: ", e);
