@@ -9,6 +9,7 @@ import Menu from '@mui/material/Menu'
 import MenuIcon from '@mui/icons-material/Menu'
 import MenuList from '@mui/icons-material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import { Stack, TextField, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material'
 import { Api } from '../api';
 
 
@@ -32,7 +33,7 @@ export function NavBar(props) {
   return (
     <>
 
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <AppBar position="static">
           <Toolbar>
             <IconButton
