@@ -12,6 +12,7 @@ export function User(props) {
     const [saves, setSaves] = useState(null);
     const [following, setFollowing] = useState(null);
     const [followers, setFollowers] = useState(null);
+    const [likes, setLikes] = useState(null);
     const { id: userId } = useParams();
     const api = new Api();
 
@@ -26,11 +27,13 @@ export function User(props) {
         const usersSaves = await api.getUserSaves(userId);
         const usersFollowing = await api.getUserFollowing(userId);
         const usersFollowers = await api.getUserFollowers(userId);
+        const usersLikes = await api.getLikedPosts(userId);
         console.log(res);
         console.log(usersPosts);
         console.log(usersSaves);
         console.log(usersFollowing);
         console.log(usersFollowers);
+        console.log(usersLikes);
         if (res.success) setUser(res.user);
         else setError(true);
         if (usersPosts.success) setPosts(usersPosts.posts.slice(0, 3));
@@ -40,6 +43,8 @@ export function User(props) {
         if (usersFollowing.success) setFollowing(usersFollowing.following.slice(0, 3));
         else setError(true);
         if (usersFollowers.success) setFollowers(usersFollowers.followers.slice(0, 3));
+        else setError(true);
+        if (usersLikes.success) setLikes(usersLikes.likes.slice(0, 3));
         else setError(true);
         setLoaded(true);
     }
@@ -60,13 +65,14 @@ export function User(props) {
         </>
     )
 
-    const drawerWidth = 240;
-
     if (loaded)
         return (
             <>
                 <h1>{user?.displayname}'s Profile</h1>
                 <p>@{user?.username}</p>
+
+                {/* Only display this button if the user token/cookies match the user id of the page */}
+                {isUsersPage ? <Button sx={{margin: "1rem 0rem"}} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >Edit Account</Button> : null}
 
                 <Box>
                     <Box>
@@ -80,6 +86,7 @@ export function User(props) {
                             <Tab label="Following" />
                             <Tab label="Followers" />
                             {isUsersPage ? <Tab label="Saved Posts" /> : null}
+                            {isUsersPage ? <Tab label="Likes" /> : null}
                         </Tabs>
                         <Box sx={{ marginX: "4rem" }}>
                             {tabIndex === 0 ?
@@ -102,7 +109,6 @@ export function User(props) {
                             )}
                             {tabIndex === 2 && (
                                 <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    {/* List of all or first 10 followed users --- WIP */}
                                     <h2>Followers</h2>
                                     {
                                         followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
@@ -115,23 +121,24 @@ export function User(props) {
                                     {/* List of all or first 10 posts --- WIP */}
                                     <h2>Saved Posts</h2>
                                     {
-                                        saves.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                        posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
                                     }
                                     <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >View All Saved Posts</Button>
+                                </Box>
+                            )}
+                            {tabIndex === 4 && (
+                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                                    {/* List of all or first 10 posts --- WIP */}
+                                    <h2>Likes</h2>
+                                    {
+                                        likes.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                    }
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >View All Likes</Button>
                                 </Box>
                             )}
                         </Box>
                     </Box>
                 </Box>
-
-
-
-                {/* Only display follow/unfollow button if the user is logged in and is on another user's page */}
-                {/* (!isUsersPage | props.user?.username) ?  <Follow/> : null*/}
-
-                {/* Only display this button if the user token/cookies match the user id of the page */}
-                {isUsersPage ? <Button variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >Edit Account</Button> : null}
-
             </>
         );
 

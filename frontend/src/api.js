@@ -142,7 +142,7 @@ export class Api {
         }
     }
 
-    //get posts liked by a user
+    //get posts liked by a user of given id
     async getLikedPosts(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/likes`, {
@@ -356,7 +356,8 @@ export class Api {
         }
     }
 
-    async getUserPost(id) { //get posts for user id
+    //get posts for user of given id
+    async getUserPost(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/posts`, {
                 method: "GET",
@@ -369,7 +370,8 @@ export class Api {
         }
     }
 
-    async getUserSaves(id) { //get saved posts for user id
+    //get saved posts for user of given id
+    async getUserSaves(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/saves`, {
                 method: "GET",
@@ -382,7 +384,8 @@ export class Api {
         }
     }
 
-    async getUserFollowers(id) { //get followers for user id
+    //get followers for user of given id
+    async getUserFollowers(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/followers`, {
                 method: "GET",
@@ -395,7 +398,8 @@ export class Api {
         }
     }
 
-    async getUserFollowing(id) { //get following for user id
+    //get following for user of given id
+    async getUserFollowing(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/following`, {
                 method: "GET",
@@ -407,4 +411,5 @@ export class Api {
             return e;
         }
     }
+
 }
