@@ -72,26 +72,29 @@ export function User(props) {
                 <p>@{user?.username}</p>
 
                 {/* Only display this button if the user token/cookies match the user id of the page */}
-                {isUsersPage ? <Button sx={{margin: "1rem 0rem"}} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >Edit Account</Button> : null}
+                {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`}>Edit Profile</Button> : null}
 
                 <Box>
                     <Box>
-                        <Tabs
-                            value={tabIndex}
-                            onChange={handleTabChange}
-                            centered
-                            orientation="horizontal"
-                        >
-                            <Tab label="Posts" />
-                            <Tab label="Following" />
-                            <Tab label="Followers" />
-                            {isUsersPage ? <Tab label="Saved Posts" /> : null}
-                            {isUsersPage ? <Tab label="Likes" /> : null}
-                        </Tabs>
+                        <Box display="flex" justifyContent="center" width="100%">
+                            <Tabs
+                                value={tabIndex}
+                                onChange={handleTabChange}
+                                variant="scrollable"
+                                centered
+                                orientation="horizontal"
+                            >
+                                <Tab label="Posts" />
+                                <Tab label="Following" />
+                                <Tab label="Followers" />
+                                {isUsersPage ? <Tab label="Saved Posts" /> : null}
+                                {isUsersPage ? <Tab label="Likes" /> : null}
+                            </Tabs>
+                        </Box>
                         <Box sx={{ marginX: "4rem" }}>
                             {tabIndex === 0 ?
-                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    <h2>Posts</h2>
+                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                    <h1>Posts</h1>
                                     {
                                         posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
                                     }
@@ -99,8 +102,8 @@ export function User(props) {
                                 </Box> : null
                             }
                             {tabIndex === 1 && (
-                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    <h2>Following</h2>
+                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                    <h1>Following</h1>
                                     {
                                         following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
                                     }
@@ -108,8 +111,8 @@ export function User(props) {
                                 </Box>
                             )}
                             {tabIndex === 2 && (
-                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    <h2>Followers</h2>
+                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                    <h1>Followers</h1>
                                     {
                                         followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
                                     }
@@ -117,9 +120,8 @@ export function User(props) {
                                 </Box>
                             )}
                             {tabIndex === 3 && (
-                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    {/* List of all or first 10 posts --- WIP */}
-                                    <h2>Saved Posts</h2>
+                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                    <h1>Saved Posts</h1>
                                     {
                                         posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
                                     }
@@ -127,13 +129,13 @@ export function User(props) {
                                 </Box>
                             )}
                             {tabIndex === 4 && (
-                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
+                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
                                     {/* List of all or first 10 posts --- WIP */}
-                                    <h2>Likes</h2>
+                                    <h1>Likes</h1>
                                     {
                                         likes.map((post, index) => <Post key={index} post={post} user={props.user} />)
                                     }
-                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >View All Likes</Button>
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/likes`} >View All Likes</Button>
                                 </Box>
                             )}
                         </Box>

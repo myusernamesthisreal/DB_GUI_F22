@@ -439,4 +439,18 @@ export class Api {
             return e;
         }
     }
+
+    //update displayname of current user
+    async updateDisplayName() {
+        try {
+            const res = await fetch(`${this.url}/displayname`, {
+                method: "PUT",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 }
