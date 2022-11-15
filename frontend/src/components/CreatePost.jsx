@@ -3,7 +3,7 @@ import { Api } from '../api';
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import { IconButton, ListItem, ListItemAvatar, ListItemText, Button, Snackbar, Alert } from '@mui/material';
+import { IconButton, ListItem, ListItemAvatar, ListItemText, Button, Snackbar, Alert, Chip } from '@mui/material';
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import ListItemButton from '@mui/material/Button';
@@ -14,13 +14,14 @@ import Cancel from '@mui/icons-material/Cancel';
 export function CreatePost(props) {
     const api = new Api();
     const [text, setText] = useState("");
-    const [categories, setCategories] = useState("");
+    const [currentCategory, setCurrentCategory] = useState("");
+    const [userCategories, setUserCategories] = useState([]);
     const [errorMsg, setErrorMsg] = useState("");
     const [open, setOpen] = useState(false);
 
 
     const handleNewPost = async () => {
-        const req = await api.makePost(text, categories);
+        const req = await api.makePost(text, userCategories);
         if (req.status === 201) window.location.href = "/";
         else {
             const body = await req.json();
@@ -42,6 +43,23 @@ export function CreatePost(props) {
 
         setOpen(false);
     };
+
+    const handleEvent = (event) => {
+        if (event.key === ",") {
+            event.preventDefault();
+            const cats = [...userCategories];
+            cats.push(event.target.value);
+            setUserCategories(cats);
+            setCurrentCategory("");
+            console.log("userCategories", cats);
+        }
+    }
+
+    const handleDelete = (index) => {
+        const newCats = [...userCategories];
+        newCats.splice(index, 1);
+        setUserCategories(newCats);
+    }
 
     return (
         <>
@@ -70,7 +88,12 @@ export function CreatePost(props) {
                         <Stack>
                             <Typography>{`@${props.user?.username}`}</Typography>
                             <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" onChange={(e) => setText(e.target.value)} />
-                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" onChange={(e) => setCategories(e.target.value.split(','))} />
+                            <Box sx={{display: "flex"}}>
+                                {userCategories.map((value, index) => {
+                                    return <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${value}`} onDelete={() => handleDelete(index)} />
+                                })}
+                            </Box>
+                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" onKeyDown={(e) => handleEvent(e)} value={currentCategory} onChange={(e) => setCurrentCategory(e.target.value)} />
                         </Stack>
                     </ListItemText>
 
