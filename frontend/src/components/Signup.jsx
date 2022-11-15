@@ -35,7 +35,7 @@ export const Signup = () => {
         <>
             <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "5rem" }}>
                 <Stack direction="column" alignItems="stretch" justifyContent="flex-start" spacing={1.5}>
-                    <Typography sx={{ color: "black", fontSize: 32, fontWeight: "bold" }}>
+                    <Typography>
                         Sign Up
                     </Typography>
                     <TextField required id="username-box" label="Username" type="standard" value={username} onChange={(e) => setUsername(e.target.value)} />
@@ -45,7 +45,8 @@ export const Signup = () => {
                     <Snackbar
                         open={open}
                         autoHideDuration={6000}
-                        onClose={handleClose}>
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: "top", horizontal: "left" }}>
                             <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords must match!</Alert>
                     </Snackbar>
 

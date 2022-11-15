@@ -83,6 +83,32 @@ export class Api {
         }
     }
 
+    async getPostById(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}`, {
+                method: "GET",
+                credentials: "include",
+            })
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+            return e;
+        }
+    }
+
+    async getPostComments(postId) {
+        try {
+            const res = await fetch(`${this.url}/posts/${postId}/comments`, {
+                method: "GET",
+                credentials: "include",
+            })
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+            return e;
+        }
+    }
+
     async getUser(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}`, {
@@ -98,20 +124,15 @@ export class Api {
 
     async makePost(body, categories) {
         const data = { body, categories };
-        try {
-            const res = await fetch(`${this.url}/posts`, {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
+        const res = await fetch(`${this.url}/posts`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
     }
 
     async getAllCatgories() {
