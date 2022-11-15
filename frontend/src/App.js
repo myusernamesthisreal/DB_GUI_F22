@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { NavBar, Login, Signup, CreatePost, Homepage, UserPosts, UserFollowing, UserFollowers, UserSaves, UserLikes } from './components';
+import { NavBar, Login, Signup, CreatePost, Homepage, UserPosts, UserFollowing, UserFollowers, UserSaves, UserLikes, EditAccount } from './components';
 import { User } from './components/User';
 import { Api } from './api';
 
@@ -34,6 +34,7 @@ function App () {
                 <Route path="/users/:id/followers" element={<UserFollowers user={user}/>} />
                 <Route path="/users/:id/saves" element={<UserSaves user={user}/>} />
                 <Route path="/users/:id/likes" element={<UserLikes user={user}/>} />
+                <Route path="/users/:id/editAccount" element={<EditAccount user={user}/>} />
             </Routes>
         </Router>
     </div>

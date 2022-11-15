@@ -19,7 +19,7 @@ export const UserPreview = (props) => {
                 <ListItemText
                     primary={
                         <React.Fragment>
-                            <Link style={{textDecoration: "none", color: "inherit"}} to={`/users/${props.user?.id}`}>
+                            <Link style={{textDecoration: "none", color: "inherit"}} onClick={() => window.location.href = `/users/${props.user?.id}`}>
                                 <Typography sx={{ display: 'inline', '&:hover': {textDecoration: "underline"} }}>
                                     <Box sx={{ overflow: "hidden" }}>{props.user?.displayname}</Box>
                                 </Typography> 

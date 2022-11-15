@@ -72,7 +72,7 @@ export function User(props) {
                 <p>@{user?.username}</p>
 
                 {/* Only display this button if the user token/cookies match the user id of the page */}
-                {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`}>Edit Profile</Button> : null}
+                {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/editAccount`}>Edit Profile</Button> : null}
 
                 <Box>
                     <Box>
@@ -93,47 +93,56 @@ export function User(props) {
                         </Box>
                         <Box sx={{ marginX: "4rem" }}>
                             {tabIndex === 0 ?
-                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
                                     <h1>Posts</h1>
                                     {
-                                        posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                        posts.length !== 0 ?
+                                            posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                            : <div>{user?.displayname} has no posts.</div>
                                     }
                                     <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/posts`} >View All Posts</Button>
                                 </Box> : null
                             }
                             {tabIndex === 1 && (
-                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
                                     <h1>Following</h1>
                                     {
-                                        following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                        following.length !== 0 ?
+                                            following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                            : <div>{user?.displayname} is not following anyone.</div>
                                     }
-                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/following`} >View All Following Users</Button>
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/following`} >View All Following</Button>
                                 </Box>
                             )}
                             {tabIndex === 2 && (
-                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
                                     <h1>Followers</h1>
                                     {
-                                        followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                        followers.length !== 0 ?
+                                            followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                            : <div>{user?.displayname} has no followers.</div>
                                     }
-                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/followers`} >View All Followed Users</Button>
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/followers`} >View All Followers</Button>
                                 </Box>
                             )}
                             {tabIndex === 3 && (
-                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
                                     <h1>Saved Posts</h1>
                                     {
-                                        posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                        saves.length !== 0 ?
+                                            saves.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                            : <div>You have not saved any posts.</div>
                                     }
                                     <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >View All Saved Posts</Button>
                                 </Box>
                             )}
                             {tabIndex === 4 && (
-                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem" }}>
-                                    {/* List of all or first 10 posts --- WIP */}
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
                                     <h1>Likes</h1>
                                     {
-                                        likes.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                        likes.length !== 0 ?
+                                            likes.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                            : <div>You have not liked any posts.</div>
                                     }
                                     <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/likes`} >View All Likes</Button>
                                 </Box>
