@@ -24,9 +24,9 @@ export const CommentsModal = ({ open, setOpen, post }) => {
     //need to send in the post as well
     const handleNewComment = async () => {
         const req = await api.addComment(text, post.id);
+        const body = await req.json();
         if (req.status === 201) console.log("success!");
         else {
-            const body = req.json();
             setErrorMsg(body.message);
         }
     }

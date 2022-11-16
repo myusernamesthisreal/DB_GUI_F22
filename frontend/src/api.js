@@ -474,16 +474,18 @@ export class Api {
             return e;
         }
     }
-    async addComment(body, id) {
+    async addComment(comment, id) {
+        const body = { comment };
+        console.log(body);
         const res = await fetch(`${this.url}/posts/${id}/comments`, {
             method: "POST",
-            credentions: "include",
-            comment: JSON.stringify(body),
-            header: {
+            credentials: "include",
+            body: JSON.stringify(body),
+            headers: {
                 "Content-Type": "application/json",
             }
         });
-        return res; 
+        return res;
     }
-    
+
 }
