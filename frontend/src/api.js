@@ -476,7 +476,6 @@ export class Api {
     }
     async addComment(comment, id) {
         const body = { comment };
-        console.log(body);
         const res = await fetch(`${this.url}/posts/${id}/comments`, {
             method: "POST",
             credentials: "include",
