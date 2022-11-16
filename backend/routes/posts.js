@@ -24,7 +24,7 @@ module.exports = function routes(app, logger) {
           "INSERT INTO db.posts (body, author) VALUES (?, ?)",
           [body, user.id]);
         const postId = insertQuery.insertId;
-        if (categories) {
+        if (categories && categories.length > 0) {
           if (!Array.isArray(categories))
             throw new Error("Categories must be an array of strings");
           categories.map(c => {
