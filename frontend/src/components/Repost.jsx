@@ -7,7 +7,7 @@ import RepeatOn from '@mui/icons-material/RepeatOn';
 
 
 export function Repost(props) {
-    const [repost, setRepost] = useState(props.post.repost);
+    const [repost, setRepost] = useState(props.post.reposted);
     const api = new Api();
     
     const handlePatchRepost = async () => {

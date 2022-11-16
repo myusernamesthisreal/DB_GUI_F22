@@ -122,13 +122,14 @@ module.exports =
       async (req, res) => {
         try {
           const user = await jwt.verifyToken(req);
-          console.log("User: ", user);
+          delete user.password;
           if (user) {
             res.status(200).send({
               message: "Token is valid",
               success: true,
               username: user.username,
               id: user.id,
+              user,
             })
           }
           else {
@@ -162,6 +163,7 @@ module.exports =
       async (req, res) => {
         try {
           const user = await jwt.verifyToken(req);
+          delete user.password;
           if (user.is_admin) {
             res.status(200).send({
               admin: true,
@@ -169,6 +171,7 @@ module.exports =
               success: true,
               username: user.username,
               id: user.id,
+              user,
             })
           }
           else {
@@ -178,6 +181,7 @@ module.exports =
               success: true,
               username: user.username,
               id: user.id,
+              user,
             })
           }
         } catch (e) {
