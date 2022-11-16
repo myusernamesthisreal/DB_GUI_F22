@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Api } from "../api";
 import { Post } from "./";
 import { Button, Box, FormGroup, FormControlLabel, Typography, Checkbox } from "@mui/material";
-import { useWindowWidth } from "@react-hook/window-size"
+//import { useWindowWidth } from "@react-hook/window-size";
 
 export function Homepage(props) {
 
@@ -11,7 +11,8 @@ export function Homepage(props) {
     const [posts, setPosts] = useState([]);
     const [allPosts, setAllPosts] = useState([]);
     const [categories, setCategories] = useState([]);
-    const screenWidth = useWindowWidth();
+    //const screenWidth = useWindowWidth();
+    const screenWidth = 555;
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
     const [checked, setChecked] = useState({});

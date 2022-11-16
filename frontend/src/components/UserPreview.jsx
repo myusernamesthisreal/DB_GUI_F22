@@ -14,17 +14,17 @@ export const UserPreview = (props) => {
         <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
             <ListItem alignItems="flex-start">
                 <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: blueGrey }}> {props.user?.displayname}</Avatar>
+                    <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
                 </ListItemAvatar>
                 <ListItemText
                     primary={
                         <React.Fragment>
-                            <Link style={{textDecoration: "none", color: "inherit"}} to={`/users/${props.user?.id}`}>
-                                <Typography sx={{ display: 'inline' }}>
-                                    {props.user?.displayname}
-                                </Typography> @
+                            <Link style={{textDecoration: "none", color: "inherit"}} onClick={() => window.location.href = `/users/${props.user?.id}`}>
+                                <Typography sx={{ display: 'inline', '&:hover': {textDecoration: "underline"} }}>
+                                    <Box sx={{ overflow: "hidden" }}>{props.user?.displayname}</Box>
+                                </Typography> 
                                 <Typography sx={{ display: 'inline' }} variant="body2">
-                                    {props.user?.username}
+                                    <Box sx={{ overflow: "hidden" }}>@{props.user?.username}</Box>
                                 </Typography>
                             </Link>
                         </React.Fragment>}

@@ -12,6 +12,7 @@ export function User(props) {
     const [saves, setSaves] = useState(null);
     const [following, setFollowing] = useState(null);
     const [followers, setFollowers] = useState(null);
+    const [likes, setLikes] = useState(null);
     const { id: userId } = useParams();
     const api = new Api();
 
@@ -26,11 +27,13 @@ export function User(props) {
         const usersSaves = await api.getUserSaves(userId);
         const usersFollowing = await api.getUserFollowing(userId);
         const usersFollowers = await api.getUserFollowers(userId);
+        const usersLikes = await api.getLikedPosts(userId);
         console.log(res);
         console.log(usersPosts);
         console.log(usersSaves);
         console.log(usersFollowing);
         console.log(usersFollowers);
+        console.log(usersLikes);
         if (res.success) setUser(res.user);
         else setError(true);
         if (usersPosts.success) setPosts(usersPosts.posts.slice(0, 3));
@@ -40,6 +43,8 @@ export function User(props) {
         if (usersFollowing.success) setFollowing(usersFollowing.following.slice(0, 3));
         else setError(true);
         if (usersFollowers.success) setFollowers(usersFollowers.followers.slice(0, 3));
+        else setError(true);
+        if (usersLikes.success) setLikes(usersLikes.likes.slice(0, 3));
         else setError(true);
         setLoaded(true);
     }
@@ -60,78 +65,91 @@ export function User(props) {
         </>
     )
 
-    const drawerWidth = 240;
-
     if (loaded)
         return (
             <>
                 <h1>{user?.displayname}'s Profile</h1>
                 <p>@{user?.username}</p>
 
+                {/* Only display this button if the user token/cookies match the user id of the page */}
+                {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/editAccount`}>Edit Profile</Button> : null}
+
                 <Box>
                     <Box>
-                        <Tabs
-                            value={tabIndex}
-                            onChange={handleTabChange}
-                            centered
-                            orientation="horizontal"
-                        >
-                            <Tab label="Posts" />
-                            <Tab label="Following" />
-                            <Tab label="Followers" />
-                            {isUsersPage ? <Tab label="Saved Posts" /> : null}
-                        </Tabs>
+                        <Box display="flex" justifyContent="center" width="100%">
+                            <Tabs
+                                value={tabIndex}
+                                onChange={handleTabChange}
+                                variant="scrollable"
+                                centered
+                                orientation="horizontal"
+                            >
+                                <Tab label="Posts" />
+                                <Tab label="Following" />
+                                <Tab label="Followers" />
+                                {isUsersPage ? <Tab label="Saved Posts" /> : null}
+                                {isUsersPage ? <Tab label="Likes" /> : null}
+                            </Tabs>
+                        </Box>
                         <Box sx={{ marginX: "4rem" }}>
                             {tabIndex === 0 ?
-                                <Box sx={{ border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    <h2>Posts</h2>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
+                                    <h1>Posts</h1>
                                     {
-                                        posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                        posts.length !== 0 ?
+                                            posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                            : <div>{user?.displayname} has no posts.</div>
                                     }
                                     <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/posts`} >View All Posts</Button>
                                 </Box> : null
                             }
                             {tabIndex === 1 && (
-                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    <h2>Following</h2>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
+                                    <h1>Following</h1>
                                     {
-                                        following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                        following.length !== 0 ?
+                                            following?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                            : <div>{user?.displayname} is not following anyone.</div>
                                     }
-                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/following`} >View All Following Users</Button>
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/following`} >View All Following</Button>
                                 </Box>
                             )}
                             {tabIndex === 2 && (
-                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    {/* List of all or first 10 followed users --- WIP */}
-                                    <h2>Followers</h2>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
+                                    <h1>Followers</h1>
                                     {
-                                        followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                        followers.length !== 0 ?
+                                            followers?.map((fUser, index) => <UserPreview key={index} user={fUser} />)
+                                            : <div>{user?.displayname} has no followers.</div>
                                     }
-                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/followers`} >View All Followed Users</Button>
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/followers`} >View All Followers</Button>
                                 </Box>
                             )}
                             {tabIndex === 3 && (
-                                <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem" }}>
-                                    {/* List of all or first 10 posts --- WIP */}
-                                    <h2>Saved Posts</h2>
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
+                                    <h1>Saved Posts</h1>
                                     {
-                                        saves.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                        saves.length !== 0 ?
+                                            saves.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                            : <div>You have not saved any posts.</div>
                                     }
                                     <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >View All Saved Posts</Button>
+                                </Box>
+                            )}
+                            {tabIndex === 4 && (
+                                <Box sx={{ border: 1, borderColor: "#C0C0C0", p: 2.5, marginX: "auto", marginTop: "2rem", marginBottom: "2rem", padding: "0rem 1rem 1rem 1rem", backgroundColor: "#F8F8F8" }}>
+                                    <h1>Likes</h1>
+                                    {
+                                        likes.length !== 0 ?
+                                            likes.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                                            : <div>You have not liked any posts.</div>
+                                    }
+                                    <Button style={{ marginTop: "1rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/likes`} >View All Likes</Button>
                                 </Box>
                             )}
                         </Box>
                     </Box>
                 </Box>
-
-
-
-                {/* Only display follow/unfollow button if the user is logged in and is on another user's page */}
-                {/* (!isUsersPage | props.user?.username) ?  <Follow/> : null*/}
-
-                {/* Only display this button if the user token/cookies match the user id of the page */}
-                {isUsersPage ? <Button variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/saves`} >Edit Account</Button> : null}
-
             </>
         );
 
