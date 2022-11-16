@@ -111,7 +111,7 @@ module.exports = function routes(app, logger) {
                 const commentResult = await query("SELECT author FROM db.comments WHERE id = ?", [commentid]);
                 if (commentResult.length === 0)
                     throw new Error("Comment not found");
-                if (commentResult[0].author !== user.id)
+                if (!(user.is_admin || commentResult[0].author === user.id))
                     throw new Error("You cannot delete this comment");
                 await query("DELETE FROM db.comments WHERE id = ?", [commentid]);
                 res.status(204).send()
