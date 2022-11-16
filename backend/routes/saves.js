@@ -147,16 +147,14 @@ module.exports = function routes(app, logger) {
                 if (queryResult[0].author === user.id)
                     throw new Error("Cannot save your own post");
                 const saveResult = await query("SELECT id FROM db.saves WHERE post = ? AND user = ?", [id, user.id]);
-                if (saveResult.length > 0)
-                {
+                if (saveResult.length > 0) {
                     await query("DELETE FROM db.saves WHERE user = ? AND post = ?", [user.id, id]);
                     res.status(200).send({
                         message: "Post unsaved",
                         success: true,
                     });
                 }
-                else
-                {
+                else {
                     await query("INSERT INTO db.saves (user, post) VALUES (?, ?)", [user.id, id]);
                     res.status(201).send({
                         message: "Post saved",
@@ -207,7 +205,7 @@ module.exports = function routes(app, logger) {
                 const queryResult = await query("SELECT id FROM db.users WHERE id = ?", [id]);
                 if (queryResult.length === 0)
                     throw new Error("User not found");
-                const saveQuery = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM saves JOIN posts ON saves.post = posts.id JOIN users ON users.id = saves.user WHERE users.id = ?", [id]);
+                const saveQuery = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM saves JOIN posts ON saves.post = posts.id JOIN users ON users.id = posts.author WHERE saves.user = ? ORDER BY posts.timestamp DESC", [id]);
                 const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
 
                 const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
@@ -270,13 +268,50 @@ module.exports = function routes(app, logger) {
          * @param {import('express').Response} res
          */
         async (req, res) => {
+            let authenticated = false;
             try {
                 const user = await jwt.verifyToken(req);
-                const saves = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM saves JOIN posts ON saves.post = posts.id JOIN users ON users.id = saves.user WHERE users.id = ?", [user.id]);
+                authenticated = user.id;
+            } catch (e) { }
+            try {
+                const user = await jwt.verifyToken(req);
+                const saveQuery = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM saves JOIN posts ON saves.post = posts.id JOIN users ON users.id = posts.author WHERE saves.user = ? ORDER BY posts.timestamp DESC", [user.id]);
+                const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
+                const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+                const likes = likesResult.map(like => like.post);
+
+                const repostsResult = await query("SELECT post FROM reposts WHERE user = ?", [authenticated]);
+                const reposts = repostsResult.map(repost => repost.post);
+
+                const savesResult = await query("SELECT post FROM saves WHERE user = ?", [authenticated]);
+                const saves = savesResult.map(save => save.post);
+
+                let postsWithLikes = saveQuery;
+                if (authenticated) {
+                    postsWithLikes = postsWithLikes.map(post => {
+                        post.liked = likes.includes(post.id);
+                        post.reposted = reposts.includes(post.id);
+                        post.saved = saves.includes(post.id);
+                        return post;
+                    })
+                }
+                else {
+                    postsWithLikes = postsWithLikes.map(post => {
+                        post.liked = false;
+                        post.reposted = false;
+                        post.saved = false;
+                        return post;
+                    })
+                }
+                postsWithLikes = postsWithLikes.map(post => {
+                    post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+                    return post;
+                })
                 res.status(200).send({
                     message: "Saves fetched",
                     success: true,
-                    saves,
+                    posts: postsWithLikes,
                 })
             } catch (e) {
                 logger.error("Error in GET /users/saves: ", e);
