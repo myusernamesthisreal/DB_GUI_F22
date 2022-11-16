@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Post } from './';
-import { Api } from '../api'
+import { Api } from '../api';
+import { Comment } from './Comment';
 
 export const PostPage = (props) => {
     const [post, setPost] = useState(null);
@@ -31,7 +32,7 @@ export const PostPage = (props) => {
     if (post != null) {
         return <>
         <Post post={post} user={props.user} />
-        {comments.map((comment, index) => <div>{comment.body}</div>)};
+        {comments.map((comment, index) => <Comment post={post} comment={comment} user={props.user} />)};
     </>
     }
     return <>
