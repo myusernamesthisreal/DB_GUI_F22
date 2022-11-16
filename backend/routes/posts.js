@@ -383,7 +383,7 @@ module.exports = function routes(app, logger) {
         const queryResult = await query("SELECT posts.* FROM db.posts WHERE id = ?", [id]);
         if (queryResult.length === 0)
           throw new Error("Post not found");
-        if (queryResult[0].author !== user.id)
+        if (!(user.is_admin || queryResult[0].author === user.id))
           throw new Error("Unauthorized");
         await query("DELETE FROM db.posts WHERE id = ?", [id]);
         res.status(204).send();
