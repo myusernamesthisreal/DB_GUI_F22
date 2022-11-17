@@ -42,10 +42,10 @@ export function EditPost(props) {
                     </IconButton>
                     <Box sx={{ flexGrow: 1 }} />
                     <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleEditPost}>
-                        <ListItemText primary="Post" />
+                        <ListItemText primary="Post Edit" />
                     </Button>
                     <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleDeletePost}>
-                        <ListItemText primary="Post" />
+                        <ListItemText primary="Delete Post" />
                     </Button>
                 </Box>
                 <ListItem alignItems="flex-start">
