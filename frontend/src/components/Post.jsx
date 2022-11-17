@@ -58,13 +58,9 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small">Comment</Button>
-            {props.user?.id !== props.post.author ? null :
-                <Popup post={props.post} trigger={<Button>...</Button>} position="right center">
-                    <Link>
-                        <Button>Edit or delete post</Button>
-                    </Link>
-                </Popup>
-            }
+            <Popup post={props.post} trigger={<Button>...</Button>} position="right center">
+                <EditPost></EditPost>
+            </Popup>
         </Box>
     </>
 
