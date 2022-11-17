@@ -19,7 +19,7 @@ export function Login() {
 
     return (
         <>
-            <Box sx={{ width: '50%', border: 1, p: 2.5, justifyContent: "center", marginX: "auto", marginTop: "5rem" }}>
+            <Box sx={{ backgroundColor: "white", width: '50%', p: 2.5, justifyContent: "center", marginX: "auto", marginTop: "5rem" }}>
                 <Stack direction="column" alignItems="stretch" justifyContent="flex-start" spacing={1.5}>
                     <Typography sx={{ color: "black", fontSize: 32, fontWeight: "bold" }}>
                         Sign In
