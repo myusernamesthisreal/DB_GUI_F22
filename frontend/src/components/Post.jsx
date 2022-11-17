@@ -8,6 +8,7 @@ import { Like } from './Likes';
 import { Repost } from './Repost';
 import { Link } from "react-router-dom"
 import { CommentsModal } from './CommentsModal';
+import InsertCommentIcon from '@mui/icons-material/InsertComment';
 
 export const Post = (props) => {
     const [time, setTime] = useState("");
@@ -60,7 +61,9 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Like post={props.post} />}
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             <Button variant="outlined" size="small">Bookmark</Button>
-            <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Comment</Button>
+            <Button variant="outlined" size="small" onClick={() => setOpen(true)}>
+                <InsertCommentIcon sx={{border:"none"}}></InsertCommentIcon>
+            </Button>
             <CommentsModal open={open} setOpen={setOpen} post={props.post}/>
         </Box>
 
