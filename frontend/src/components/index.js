@@ -10,7 +10,10 @@ export * from './UserPosts'
 export * from './UserFollowing'
 export * from './UserFollowers'
 export * from './UserSaves'
+export * from './UserLikes'
 export * from './Follows';
 export * from './Repost'
 export * from './Homepage';
-export * from './EditPost.jsx'
+export * from './EditAccount';
+export * from "./Post";
+export * from "./PostPage";

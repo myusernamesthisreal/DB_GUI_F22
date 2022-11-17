@@ -24,7 +24,7 @@ module.exports = function routes(app, logger) {
           "INSERT INTO db.posts (body, author) VALUES (?, ?)",
           [body, user.id]);
         const postId = insertQuery.insertId;
-        if (categories) {
+        if (categories && categories.length > 0) {
           if (!Array.isArray(categories))
             throw new Error("Categories must be an array of strings");
           categories.map(c => {
@@ -383,7 +383,7 @@ module.exports = function routes(app, logger) {
         const queryResult = await query("SELECT posts.* FROM db.posts WHERE id = ?", [id]);
         if (queryResult.length === 0)
           throw new Error("Post not found");
-        if (queryResult[0].author !== user.id)
+        if (!(user.is_admin || queryResult[0].author === user.id))
           throw new Error("Unauthorized");
         await query("DELETE FROM db.posts WHERE id = ?", [id]);
         res.status(204).send();

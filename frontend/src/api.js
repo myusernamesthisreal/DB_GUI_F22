@@ -26,18 +26,18 @@ export class Api {
     }
 
     async login(username, password) {
-        const body = {username, password };
+        const body = { username, password };
         try {
             const res = await fetch(`${this.url}/login`,
-            {
-                method: "POST",
-                body: JSON.stringify(body),
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                }
+                {
+                    method: "POST",
+                    body: JSON.stringify(body),
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
 
-            })
+                })
             return await res.json();
         } catch (e) {
             console.error(e);
@@ -82,7 +82,33 @@ export class Api {
             return e;
         }
     }
-        
+
+    async getPostById(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}`, {
+                method: "GET",
+                credentials: "include",
+            })
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+            return e;
+        }
+    }
+
+    async getPostComments(postId) {
+        try {
+            const res = await fetch(`${this.url}/posts/${postId}/comments`, {
+                method: "GET",
+                credentials: "include",
+            })
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+            return e;
+        }
+    }
+
     async getUser(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}`, {
@@ -98,17 +124,25 @@ export class Api {
 
     async makePost(body, categories) {
         const data = { body, categories };
+        const res = await fetch(`${this.url}/posts`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
+    async getAllCatgories() {
         try {
-            const res = await fetch(`${this.url}/posts`, {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                }});
-            return await res.json();
+            const res = await fetch(`${this.url}/categories`, {
+                credentials: "include"
+            });
+            return res.json();
         } catch (e) {
-            console.error(e)
+            console.error(e);
             return e;
         }
     }
@@ -142,7 +176,7 @@ export class Api {
         }
     }
 
-    //get posts liked by a user
+    //get posts liked by a user of given id
     async getLikedPosts(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/likes`, {
@@ -270,7 +304,7 @@ export class Api {
         }
     }
 
-    
+
     //Repost calls
     //get reposts
     async getReposts(id) {
@@ -356,7 +390,8 @@ export class Api {
         }
     }
 
-    async getUserPost(id) { //get posts for user id
+    //get posts for user of given id
+    async getUserPost(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/posts`, {
                 method: "GET",
@@ -369,7 +404,8 @@ export class Api {
         }
     }
 
-    async getUserSaves(id) { //get saved posts for user id
+    //get saved posts for user of given id
+    async getUserSaves(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/saves`, {
                 method: "GET",
@@ -382,7 +418,8 @@ export class Api {
         }
     }
 
-    async getUserFollowers(id) { //get followers for user id
+    //get followers for user of given id
+    async getUserFollowers(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/followers`, {
                 method: "GET",
@@ -395,7 +432,8 @@ export class Api {
         }
     }
 
-    async getUserFollowing(id) { //get following for user id
+    //get following for user of given id
+    async getUserFollowing(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/following`, {
                 method: "GET",
@@ -409,12 +447,11 @@ export class Api {
     }
 
 
-    //edit post calls
-    // edit post
-    async patchPost(id) {
+    async getAllPostsByCategories(data) {
+        const query = data.join(',');
         try {
-            const res = await fetch(`${this.url}/posts/${id}/edit`, {
-                method: "PATCH",
+            const res = await fetch(`${this.url}/posts?categories=${query}`, {
+                method: "GET",
                 credentials: "include"
             });
             return await res.json();
@@ -424,11 +461,11 @@ export class Api {
         }
     }
 
-    //delete post
-    async deletePost(id) {
+    //update displayname of current user
+    async updateDisplayName() {
         try {
-            const res = await fetch(`${this.url}/posts/${id}/edit`, {
-                method: "DELETE",
+            const res = await fetch(`${this.url}/displayname`, {
+                method: "PUT",
                 credentials: "include"
             });
             return await res.json();
@@ -437,4 +474,17 @@ export class Api {
             return e;
         }
     }
+    async addComment(comment, id) {
+        const body = { comment };
+        const res = await fetch(`${this.url}/posts/${id}/comments`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
 }
