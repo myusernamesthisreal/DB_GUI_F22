@@ -66,7 +66,7 @@ export const Post = (props) => {
             <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Comment</Button>
             {props.user?.id !== props.post.author ? null : 
                 <Popup trigger={<Button variant="outlined" size="small">...</Button>} position="right center">
-                    <Button>Edit or Delete Post</Button>
+                    <Button>Edit or Delete</Button>
                 </Popup> 
             }
             <CommentsModal open={open} setOpen={setOpen} post={props.post}/>
