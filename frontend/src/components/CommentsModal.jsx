@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Typography, Box, TextField, Button, IconButton } from '@mui/material';
+import { Modal, Typography, Box, TextField, Button, IconButton, Snackbar, Alert } from '@mui/material';
 import { InsertComment, Cancel } from '@mui/icons-material';
 import { Api } from '../api';
 
@@ -18,25 +18,42 @@ const style = {
 export const CommentsModal = ({ open, setOpen, post }) => {
     const [text, setText] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const [alertOpen, setAlertOpen] = useState(false);
 
     const api = new Api();
 
     //need to send in the post as well
     const handleNewComment = async () => {
         const req = await api.addComment(text, post.id);
-        const body = await req.json();
         if (req.status === 201) {
             setOpen(false);
             window.location.reload(false);
         }
         else {
+            const body = await req.json();
             setErrorMsg(body.message);
+            setAlertOpen(true);
         }
     }
 
     const handleClose = () => setOpen(false);
 
+    const handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setAlertOpen(false);
+    };
+
     return <>
+        <Snackbar
+            open={alertOpen}
+            autoHideDuration={6000}
+            onClose={handleAlertClose}
+            anchorOrigin={{ vertical: "top", horizontal: "left" }}>
+            <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
+        </Snackbar>
         <Button size="small" onClick={() => setOpen(true)}>
             <InsertComment sx={{ border: "none", outline: "none" }}></InsertComment>
         </Button>
