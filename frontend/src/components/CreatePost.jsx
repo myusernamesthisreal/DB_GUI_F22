@@ -45,14 +45,15 @@ export function CreatePost(props) {
     };
 
     const handleEvent = (event) => {
-        if (event.key === ",") {
+        if (event.target.value.substr(-1) === ",") {
             event.preventDefault();
             const cats = [...userCategories];
-            cats.push(event.target.value);
+            cats.push(event.target.value.split(",")[0]);
             setUserCategories(cats);
             setCurrentCategory("");
             console.log("userCategories", cats);
         }
+        else setCurrentCategory(event.target.value);
     }
 
     const handleDelete = (index) => {
@@ -90,10 +91,10 @@ export function CreatePost(props) {
                             <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" onChange={(e) => setText(e.target.value)} />
                             <Box sx={{display: "flex"}}>
                                 {userCategories.map((value, index) => {
-                                    return <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${value}`} onDelete={() => handleDelete(index)} />
+                                    return <Chip key={index} sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${value}`} onDelete={() => handleDelete(index)} />
                                 })}
                             </Box>
-                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" onKeyDown={(e) => handleEvent(e)} value={currentCategory} onChange={(e) => setCurrentCategory(e.target.value)} />
+                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" value={currentCategory} onChange={(e) => handleEvent(e)} />
                         </Stack>
                     </ListItemText>
 
