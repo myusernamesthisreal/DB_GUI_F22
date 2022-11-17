@@ -60,7 +60,7 @@ export const Post = (props) => {
             </Link>
             {props.user?.id === props.post.author ? null : <Like post={props.post} />}
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
-            <Bookmark post={props.post}/>
+            {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
             {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
         </Box>
 
