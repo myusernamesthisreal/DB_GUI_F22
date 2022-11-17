@@ -65,7 +65,7 @@ export function Homepage(props) {
     if (loaded)
         return (
             <>
-                <Box sx={{ display: "flex", marginTop: "1rem" }}>
+                <Box sx={{ display: "flex", marginTop: "1rem" }} >
                     {screenWidth > 420 ? <Box sx={{ marginLeft: "2rem" }}>
                         <Button variant="contained" sx={{ width: "100%", marginBottom: "1rem" }} onClick={handlePostClick}>Post</Button>
                         <Typography sx={{ color: "black", fontSize: 24, fontWeight: "bold", textAlign: "left" }}>
