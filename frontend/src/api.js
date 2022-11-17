@@ -487,4 +487,17 @@ export class Api {
         return res;
     }
 
+    //bookmark post
+    async bookmark(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/saves`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
 }

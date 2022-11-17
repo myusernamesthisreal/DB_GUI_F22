@@ -17,3 +17,4 @@ export * from './Homepage';
 export * from './EditAccount';
 export * from "./Post";
 export * from "./PostPage";
+export * from './Bookmark';
