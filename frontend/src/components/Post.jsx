@@ -64,9 +64,11 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Comment</Button>
-            <Popup>
-                <Button>Edit or Delete Post</Button>
-            </Popup>
+            {props.user?.id !== props.post.author ? null : 
+                <Popup trigger={<Button variant="outlined" size="small">...</Button>} position="right center">
+                    <Button>Edit or Delete Post</Button>
+                </Popup> 
+            }
             <CommentsModal open={open} setOpen={setOpen} post={props.post}/>
         </Box>
 
