@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Typography, Box, TextField, Button, IconButton } from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
+import { InsertComment, Cancel } from '@mui/icons-material';
 import { Api } from '../api';
 
 
@@ -37,6 +37,9 @@ export const CommentsModal = ({ open, setOpen, post }) => {
     const handleClose = () => setOpen(false);
 
     return <>
+        <Button size="small" onClick={() => setOpen(true)}>
+            <InsertComment sx={{ border: "none", outline: "none" }}></InsertComment>
+        </Button>
         <Modal
             open={open}
             onClose={handleClose}
@@ -46,14 +49,14 @@ export const CommentsModal = ({ open, setOpen, post }) => {
             <Box sx={style}>
                 <Box sx={{ display: "flex" }}>
                     <IconButton sx={{ justifyContent: "start" }}>
-                        <CancelIcon sx={{ display: "block" }} onClick={handleClose}></CancelIcon>
+                        <Cancel sx={{ display: "block" }} onClick={handleClose}></Cancel>
                     </IconButton>
                 </Box>
                 <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: "2rem" }}>
                     Add a comment
                 </Typography>
                 <Typography>
-                    <TextField label="comment" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)}/>
+                    <TextField label="comment" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)} />
                 </Typography>
                 <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleNewComment}>Submit</Button>
             </Box>
