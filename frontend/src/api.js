@@ -8,7 +8,6 @@ export class Api {
 
     async signup(username, password) {
         const body = { username, password };
-        try {
             const res = await fetch(`${this.url}/users`,
                 {
                     method: "POST",
@@ -18,11 +17,7 @@ export class Api {
                         "Content-Type": "application/json",
                     }
                 })
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return e;
-        }
+            return await res;
     }
 
     async login(username, password) {

@@ -7,6 +7,8 @@ export const Signup = () => {
     const [password, setPassword] = useState("");
     const [passwordC, setPasswordC] = useState("");
     const [open, setOpen] = useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [errorMsg, setErrorMsg] = useState(undefined);
     const api = new Api();
 
     const handleSubmit = async () => {
@@ -15,6 +17,11 @@ export const Signup = () => {
         } else {
             const req = await api.signup(username, password);
             if (req.success) window.location.href = "/";
+            else {
+                const body = await req.json();
+                setErrorMsg(body.message);
+                setOpenAlert(true);
+            }
         }
     }
 
@@ -25,6 +32,13 @@ export const Signup = () => {
 
         setOpen(false);
     };
+
+    const handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    }
 
 
     const returnSignIn = async () => {
@@ -47,9 +61,15 @@ export const Signup = () => {
                         autoHideDuration={6000}
                         onClose={handleClose}
                         anchorOrigin={{ vertical: "top", horizontal: "left" }}>
-                            <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords must match!</Alert>
+                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords must match!</Alert>
                     </Snackbar>
-
+                    <Snackbar
+                        open={openAlert}
+                        autoHideDuration={6000}
+                        onClose={handleAlertClose}
+                        anchorOrigin={{ vertical: "top", horizontal: "left" }}>
+                        <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
+                    </Snackbar>
                     <Button variant="text" size="small" onClick={returnSignIn}>Already have an account? Sign in</Button>
                 </Stack>
             </Box>
