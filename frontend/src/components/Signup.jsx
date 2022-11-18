@@ -16,7 +16,9 @@ export const Signup = () => {
             setOpen(true);
         } else {
             const req = await api.signup(username, password);
-            if (req.success) window.location.href = "/";
+            if (req.status === 201) {
+                window.location.href = "/";
+            }
             else {
                 const body = await req.json();
                 setErrorMsg(body.message);

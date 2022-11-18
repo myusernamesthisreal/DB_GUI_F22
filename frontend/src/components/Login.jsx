@@ -12,7 +12,9 @@ export function Login() {
 
     const handleLogIn = async () => {
         const req = await api.login(username, password);
-        if (req.success) window.location.href = "/";
+        if (req.status === 200) {
+            window.location.href = "/";
+        } 
         else {
             const body = await req.json();
             setErrorMsg(body.message);
