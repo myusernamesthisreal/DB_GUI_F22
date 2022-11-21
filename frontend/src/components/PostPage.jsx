@@ -33,8 +33,8 @@ export const PostPage = (props) => {
     if (post != null) {
         return <>
             <Post post={post} user={props.user} />
-            <Box display={"flex"} sx={{alignItems:"left", ml:"8rem"}}>
-                <Typography variant="h6" sx={{ mt: "0.5rem", mb: "0.5rem" }}>
+            <Box display={"flex"} textAlign="center" sx={{alignItems:"left", marginX:"auto", width: "80%"}}>
+                <Typography variant="h6" sx={{ mt: "0.5rem", mb: "0.5rem", textAlign: "left"}}>
                     {`Comments: (${comments.length})`}
                 </Typography>
             </Box>
