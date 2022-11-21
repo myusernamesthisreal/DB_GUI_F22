@@ -42,7 +42,7 @@ export const EditPost = (props) => {
         }
         return <>
             <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
-                <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${props.post.id}`}>
+                <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${props.post.id}/edit`}>
                     <ListItem alignItems="flex-start">
                         <ListItemAvatar>
                             <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
@@ -76,16 +76,6 @@ export const EditPost = (props) => {
                         />
                     </ListItem>
                 </Link>
-                {props.user?.id === props.post.author ? null : <Like post={props.post} />}
-                {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
-                <Button variant="outlined" size="small">Bookmark</Button>
-                <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Comment</Button>
-                {props.user?.id !== props.post.author ? null : 
-                    <Popup trigger={<Button variant="outlined" size="small">...</Button>} position="right center">
-                        <Button>Edit or Delete</Button>
-                    </Popup> 
-                }
-                <CommentsModal open={open} setOpen={setOpen} post={props.post}/>
             </Box>
     
         </>
