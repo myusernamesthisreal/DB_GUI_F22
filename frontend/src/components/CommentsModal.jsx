@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Typography, Box, TextField, Button, IconButton, Snackbar, Alert } from '@mui/material';
 import { InsertComment, Cancel } from '@mui/icons-material';
 import { Api } from '../api';
+import { useWindowWidth } from "@react-hook/window-size";
 
 
 const style = {
@@ -9,7 +10,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 350,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -19,6 +20,8 @@ export const CommentsModal = ({ open, setOpen, post }) => {
     const [text, setText] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [alertOpen, setAlertOpen] = useState(false);
+    const screenWidth = useWindowWidth();
+
 
     const api = new Api();
 
