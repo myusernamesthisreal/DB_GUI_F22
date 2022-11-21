@@ -8,41 +8,31 @@ export class Api {
 
     async signup(username, password) {
         const body = { username, password };
-        try {
-            const res = await fetch(`${this.url}/users`,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                })
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return e;
-        }
+        const res = await fetch(`${this.url}/users`,
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+        return res;
     }
 
     async login(username, password) {
         const body = { username, password };
-        try {
-            const res = await fetch(`${this.url}/login`,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
+        const res = await fetch(`${this.url}/login`,
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                }
 
-                })
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return e;
-        }
+            })
+        return res;
     }
 
     async checkUser() {
@@ -485,6 +475,19 @@ export class Api {
             }
         });
         return res;
+    }
+
+    //bookmark post
+    async bookmark(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/saves`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+        }
     }
 
 }

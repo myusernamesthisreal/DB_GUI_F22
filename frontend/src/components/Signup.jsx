@@ -7,6 +7,8 @@ export const Signup = () => {
     const [password, setPassword] = useState("");
     const [passwordC, setPasswordC] = useState("");
     const [open, setOpen] = useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [errorMsg, setErrorMsg] = useState(undefined);
     const api = new Api();
 
     const handleSubmit = async () => {
@@ -14,7 +16,14 @@ export const Signup = () => {
             setOpen(true);
         } else {
             const req = await api.signup(username, password);
-            if (req.success) window.location.href = "/";
+            if (req.status === 201) {
+                window.location.href = "/";
+            }
+            else {
+                const body = await req.json();
+                setErrorMsg(body.message);
+                setOpenAlert(true);
+            }
         }
     }
 
@@ -26,6 +35,13 @@ export const Signup = () => {
         setOpen(false);
     };
 
+    const handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    }
+
 
     const returnSignIn = async () => {
         window.location.href = "/SignIn"
@@ -33,9 +49,9 @@ export const Signup = () => {
 
     return (
         <>
-            <Box sx={{ width: '50%', border: 1, p: 2.5, marginX: "auto", marginTop: "5rem" }}>
+            <Box sx={{ width: '50%', border: "none", p: 2.5, marginX: "auto", marginTop: "5rem" }}>
                 <Stack direction="column" alignItems="stretch" justifyContent="flex-start" spacing={1.5}>
-                    <Typography>
+                    <Typography sx={{ color: "black", fontSize: 32, fontWeight: "bold" }}>
                         Sign Up
                     </Typography>
                     <TextField required id="username-box" label="Username" type="standard" value={username} onChange={(e) => setUsername(e.target.value)} />
@@ -47,9 +63,15 @@ export const Signup = () => {
                         autoHideDuration={6000}
                         onClose={handleClose}
                         anchorOrigin={{ vertical: "top", horizontal: "left" }}>
-                            <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords must match!</Alert>
+                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords must match!</Alert>
                     </Snackbar>
-
+                    <Snackbar
+                        open={openAlert}
+                        autoHideDuration={6000}
+                        onClose={handleAlertClose}
+                        anchorOrigin={{ vertical: "top", horizontal: "left" }}>
+                        <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
+                    </Snackbar>
                     <Button variant="text" size="small" onClick={returnSignIn}>Already have an account? Sign in</Button>
                 </Stack>
             </Box>
