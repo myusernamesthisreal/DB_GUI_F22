@@ -4,13 +4,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
 import Button from '@mui/material/Button';
-import { Like } from './Likes';
-import { Repost } from './Repost';
-import { Link } from "react-router-dom"
-import { CommentsModal } from './CommentsModal';
+import { Link } from "react-router-dom";
 import { Api } from '../api';
-import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
     
 export const EditPost = (props) => {
     const api = new Api();
