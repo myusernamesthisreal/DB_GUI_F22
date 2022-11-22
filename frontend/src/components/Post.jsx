@@ -66,13 +66,10 @@ export const Post = (props) => {
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Comment</Button>
             {props.user?.id !== props.post.author ? null : 
-                <Popup trigger={<Button variant="outlined" size="small">...</Button>} position="right center">
-                    <EditPost post={props.post}>Edit or Delete</EditPost>
-                </Popup> 
+                <Button variant="outlined" size="small" post={props.post}>
+                    ...
+                </Button>
             }
-            <Button aria-describedby={props.id} variant="contained" onClick={props.handleClick}>
-                ...
-            </Button>
             <Popover
                 id={props.id}
                 open={open}
