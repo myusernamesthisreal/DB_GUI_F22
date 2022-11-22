@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
 import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 import { EditPost } from './EditPost';
@@ -69,6 +70,23 @@ export const Post = (props) => {
                     <EditPost post={props.post}>Edit or Delete</EditPost>
                 </Popup> 
             }
+            <Button aria-describedby={props.id} variant="contained" onClick={props.handleClick}>
+                ...
+            </Button>
+            <Popover
+                id={props.id}
+                open={open}
+                anchorReference={props.anchorEl}
+                onClose={props.handleClose}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+            >
+                <Typography sx={{ p: 2 }}>
+                    <EditPost>Edit or Delete Post</EditPost>
+                </Typography>
+            </Popover>
             <CommentsModal open={open} setOpen={setOpen} post={props.post}/>
         </Box>
 
