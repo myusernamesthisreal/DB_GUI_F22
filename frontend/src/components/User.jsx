@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import { Typography, Button, Stack, Box, Tabs, Tab } from '@mui/material'
 import { Api } from '../api'
-import { Post, UserPreview, Follow } from "./"
+import { Post, UserPreview, FollowButton } from "./"
 
 //id, userName, displayName
 
@@ -69,10 +69,8 @@ export function User(props) {
         return (
             <>
                 <h1>{user?.displayname}'s Profile</h1>
-                <p>@{user?.username}</p>
-
-                {/* Only display this button if the user token/cookies match the user id of the page */}
-                {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/editAccount`}>Edit Profile</Button> : null}
+                <p>@{user?.username} &ensp;&ensp; 
+                {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/editAccount`}>Edit Profile</Button> : <FollowButton user={user}/>}</p>
 
                 <Box>
                     <Box>

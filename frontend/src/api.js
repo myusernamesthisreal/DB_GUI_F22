@@ -266,6 +266,20 @@ export class Api {
         }
     }
 
+    //follow a user
+    async toggleFollow(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/follows`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
     //unfollow a user
     async unfollow(id) {
         try {
