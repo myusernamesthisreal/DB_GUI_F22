@@ -5,8 +5,8 @@ const promisify = require("util").promisify;
 
 module.exports =
   /**
-   * @param {import("express").Application} app 
-   * @param {import("winston").Logger} logger 
+   * @param {import("express").Application} app
+   * @param {import("winston").Logger} logger
    */
   (app, logger) => {
     const query = promisify(pool.query).bind(pool);
@@ -266,9 +266,27 @@ module.exports =
        * @param {import('express').Response} res
        */
       async (req, res) => {
+        let authenticated = false;
+        try {
+          const user = await jwt.verifyToken(req);
+          authenticated = user.id;
+        } catch (e) { }
         try {
           const queryResult = await query("SELECT id, username, displayname, is_admin FROM db.users WHERE id = ?", [req.params.id]);
           if (queryResult.length === 0) throw new Error("User not found");
+
+          if (authenticated && authenticated !== req.params.id) {
+            const followsQueryResult = await query("SELECT follows.* FROM db.follows WHERE src = ? AND dst = ?", [authenticated, req.params.id]);
+            if (followsQueryResult.length > 0) {
+              queryResult[0].following = true;
+            }
+            else {
+              queryResult[0].following = false;
+            }
+          } else {
+            queryResult[0].following = false;
+          }
+
           res.status(200).send({
             message: "User fetched successfully",
             success: true,
