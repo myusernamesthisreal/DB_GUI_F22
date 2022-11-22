@@ -94,7 +94,7 @@ export function CreatePost(props) {
                                     return <Chip key={index} sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${value}`} onDelete={() => handleDelete(index)} />
                                 })}
                             </Box>
-                            <TextField id="standar-basic" label="Enter Categories (comma delimeted, no space)" variant="standard" value={currentCategory} onChange={(e) => handleEvent(e)} />
+                            <TextField id="standar-basic" label="Enter Categories" variant="standard" value={currentCategory} onChange={(e) => handleEvent(e)} />
                         </Stack>
                     </ListItemText>
 

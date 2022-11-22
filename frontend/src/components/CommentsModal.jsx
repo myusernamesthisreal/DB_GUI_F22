@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Typography, Box, TextField, Button, IconButton } from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
+import { Modal, Typography, Box, TextField, Button, IconButton, Snackbar, Alert } from '@mui/material';
+import { InsertComment, Cancel } from '@mui/icons-material';
 import { Api } from '../api';
+import { useWindowWidth } from "@react-hook/window-size";
 
 
 const style = {
@@ -9,7 +10,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 350,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -18,25 +19,47 @@ const style = {
 export const CommentsModal = ({ open, setOpen, post }) => {
     const [text, setText] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
+    const [alertOpen, setAlertOpen] = useState(false);
+    const screenWidth = useWindowWidth();
+
 
     const api = new Api();
 
     //need to send in the post as well
     const handleNewComment = async () => {
         const req = await api.addComment(text, post.id);
-        const body = await req.json();
         if (req.status === 201) {
             setOpen(false);
             window.location.reload(false);
         }
         else {
+            const body = await req.json();
             setErrorMsg(body.message);
+            setAlertOpen(true);
         }
     }
 
     const handleClose = () => setOpen(false);
 
+    const handleAlertClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setAlertOpen(false);
+    };
+
     return <>
+        <Snackbar
+            open={alertOpen}
+            autoHideDuration={6000}
+            onClose={handleAlertClose}
+            anchorOrigin={{ vertical: "top", horizontal: "left" }}>
+            <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
+        </Snackbar>
+        <Button size="small" onClick={() => setOpen(true)}>
+            <InsertComment sx={{ border: "none", outline: "none" }}></InsertComment>
+        </Button>
         <Modal
             open={open}
             onClose={handleClose}
@@ -46,14 +69,14 @@ export const CommentsModal = ({ open, setOpen, post }) => {
             <Box sx={style}>
                 <Box sx={{ display: "flex" }}>
                     <IconButton sx={{ justifyContent: "start" }}>
-                        <CancelIcon sx={{ display: "block" }} onClick={handleClose}></CancelIcon>
+                        <Cancel sx={{ display: "block" }} onClick={handleClose}></Cancel>
                     </IconButton>
                 </Box>
                 <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: "2rem" }}>
                     Add a comment
                 </Typography>
                 <Typography>
-                    <TextField label="comment" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)}/>
+                    <TextField label="comment" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)} />
                 </Typography>
                 <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleNewComment}>Submit</Button>
             </Box>

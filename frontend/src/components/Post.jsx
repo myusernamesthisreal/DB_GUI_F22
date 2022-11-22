@@ -4,14 +4,11 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
 import Button from '@mui/material/Button';
-import Popover from '@mui/material/Popover';
 import { Like } from './Likes';
 import { Repost } from './Repost';
-import { EditPost } from './EditPost';
 import { Link } from "react-router-dom"
 import { CommentsModal } from './CommentsModal';
-import Popup from 'reactjs-popup';
-import 'reactjs-popup/dist/index.css';
+import { Bookmark } from './Bookmark'
 
 export const Post = (props) => {
     const [time, setTime] = useState("");
@@ -63,28 +60,8 @@ export const Post = (props) => {
             </Link>
             {props.user?.id === props.post.author ? null : <Like post={props.post} />}
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
-            <Button variant="outlined" size="small">Bookmark</Button>
-            <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Comment</Button>
-            {props.user?.id !== props.post.author ? null : 
-                <Button aria-describedby={props.post.id} variant="outlined" size="small" post={props.post}>
-                    ...
-                </Button>
-            }
-            <Popover
-                id={props.post.id}
-                open={open}
-                anchorReference={props.post.anchorEl}
-                onClose={props.handleClose}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-            >
-                <Typography sx={{ p: 2 }}>
-                    <EditPost>Edit or Delete Post</EditPost>
-                </Typography>
-            </Popover>
-            <CommentsModal open={open} setOpen={setOpen} post={props.post}/>
+            {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
+            {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
         </Box>
 
     </>

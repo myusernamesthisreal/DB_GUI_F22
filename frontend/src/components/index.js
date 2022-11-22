@@ -18,3 +18,4 @@ export * from './EditAccount';
 export * from './EditPost';
 export * from "./Post";
 export * from "./PostPage";
+export * from './Bookmark';
