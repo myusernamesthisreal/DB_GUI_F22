@@ -66,14 +66,14 @@ export const Post = (props) => {
             <Button variant="outlined" size="small">Bookmark</Button>
             <Button variant="outlined" size="small" onClick={() => setOpen(true)}>Comment</Button>
             {props.user?.id !== props.post.author ? null : 
-                <Button variant="outlined" size="small" post={props.post}>
+                <Button aria-describedby={props.post.id} variant="outlined" size="small" post={props.post}>
                     ...
                 </Button>
             }
             <Popover
-                id={props.id}
+                id={props.post.id}
                 open={open}
-                anchorReference={props.anchorEl}
+                anchorReference={props.post.anchorEl}
                 onClose={props.handleClose}
                 anchorOrigin={{
                     vertical: 'top',
