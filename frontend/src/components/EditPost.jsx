@@ -22,7 +22,10 @@ export const EditPost = (props) => {
     
         const handleEditPost = async () => {
             const req = await api.Post(text, categories);
-            if (req.success) window.location.href = "/";
+            if (req.success) {
+                setCategories(categories);
+                setText(text)
+            };
         }
     
         const handleDeletePost = async () => {
