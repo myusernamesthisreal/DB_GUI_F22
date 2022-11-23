@@ -16,5 +16,6 @@ export * from './Repost'
 export * from './Homepage';
 export * from "./Post";
 export * from "./PostPage";
+export * from './EditPost';
 export * from './Bookmark';
 export * from './FollowButton';
