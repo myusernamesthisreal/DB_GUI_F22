@@ -10,7 +10,8 @@ import { bindMenu, bindTrigger } from 'material-ui-popup-state/hooks';
 import Menu from '@mui/material/Menu';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
-
+import Modal from '@mui/material/Modal';
+import { handleOpen, handleClose, style } from 'material-ui-popup-state/hooks';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 import { EditPost } from './EditPost';
@@ -85,7 +86,7 @@ export const Post = (props) => {
                     }}
                 >
                     <Typography sx={{ p: 2 }}>
-                        <EditPost post={props.post}>Edit or Delete Post</EditPost>
+                        <EditPost post={props.post}></EditPost>
                     </Typography>
                 </Popover>
 
@@ -99,7 +100,10 @@ export const Post = (props) => {
                                 ...
                             </Button>
                             <Menu {...bindMenu(popupState)}>
-                                <MenuItem onClick={popupState.close}>Edit or Delete Post</MenuItem>
+                                <MenuItem onClick={<EditPost post={props.post}/>}>Edit Post</MenuItem>
+                                <MenuItem onClick={popupState.close}>
+                                    Delete Post
+                                </MenuItem>
                             </Menu>
                         </React.Fragment>
                     )}
