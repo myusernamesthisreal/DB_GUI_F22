@@ -210,6 +210,7 @@ module.exports =
         try {
           const user = await jwt.verifyToken(req);
           const { displayName } = req.body;
+          if (!displayName) throw new Error("Display name cannot be empty");
           const queryResult = await query(
             "UPDATE db.users SET displayname = ? WHERE id = ?",
             [displayName, user.id]
@@ -224,6 +225,11 @@ module.exports =
           if (e.message === "Invalid token") {
             res.status(401).send({
               message: "Unauthorized",
+              success: false,
+            })
+          } else if (e.message === "Display name cannot be empty") {
+            res.status(400).send({
+              message: e.message,
               success: false,
             })
           } else
