@@ -14,8 +14,7 @@ export * from './UserLikes'
 export * from './Follows';
 export * from './Repost'
 export * from './Homepage';
-export * from './EditAccount';
-export * from './EditPost';
 export * from "./Post";
 export * from "./PostPage";
 export * from './Bookmark';
+export * from './FollowButton';

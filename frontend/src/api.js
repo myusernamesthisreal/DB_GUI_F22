@@ -266,6 +266,20 @@ export class Api {
         }
     }
 
+    //follow a user
+    async toggleFollow(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/follows`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
     //unfollow a user
     async unfollow(id) {
         try {
@@ -483,13 +497,18 @@ export class Api {
     }
 
     //update displayname of current user
-    async updateDisplayName() {
+    async updateDisplayName(displayName) {
+        const body = { displayName };
         try {
             const res = await fetch(`${this.url}/displayname`, {
                 method: "PUT",
-                credentials: "include"
+                credentials: "include",
+                body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json",
+                }
             });
-            return await res.json();
+            return res;
         } catch (e) {
             console.error(e)
             return e;
