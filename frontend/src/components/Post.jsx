@@ -65,24 +65,22 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
             
             {props.user?.id !== props.post.author ? null : 
-                <Button aria-describedby={props.post.id} variant="outlined" size="small" post={props.post}>
-                    ...
-                </Button>
+                <Popover
+                    id={props.post.id}
+                    open={open}
+                    anchorReference={props.post.anchorEl}
+                    onClose={props.handleClose}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right'
+                    }}
+                >
+                    <Typography sx={{ p: 2 }}>
+                        <EditPost post={props.post}>Edit or Delete Post</EditPost>
+                    </Typography>
+                </Popover>
             }
-            <Popover
-                id={props.post.id}
-                open={open}
-                anchorReference={props.post.anchorEl}
-                onClose={props.handleClose}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-            >
-                <Typography sx={{ p: 2 }}>
-                    <EditPost>Edit or Delete Post</EditPost>
-                </Typography>
-            </Popover>
+                
             {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
         </Box>
 
