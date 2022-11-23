@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
-import { Typography, Button, Stack, Box, Tabs, Tab } from '@mui/material'
+import { Typography, Button, Stack, Box, Tabs, Tab, Modal, TextField, IconButton, Snackbar, Alert } from '@mui/material'
+import { InsertComment, Cancel } from '@mui/icons-material';
 import { Api } from '../api'
 import { Post, UserPreview, FollowButton } from "./"
 
@@ -59,6 +60,39 @@ export function User(props) {
         setTabIndex(newTabIndex);
     };
 
+
+    const [text, setText] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+    const [alertOpen, setAlertOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    const handleClose = () => setOpen(false);
+
+    const handleChangeName = async () => {
+        const req = await api.updateDisplayName(text);
+        console.log(req.status);
+        if (req.status === 200) {
+            setOpen(false);
+            window.location.reload(false);
+        }
+        else {
+            const body = await req.json();
+            setErrorMsg(body.message);
+            setAlertOpen(true);
+        }
+    }
+
+    const modalStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 350,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+    };
+
     if (error) return (
         <>
             An error occurred...
@@ -69,8 +103,33 @@ export function User(props) {
         return (
             <>
                 <h1>{user?.displayname}'s Profile</h1>
-                <p>@{user?.username} &ensp;&ensp; 
-                {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => window.location.href = `/users/${user?.id}/editAccount`}>Edit Profile</Button> : <FollowButton user={user}/>}</p>
+                <p>
+                    @{user?.username} &ensp;&ensp;
+                    {isUsersPage ? <Button sx={{ margin: "1rem 0rem" }} variant="contained" color="primary" onClick={() => setOpen(true)}>Edit Username</Button>
+                        : <FollowButton user={user} />}
+                </p>
+
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={modalStyle}>
+                        <Box sx={{ display: "flex" }}>
+                            <IconButton sx={{ justifyContent: "start" }}>
+                                <Cancel sx={{ display: "block" }} onClick={handleClose}></Cancel>
+                            </IconButton>
+                        </Box>
+                        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: "2rem" }}>
+                            Change your Display Name
+                        </Typography>
+                        <Typography>
+                            <TextField label="Display Name" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)} />
+                        </Typography>
+                        <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleChangeName} >Change</Button>
+                    </Box>
+                </Modal>
 
                 <Box>
                     <Box>

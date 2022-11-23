@@ -56,7 +56,6 @@ function App() {
               <Route path="/users/:id/followers" element={<UserFollowers user={user} />} />
               <Route path="/users/:id/saves" element={<UserSaves user={user} />} />
               <Route path="/users/:id/likes" element={<UserLikes user={user} />} />
-              <Route path="/users/:id/editAccount" element={<EditAccount user={user} />} />
               <Route path="/posts/:id" element={<PostPage user={user} />} />
             </Routes>
         </ThemeProvider>
