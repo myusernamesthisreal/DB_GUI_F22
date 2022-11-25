@@ -394,6 +394,37 @@ export class Api {
         }
     }
 
+
+        //edit post calls
+    // edit post
+    async patchPost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //delete post
+    async deletePost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    
     //get posts for user of given id
     async getUserPost(id) {
         try {
