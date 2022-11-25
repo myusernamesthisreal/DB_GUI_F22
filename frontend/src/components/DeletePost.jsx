@@ -20,7 +20,9 @@ export const DeletePost = (props) => {
         return <>
             <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
                 <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${props.post.id}/edit`}>
-                    
+                    <Modal>
+                        
+                    </Modal>
                 </Link>
             </Box>
     
