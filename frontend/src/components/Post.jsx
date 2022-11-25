@@ -15,7 +15,7 @@ import { handleOpen, handleClose, style } from 'material-ui-popup-state/hooks';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 import { EditPost } from './EditPost';
-import { DeletePoste } from './DeletePost';
+import { DeletePost } from './DeletePost';
 import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
@@ -87,8 +87,8 @@ export const Post = (props) => {
                     }}
                 >
                     <Typography sx={{ p: 2 }}>
-                        <EditPost post={props.post}/>
-                        
+                        <EditPost post={props.post}>Edit Post</EditPost>
+                        <DeletePost post={props.post}>Delete Post</DeletePost>
                     </Typography>
                 </Popover>
 
@@ -104,7 +104,7 @@ export const Post = (props) => {
                             <Menu {...bindMenu(popupState)}>
                                 <MenuItem onClick={<EditPost post={props.post}/>}>Edit Post</MenuItem>
                                 <MenuItem onClick={popupState.close}>
-                                    Delete Post
+                                    <DeletePost post={props.post}>Delete Post</DeletePost>
                                 </MenuItem>
                             </Menu>
                         </React.Fragment>
