@@ -20,8 +20,10 @@ export const DeletePost = (props) => {
         return <>
             <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
                 <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${props.post.id}/edit`}>
-                    <Modal>
-                        
+                    <Modal aria-labelledby="modal-title" aria-describedby="modal-description">
+                        <h2>Are you sure you want to delete this post?</h2>
+                        <Button id="modal-description" onClick={handleDeletePost}>Yes</Button>
+                        <Button id="modal-description">Cancel</Button>
                     </Modal>
                 </Link>
             </Box>
