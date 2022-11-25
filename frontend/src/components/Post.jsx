@@ -15,6 +15,7 @@ import { handleOpen, handleClose, style } from 'material-ui-popup-state/hooks';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 import { EditPost } from './EditPost';
+import { DeletePoste } from './DeletePost';
 import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
@@ -86,7 +87,8 @@ export const Post = (props) => {
                     }}
                 >
                     <Typography sx={{ p: 2 }}>
-                        <EditPost post={props.post}></EditPost>
+                        <EditPost post={props.post}/>
+                        
                     </Typography>
                 </Popover>
 
