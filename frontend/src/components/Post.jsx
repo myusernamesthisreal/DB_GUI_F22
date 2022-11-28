@@ -10,10 +10,13 @@ import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
 import { Pin } from './Pin';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import { useWindowWidth } from "@react-hook/window-size";
 
 export const Post = (props) => {
     const [time, setTime] = useState("");
     const [open, setOpen] = useState(false);
+    const [displayedCategories, setDisplayedCategories] = useState(props.post?.categories);
+    const screenWidth = useWindowWidth();
 
     useEffect(() => {
         const t = Date.parse(props?.post.timestamp);
@@ -22,6 +25,13 @@ export const Post = (props) => {
         setTime(new Date(t - tzOffset).toLocaleString("en-us"));
     }, []);
 
+    useEffect(() => {
+        if (screenWidth < 450) {
+            setDisplayedCategories(props.post?.categories?.slice(0,3))
+        } else {
+            setDisplayedCategories(props.post?.categories);
+        }
+    }, [screenWidth])
 
     return <>
         <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
@@ -60,7 +70,7 @@ export const Post = (props) => {
                                         {time ? new Date(time).toLocaleString("en-us") : null}
                                     </Typography> --
                                     <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}> {props.post.body} </Box>
-                                    {props.post.categories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
+                                    {displayedCategories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
                                 </React.Fragment>
                             }
                         />
