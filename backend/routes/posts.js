@@ -307,11 +307,26 @@ module.exports = function routes(app, logger) {
       try {
         const user = await jwt.verifyToken(req);
         const { id } = req.params;
-        const { body, categories } = req.body;
+        const { body, categories, pinned } = req.body;
         const findPostQuery = await query("SELECT * FROM db.posts WHERE id = ?", [id]);
         if (findPostQuery.length === 0)
           throw new Error("Post not found");
-        if (findPostQuery[0].author !== user.id)
+        if (user.is_admin) {
+          if (pinned !== undefined) {
+            await query("UPDATE db.posts SET is_pinned = ? WHERE id = ?", [pinned, id]);
+            if (user.id !== findPostQuery[0].author) {
+              console.log("Pinned post by " + user.id + " (admin) to " + pinned + " (post id: " + id + ")");
+              return res.status(200).send({
+                message: `Pin/unpin operation successful`,
+                pinned,
+                success: true,
+              })
+            }
+          }
+        }
+        if (user.id !== findPostQuery[0].author)
+          throw new Error("Unauthorized");
+        if (!user.is_admin && pinned !== undefined)
           throw new Error("Unauthorized");
         if (body) {
           if (body.length > 150)
@@ -323,15 +338,15 @@ module.exports = function routes(app, logger) {
         if (categories) {
           if (!Array.isArray(categories))
             throw new Error("Categories must be an array of strings");
-          categories.map(c => {
+          let newCategories = categories.map(c => {
             if (typeof c !== "string")
               throw new Error("Categories must be an array of strings");
             return c.toLowerCase();
           })
           await query("DELETE FROM categories WHERE post = ?", [id]);
-          if (categories.length > 0)
+          if (newCategories.length > 0)
             await query("INSERT INTO categories (post, categoryname) VALUES ?",
-              [categories.map(c => [id, c])]);
+              [newCategories.map(c => [id, c])]);
         }
         const queryResult = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname, (SELECT COUNT(*) FROM likes WHERE post = posts.id) AS likes FROM posts JOIN users ON posts.author = users.id WHERE posts.id = ?", [id]);
         const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
@@ -346,9 +361,14 @@ module.exports = function routes(app, logger) {
         })
       } catch (e) {
         logger.error("Error in PATCH /posts/:id: ", e);
-        if (e === "Invalid token" || e.message === "Unauthorized") {
+        if (e === "Invalid token") {
           res.status(401).send({
             message: "Unauthorized",
+            success: false,
+          })
+        } else if (e.message === "Unauthorized") {
+          res.status(403).send({
+            message: "Forbidden",
             success: false,
           })
         } else if (e.message === "Post is too long" || e.message === "Categories must be an array of strings" || e.message === "Body is not a string") {
