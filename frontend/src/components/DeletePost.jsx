@@ -18,7 +18,6 @@ const style = {
 };
 
 export const DeletePost = ({ open, setOpen, post }) => {
-    const [text, setText] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [alertOpen, setAlertOpen] = useState(false);
     const screenWidth = useWindowWidth();
@@ -28,8 +27,8 @@ export const DeletePost = ({ open, setOpen, post }) => {
 
     //need to send in the post as well
     const handleDeletePost = async () => {
-        const req = await api.deletePost(text, post.id);
-        if (req.status === 201) {
+        const req = await api.deletePost(post.id);
+        if (req.success) {
             setOpen(false);
             window.location.reload(false);
         }
@@ -60,7 +59,7 @@ export const DeletePost = ({ open, setOpen, post }) => {
                 <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
             </Snackbar>
             <Button size="small" onClick={() => setOpen(true)}>
-                Yes, Delete Post
+                Delete Post
             </Button>
             <Modal
                 open={open}
