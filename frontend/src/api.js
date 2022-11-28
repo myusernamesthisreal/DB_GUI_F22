@@ -413,7 +413,7 @@ export class Api {
     //delete post
     async deletePost(id) {
         try {
-            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+            const res = await fetch(`${this.url}/posts/${id}`, {
                 method: "DELETE",
                 credentials: "include"
             });
