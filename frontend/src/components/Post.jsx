@@ -9,6 +9,7 @@ import { Repost } from './Repost';
 import { Link } from "react-router-dom"
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
+import { Pin } from './Pin';
 
 export const Post = (props) => {
     const [time, setTime] = useState("");
@@ -62,6 +63,7 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
             {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
+            {props.user?.user?.is_admin && <Pin post={props.post}/>}
         </Box>
 
     </>
