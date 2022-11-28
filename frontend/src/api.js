@@ -73,19 +73,6 @@ export class Api {
         }
     }
 
-    async getPostById(id) {
-        try {
-            const res = await fetch(`${this.url}/posts/${id}`, {
-                method: "GET",
-                credentials: "include",
-            })
-            return await res.json();
-        } catch (e) {
-            console.log(e);
-            return e;
-        }
-    }
-
     async getPostComments(postId) {
         try {
             const res = await fetch(`${this.url}/posts/${postId}/comments`, {
@@ -429,6 +416,20 @@ export class Api {
     async getUserPost(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/posts`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get post by post id
+    async getPostById(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}`, {
                 method: "GET",
                 credentials: "include"
             });
