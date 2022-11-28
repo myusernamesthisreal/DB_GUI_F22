@@ -27,7 +27,7 @@ export const Post = (props) => {
     return <>
         <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
             <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${props.post.id}`}>
-                {props.post?.is_pinned && <Box sx={{ textAlign: "left", m: "0px", display: "flex" }}>
+                {!!props.post?.is_pinned && <Box sx={{ textAlign: "left", m: "0px", display: "flex" }}>
                 <PushPinIcon sx={{mt: "0.5rem", ml: "1rem", mr: "0.5rem"}}/><h3 style={{ marginTop: "0.5rem", marginBottom: "0px" }}>Pinned Post</h3>
                 </Box>}
                 <ListItem alignItems="flex-start">
@@ -67,7 +67,6 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             {props.user?.id === props.post.author ? null : <Bookmark post={props.post} />}
             {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
-            {props.user?.user?.is_admin && <Pin post={props.post} />}
         </Box>
 
     </>
