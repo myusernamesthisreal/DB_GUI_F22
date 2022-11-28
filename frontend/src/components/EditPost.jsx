@@ -80,52 +80,13 @@ export const EditPost = () => {
                 window.location.href = "/";
             }
         }
-        return <>
+        return (
+        <>
             <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
                 <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${post?.id}/edit`}>
-                    <ListItem alignItems="flex-start">
-                        <ListItemAvatar>
-                            <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
-                        </ListItemAvatar>
-    
-                        <ListItemText
-                            primary={
-                                <React.Fragment>
-                                    <Link style={{ textDecoration: "none", color: "inherit" }} to={`/users/${post?.author}`}>
-                                        <Typography sx={{ display: 'inline' }}>
-                                            {post?.authordisplayname}
-                                        </Typography> @
-                                        <Typography sx={{ display: 'inline' }} variant="body2">
-                                            {post?.authorname}
-                                        </Typography>
-                                    </Link>
-                                </React.Fragment>}
-                            secondary={
-                                <React.Fragment>
-                                    <Typography
-                                        sx={{ display: 'inline', overflow: "hidden" }}
-                                        component="span"
-                                        variant="body2"
-                                    >
-                                        {time ? new Date(time).toLocaleString("en-us") : null}
-                                    </Typography> --
-                                    <Box sx={{ overflow: "hidden" }}> {post?.body} </Box>
-                                    {post?.text.map((text) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label = {`${text}`} />)}
-                                    {post?.categories.map((category) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
-                                </React.Fragment>
-                            }
-                        />
-                        <Button variant="outlined" size="small" onClick={handleEditPost}>Post Edit</Button>
-                        <Button variant="outlined" size="small" onClick={handleCancelEdit}>Cancel Edit</Button>
-                    </ListItem>
-                </Link>
-            </Box>
-
-
-
-            <Snackbar
-                open={open}
-                autoHideDuration={6000}
+                    <Snackbar
+                    open={open}
+                    autoHideDuration={6000}
                 onClose={handleClose}
                 anchorOrigin={{ vertical: "top", horizontal: "left" }}>
                 <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>{error}</Alert>
@@ -156,10 +117,12 @@ export const EditPost = () => {
                             <TextField id="standar-basic" label="Enter Categories" variant="standard" value={currentCategory} onChange={(e) => handleEvent(e)} />
                         </Stack>
                     </ListItemText>
-
-
+                    <Button variant="outlined" size="small" onClick={handleEditPost}>Post Edit</Button>
+                    <Button variant="outlined" size="small" onClick={handleCancelEdit}>Cancel Edit</Button>
                 </ListItem>
+                </Box>
+            </Link>
             </Box>
-    
         </>
+    );
 }
