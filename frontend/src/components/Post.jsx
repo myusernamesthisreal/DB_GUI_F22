@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
+import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip, Grid } from '@mui/material';
 import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
 import PopupState from 'material-ui-popup-state';
@@ -67,10 +67,11 @@ export const Post = (props) => {
                     />
                 </ListItem>
             </Link>
-            {props.user?.id === props.post.author ? null : <Like post={props.post} />}
-            {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
-            {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
-            {props.user?.id !== props.post.author ? null : 
+            <Grid container sx={{maxWidth:"24rem", marginX: "auto"}}>
+            {props.user?.id === props.post.author ? null : <Grid item xs><Like post={props.post} /></Grid>}
+                {props.user?.id === props.post.author ? null : <Grid item xs><Repost post={props.post} /></Grid>}
+                    {props.user?.id === props.post.author ? null : <Grid item xs><Bookmark post={props.post}/></Grid>}
+            {props.user?.id !== props.post.author ? null :
                 <PopupState variant="popover" popupId="demoMenu">
                     {(popupState) => (
                         <React.Fragment>
@@ -87,8 +88,9 @@ export const Post = (props) => {
                     )}
                 </PopupState>
             }
-                
-            {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
+
+                {props.user?.id === props.post.author ? null : <Grid item xs><CommentsModal open={open} setOpen={setOpen} post={props.post} /></Grid>}
+            </Grid>
         </Box>
 
     </>
