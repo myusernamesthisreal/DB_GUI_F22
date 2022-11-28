@@ -53,6 +53,18 @@ export const EditPost = () => {
             else setError(true);
         }
 
+        const handleEvent = (event) => {
+            if (event.target.value.substr(-1) === ",") {
+                event.preventDefault();
+                const cats = [...categories];
+                cats.push(event.target.value.split(",")[0]);
+                setCategories(cats);
+                setCurrentCategory("");
+                console.log("userCategories", cats);
+            }
+            else setCurrentCategory(event.target.value);
+        }
+
         const handleDelete = (index) => {
             const newCats = [...categories];
             newCats.splice(index, 1);
