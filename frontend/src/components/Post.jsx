@@ -4,9 +4,18 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
 import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
+import PopupState from 'material-ui-popup-state';
+import { bindMenu, bindTrigger } from 'material-ui-popup-state/hooks';
+import Menu from '@mui/material/Menu';
+import MenuList from '@mui/material/MenuList';
+import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+import { handleOpen, handleClose, style } from 'material-ui-popup-state/hooks';
 import { Like } from './Likes';
 import { Repost } from './Repost';
-import { Link } from "react-router-dom"
+import { EditPost } from './EditPost';
+import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
 
@@ -61,6 +70,24 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Like post={props.post} />}
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
+            {props.user?.id !== props.post.author ? null : 
+                <PopupState variant="popover" popupId="demoMenu">
+                    {(popupState) => (
+                        <React.Fragment>
+                            <Button variant="outlined" {...bindTrigger(popupState)}>
+                                <b>...</b>
+                            </Button>
+                            <Menu {...bindMenu(popupState)}>
+                                <MenuItem onClick={() => window.location.href=`/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
+                                <MenuItem onClick={popupState.close}>
+                                    Delete Post
+                                </MenuItem>
+                            </Menu>
+                        </React.Fragment>
+                    )}
+                </PopupState>
+            }
+                
             {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
         </Box>
 
