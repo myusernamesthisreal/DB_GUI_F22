@@ -85,43 +85,43 @@ export const EditPost = () => {
             <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
                 <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${post?.id}/edit`}>
                     <Snackbar
-                    open={open}
-                    autoHideDuration={6000}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: "top", horizontal: "left" }}>
-                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>{error}</Alert>
-            </Snackbar>
-            <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "3.5rem", bgcolor: 'background.paper', p: "1rem" }}>
-                <Box sx={{ display: "flex" }} >
-                    <IconButton sx={{ justifyContent: "start" }}>
-                        <CancelIcon sx={{ display: "block", marginLeft: "8px" }} onClick={handleCancelEdit}></CancelIcon>
-                    </IconButton>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleEditPost}>
-                        <ListItemText primary="Post" />
-                    </Button>
-                </Box>
-                <ListItem alignItems="flex-start">
-                    <ListItemAvatar>
-                        <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
-                    </ListItemAvatar>
-                    <ListItemText>
-                        <Stack>
-                            <Typography>{`@${post?.username}`}</Typography>
-                            <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" onChange={(e) => setText(e.target.value)} />
-                            <Box sx={{display: "flex"}}>
-                                {categories.map((value, index) => {
-                                    return <Chip key={index} sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${value}`} onDelete={() => handleDelete(index)} />
-                                })}
-                            </Box>
-                            <TextField id="standar-basic" label="Enter Categories" variant="standard" value={currentCategory} onChange={(e) => handleEvent(e)} />
-                        </Stack>
-                    </ListItemText>
-                    <Button variant="outlined" size="small" onClick={handleEditPost}>Post Edit</Button>
-                    <Button variant="outlined" size="small" onClick={handleCancelEdit}>Cancel Edit</Button>
-                </ListItem>
-                </Box>
-            </Link>
+                        open={open}
+                        autoHideDuration={6000}
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: "top", horizontal: "left" }}>
+                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>{error}</Alert>
+                    </Snackbar>
+                    <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", width: '75%', marginX: "auto", marginTop: "3.5rem", bgcolor: 'background.paper', p: "1rem" }}>
+                        <Box sx={{ display: "flex" }} >
+                            <IconButton sx={{ justifyContent: "start" }}>
+                                <CancelIcon sx={{ display: "block", marginLeft: "8px" }} onClick={handleCancelEdit}></CancelIcon>
+                            </IconButton>
+                            <Box sx={{ flexGrow: 1 }} />
+                            <Button sx={{ justifyContent: "start" }} variant="contained" size="small" onClick={handleEditPost}>
+                                 <ListItemText primary="Post Edit" />
+                            </Button>
+                        </Box>
+                        <ListItem alignItems="flex-start">
+                            <ListItemAvatar>
+                                <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
+                            </ListItemAvatar>
+                            <ListItemText>
+                                <Stack>
+                                    <Typography>{`@${post?.username}`}</Typography>
+                                    <TextField id="standard-basic" multiline rows={4} label="What's happening?" variant="standard" onChange={(e) => setText(e.target.value)} />
+                                    <Box sx={{display: "flex"}}>
+                                        {categories.map((value, index) => {
+                                            return <Chip key={index} sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${value}`} onDelete={() => handleDelete(index)} />
+                                        })}
+                                    </Box>
+                                    <TextField id="standar-basic" label="Enter Categories" variant="standard" value={currentCategory} onChange={(e) => handleEvent(e)} />
+                                </Stack>
+                            </ListItemText>
+                            <Button variant="outlined" size="small" onClick={handleEditPost}>Post Edit</Button>
+                            <Button variant="outlined" size="small" onClick={handleCancelEdit}>Cancel Edit</Button>
+                        </ListItem>
+                    </Box>
+                </Link>
             </Box>
         </>
     );
