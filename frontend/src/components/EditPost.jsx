@@ -39,11 +39,10 @@ export const EditPost = () => {
     };
 
     const handleEditPost = async () => {
-        const req = await api.updatePost(categories, text);
-        if (req.success) {
-            setCategories(categories);
-            setText(text);
-            //window.location.href = "/";
+        const req = await api.updatePost(postId, text, categories);
+        const data = await req.json();
+        if (data.success) {
+            window.location.href = "/";
         } else setError(true);
     }
 
