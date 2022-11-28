@@ -51,7 +51,7 @@ export const Post = (props) => {
                                 >
                                     {time ? new Date(time).toLocaleString("en-us") : null}
                                 </Typography> --
-                                <Box sx={{ overflow: "hidden" }}> {props.post.body} </Box>
+                                <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}> {props.post.body} </Box>
                                 {props.post.categories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
                             </React.Fragment>
                         }
