@@ -9,8 +9,10 @@ import { Api } from '../api';
     
 export const EditPost = (props) => {
     const api = new Api();
+    const [post, setPost] = useState([]);
     const [text, setText] = useState("");
     const [categories, setCategories] = useState("");const [time, setTime] = useState("");
+    const [error, setError] = useState(false);
     const [open, setOpen] = useState(false);
     
         useEffect(() => {
@@ -24,14 +26,21 @@ export const EditPost = (props) => {
             const req = await api.Post(text, categories);
             if (req.success) {
                 setCategories(categories);
-                setText(text)
+                setText(text);
             };
         }
     
-        const handleDeletePost = async () => {
-            const req = await api.deletePost(props.post.id);
-            if (req.success) window.location.href = "/";
+        const handleGetPost = async (id) => {
+            const postById = await api.getUserPost(id);
+            if (postById.success) {
+                setPost(postById);
+            }
+            else setError(true);
         }
+    
+        useEffect(() => {
+            handleGetPost();
+        }, []);
     
         const handleCancelEdit = async () => {
             if (window.confirm("Do you want to cancel this edit?")) {
@@ -74,7 +83,6 @@ export const EditPost = (props) => {
                             }
                         />
                         <Button variant="outlined" size="small" onClick={handleEditPost}>Post Edit</Button>
-                        <Button variant="outlined" size="small" onClick={handleDeletePost}>Delete Post</Button>
                     </ListItem>
                 </Link>
             </Box>
