@@ -73,19 +73,6 @@ export class Api {
         }
     }
 
-    async getPostById(id) {
-        try {
-            const res = await fetch(`${this.url}/posts/${id}`, {
-                method: "GET",
-                credentials: "include",
-            })
-            return await res.json();
-        } catch (e) {
-            console.log(e);
-            return e;
-        }
-    }
-
     async getPostComments(postId) {
         try {
             const res = await fetch(`${this.url}/posts/${postId}/comments`, {
@@ -116,6 +103,19 @@ export class Api {
         const data = { body, categories };
         const res = await fetch(`${this.url}/posts`, {
             method: "POST",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
+    async updatePost(id, body, categories) {
+        const data = { body, categories };
+        const res = await fetch(`${this.url}/posts/${id}`, {
+            method: "PATCH",
             credentials: "include",
             body: JSON.stringify(data),
             headers: {
@@ -407,10 +407,55 @@ export class Api {
         }
     }
 
+
+        //edit post calls
+    // edit post
+    async patchPost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //delete post
+    async deletePost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    
     //get posts for user of given id
     async getUserPost(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/posts`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get post by post id
+    async getPostById(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}`, {
                 method: "GET",
                 credentials: "include"
             });

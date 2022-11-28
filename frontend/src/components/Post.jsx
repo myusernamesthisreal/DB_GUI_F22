@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { getNativeSelectUtilityClasses, ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
-import Button from '@mui/material/Button';
+import { ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
 import { Like } from './Likes';
 import { Repost } from './Repost';
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
 import { Pin } from './Pin';
@@ -31,7 +30,7 @@ export const Post = (props) => {
                     <PushPinIcon sx={{ mt: "0.5rem", ml: "1rem", mr: "0.5rem" }} /><h3 style={{ marginTop: "0.5rem", marginBottom: "0px" }}>Pinned Post</h3>
                 </Box>}
                 <Box sx={{ display: "flex" }}>
-                    <ListItem alignItems="flex-start">
+                    <ListItem alignItems="flex-start" sx={{minWidth: "260px"}}>
                         <ListItemAvatar>
                             <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
                         </ListItemAvatar>
@@ -42,7 +41,7 @@ export const Post = (props) => {
                                     <Link style={{ textDecoration: "none", color: "inherit" }} to={`/users/${props.post.author}`}>
                                         <Typography sx={{ display: 'block' }}>
                                             {props.post.authordisplayname}
-                                        </Typography> 
+                                        </Typography>
                                         <Typography sx={{
                                             display: 'block', maxWidth: '10px',
                                             textOverflow: "ellipsis"
@@ -67,7 +66,8 @@ export const Post = (props) => {
                         />
                     </ListItem>
                     <Box sx={{ marginTop: '0.5rem' }}>
-                        {props.user?.user?.is_admin && <Pin post={props.post} />}
+                        {!!props.user?.user?.is_admin && <Pin post={props.post} />}
+
                     </Box>
                 </Box>
             </Link>
