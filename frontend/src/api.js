@@ -125,6 +125,19 @@ export class Api {
         return res;
     }
 
+    async pinPost(id, pinned) {
+        const data = { pinned };
+        const res = await fetch(`${this.url}/posts/${id}`, {
+            method: "PATCH",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
     async getAllCatgories() {
         try {
             const res = await fetch(`${this.url}/categories`, {
