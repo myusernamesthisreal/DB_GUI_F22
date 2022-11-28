@@ -77,12 +77,13 @@ export const EditPost = (props) => {
                                         {time ? new Date(time).toLocaleString("en-us") : null}
                                     </Typography> --
                                     <Box sx={{ overflow: "hidden" }}> {props.post.body} </Box>
-                                    {props.post.text.map((text, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label = {`${text}`} />)}
-                                    {props.post.categories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
+                                    {props.post.text.map((text) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label = {`${text}`} />)}
+                                    {props.post.categories.map((category) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
                                 </React.Fragment>
                             }
                         />
                         <Button variant="outlined" size="small" onClick={handleEditPost}>Post Edit</Button>
+                        <Button variant="outlined" size="small" onClick={handleCancelEdit}>Cancel Edit</Button>
                     </ListItem>
                 </Link>
             </Box>
