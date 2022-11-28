@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Typography, Box, TextField, Button, IconButton, Snackbar, Alert } from '@mui/material';
-import { InsertComment, Cancel } from '@mui/icons-material';
+import { Cancel } from '@mui/icons-material';
 import { Api } from '../api';
 import { useWindowWidth } from "@react-hook/window-size";
 
@@ -26,7 +26,7 @@ export const DeletePost = ({ open, setOpen, post }) => {
     const api = new Api();
 
     //need to send in the post as well
-    const handleNewComment = async () => {
+    const handleDeletePost = async () => {
         const req = await api.deletePost(text, post.id);
         if (req.status === 201) {
             setOpen(false);
@@ -50,36 +50,36 @@ export const DeletePost = ({ open, setOpen, post }) => {
     };
 
     return <>
-        <Snackbar
-            open={alertOpen}
-            autoHideDuration={6000}
-            onClose={handleAlertClose}
-            anchorOrigin={{ vertical: "top", horizontal: "left" }}>
-            <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
-        </Snackbar>
-        <Button size="small" onClick={() => setOpen(true)}>
-            <InsertComment sx={{ border: "none", outline: "none" }}></InsertComment>
-        </Button>
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-            <Box sx={style}>
-                <Box sx={{ display: "flex" }}>
-                    <IconButton sx={{ justifyContent: "start" }}>
-                        <Cancel sx={{ display: "block" }} onClick={handleClose}></Cancel>
-                    </IconButton>
+        <Link>
+            <Snackbar
+                open={alertOpen}
+                autoHideDuration={6000}
+                onClose={handleAlertClose}
+                anchorOrigin={{ vertical: "top", horizontal: "left" }}>
+                <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
+            </Snackbar>
+            <Button size="small" onClick={() => setOpen(true)}>
+                Yes, Delete Post
+            </Button>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Box sx={{ display: "flex" }}>
+                        <IconButton sx={{ justifyContent: "start" }}>
+                            <Cancel sx={{ display: "block" }} onClick={handleClose}></Cancel>
+                        </IconButton>
+                    </Box>
+                    <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: "2rem" }}>
+                        Are you sure you want to delete this post?
+                    </Typography>
+                    <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleDeletePost}>Yes, delete</Button>
+                    <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleClose}>No</Button>
                 </Box>
-                <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: "2rem" }}>
-                    Add a comment
-                </Typography>
-                <Typography>
-                    <TextField label="comment" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)} />
-                </Typography>
-                <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleNewComment}>Submit</Button>
-            </Box>
-        </Modal>
+            </Modal>
+        </Link>
     </>
 }
