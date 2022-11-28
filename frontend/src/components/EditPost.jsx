@@ -7,16 +7,16 @@ import Button from '@mui/material/Button';
 import { Link } from "react-router-dom";
 import { Api } from '../api';
     
-export const EditPost = (props) => {
+export const EditPost = () => {
     const api = new Api();
-    const [post, setPost] = useState([]);
+    const [post, setPost] = useState(null);
     const [text, setText] = useState("");
     const [categories, setCategories] = useState("");const [time, setTime] = useState("");
     const [error, setError] = useState(false);
     const [open, setOpen] = useState(false);
     
         useEffect(() => {
-            const t = Date.parse(props?.post.timestamp);
+            const t = Date.parse(post?.timestamp);
     
             const tzOffset = new Date().getTimezoneOffset() * 60000;
             setTime(new Date(t - tzOffset).toLocaleString("en-us"));
@@ -49,7 +49,7 @@ export const EditPost = (props) => {
         }
         return <>
             <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
-                <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${props.post.id}/edit`}>
+                <Link style={{ textDecoration: "none", color: "inherit", cursor: "pointer" }} to={`/posts/${post?.id}/edit`}>
                     <ListItem alignItems="flex-start">
                         <ListItemAvatar>
                             <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
@@ -58,12 +58,12 @@ export const EditPost = (props) => {
                         <ListItemText
                             primary={
                                 <React.Fragment>
-                                    <Link style={{ textDecoration: "none", color: "inherit" }} to={`/users/${props.post.author}`}>
+                                    <Link style={{ textDecoration: "none", color: "inherit" }} to={`/users/${post?.author}`}>
                                         <Typography sx={{ display: 'inline' }}>
-                                            {props.post.authordisplayname}
+                                            {post?.authordisplayname}
                                         </Typography> @
                                         <Typography sx={{ display: 'inline' }} variant="body2">
-                                            {props.post.authorname}
+                                            {post?.authorname}
                                         </Typography>
                                     </Link>
                                 </React.Fragment>}
@@ -76,9 +76,9 @@ export const EditPost = (props) => {
                                     >
                                         {time ? new Date(time).toLocaleString("en-us") : null}
                                     </Typography> --
-                                    <Box sx={{ overflow: "hidden" }}> {props.post.body} </Box>
-                                    {props.post.text.map((text) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label = {`${text}`} />)}
-                                    {props.post.categories.map((category) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
+                                    <Box sx={{ overflow: "hidden" }}> {post?.body} </Box>
+                                    {post?.text.map((text) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label = {`${text}`} />)}
+                                    {post?.categories.map((category) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
                                 </React.Fragment>
                             }
                         />
