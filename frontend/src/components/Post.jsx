@@ -34,7 +34,7 @@ export const Post = (props) => {
         } else {
             setDisplayedCategories(props.post?.categories);
         }
-    }, [screenWidth])
+    }, [screenWidth, props.post?.categories]);
 
     return <>
         <Box sx={{ justifyContent: "center", border: 1, borderRadius: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", width: '80%', marginX: "auto", marginTop: "1rem", bgcolor: 'background.paper' }}>
