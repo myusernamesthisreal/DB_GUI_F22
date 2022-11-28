@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import { ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
 import { Like } from './Likes';
 import { Repost } from './Repost';
+
 import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
@@ -83,7 +84,25 @@ export const Post = (props) => {
             </Link>
             {props.user?.id === props.post.author ? null : <Like post={props.post} />}
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
-            {props.user?.id === props.post.author ? null : <Bookmark post={props.post} />}
+            {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
+            {props.user?.id !== props.post.author ? null : 
+                <PopupState variant="popover" popupId="demoMenu">
+                    {(popupState) => (
+                        <React.Fragment>
+                            <Button variant="outlined" {...bindTrigger(popupState)}>
+                                <b>...</b>
+                            </Button>
+                            <Menu {...bindMenu(popupState)}>
+                                <MenuItem onClick={() => window.location.href=`/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
+                                <MenuItem onClick={popupState.close}>
+                                    Delete Post
+                                </MenuItem>
+                            </Menu>
+                        </React.Fragment>
+                    )}
+                </PopupState>
+            }
+                
             {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
         </Box>
 
