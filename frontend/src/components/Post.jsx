@@ -78,7 +78,7 @@ export const Post = (props) => {
                             }
                         />
                     </ListItem>
-                    <Box sx={{ marginTop: '0.5rem' }}>
+                    <Box sx={{ marginTop: '0.5rem', zIndex:"50" }}>
                         {!!props.user?.user?.is_admin && <Pin post={props.post} />}
 
                     </Box>

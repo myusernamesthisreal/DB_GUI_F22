@@ -9,15 +9,17 @@ export function Pin(props) {
     const [pinned, setPinned] = useState(props.post.is_pinned);
     const api = new Api();
 
-    const handlePinned = async () => {
+    const handlePinned = async (e) => {
+        e.preventDefault();
         const res = await api.pinPost(props.post.id, !props.post.is_pinned);
         const data = await res.json();
         if (data.success) {
-            window.location.reload();
-        } 
+            setPinned(!pinned);
+        }
     }
     return <>
         <Button
+            sx={{ zIndex: 50}}
             onClick={handlePinned} color="primary">
             {pinned ? <PushPinIcon/> : <PushPinOutlinedIcon/>}
         </Button>
