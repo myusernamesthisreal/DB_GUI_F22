@@ -13,13 +13,13 @@ module.exports = function routes(app, logger) {
          */
         async (req, res) => {
             try {
-                const queryResult = await query("SELECT categoryname,COUNT(*) FROM categories GROUP BY categoryname");
+                const queryResult = await query("SELECT categoryname AS name, COUNT(*) AS num_posts FROM categories GROUP BY categoryname ORDER BY num_posts DESC");
                 res.status(200).send({
                     success: true,
                     categories: queryResult.map((row) => {
                         return {
-                            name: row.categoryname,
-                            num_posts: row["COUNT(*)"],
+                            name: row.name,
+                            num_posts: row.num_posts
                         }
                     }),
                 })
