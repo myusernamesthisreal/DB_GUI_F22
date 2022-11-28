@@ -67,10 +67,13 @@ export function User(props) {
     const [open, setOpen] = useState(false);
 
     const handleClose = () => setOpen(false);
+    const handleAlertClose = async (event, reason) => {
+        if (reason === "clickaway") return;
+        setAlertOpen(false);
+    }
 
     const handleChangeName = async () => {
         const req = await api.updateDisplayName(text);
-        console.log(req.status);
         if (req.status === 200) {
             setOpen(false);
             window.location.reload(false);
@@ -125,11 +128,18 @@ export function User(props) {
                             Change your Display Name
                         </Typography>
                         <Typography>
-                            <TextField label="Display Name" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)} />
+                            <TextField id="outline-required" label="Display Name" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)} />
                         </Typography>
                         <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleChangeName} >Change</Button>
                     </Box>
                 </Modal>
+                <Snackbar
+                    open={alertOpen}
+                    autoHideDuration={6000}
+                    onClose={handleAlertClose}
+                    anchorOrigin={{ vertical: "top", horizontal: "left" }}>
+                    <Alert onClose={handleAlertClose} severity="error" sx={{ width: '100%' }}>{errorMsg}</Alert>
+                </Snackbar>
 
                 <Box>
                     <Box>
