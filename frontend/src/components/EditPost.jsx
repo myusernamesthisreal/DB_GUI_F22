@@ -39,11 +39,12 @@ export const EditPost = () => {
     };
 
     const handleEditPost = async () => {
-        const req = await api.Post(text, categories);
+        const req = await api.updatePost(categories, text);
         if (req.success) {
             setCategories(categories);
             setText(text);
-        };
+            //window.location.href = "/";
+        } else setError(true);
     }
 
     const handleGetPost = async () => {
@@ -60,7 +61,7 @@ export const EditPost = () => {
     const handleEvent = (event) => {
         if (event.target.value.substr(-1) === ",") {
             event.preventDefault();
-            const cats = [...categories];
+            const cats = [...post.categories];
             cats.push(event.target.value.split(",")[0]);
             setCategories(cats);
             setCurrentCategory("");
