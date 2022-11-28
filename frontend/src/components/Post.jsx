@@ -15,6 +15,7 @@ import { handleOpen, handleClose, style } from 'material-ui-popup-state/hooks';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 import { EditPost } from './EditPost';
+import { DeletePost } from './DeletePost';
 import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
@@ -69,8 +70,8 @@ export const Post = (props) => {
             </Link>
             {props.user?.id === props.post.author ? null : <Like post={props.post} />}
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
-            {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
-            {props.user?.id !== props.post.author ? null : 
+            {props.user?.id === props.post.author ? null : <Bookmark post={props.post} />}
+            {props.user?.id !== props.post.author ? null :
                 <PopupState variant="popover" popupId="demoMenu">
                     {(popupState) => (
                         <React.Fragment>
@@ -78,8 +79,8 @@ export const Post = (props) => {
                                 <b>...</b>
                             </Button>
                             <Menu {...bindMenu(popupState)}>
-                                <MenuItem onClick={() => window.location.href=`/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
-                                <MenuItem onClick={popupState.close}>
+                                <MenuItem onClick={() => window.location.href = `/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
+                                <MenuItem onClick={<DeletePost post={props.post} />}>
                                     Delete Post
                                 </MenuItem>
                             </Menu>
@@ -87,7 +88,7 @@ export const Post = (props) => {
                     )}
                 </PopupState>
             }
-                
+
             {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
         </Box>
 
