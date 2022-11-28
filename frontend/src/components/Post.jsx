@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar'
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { ListItem, ListItemAvatar, ListItemText, Chip } from '@mui/material';
+import { ListItem, ListItemAvatar, ListItemText, Chip, Grid } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 
@@ -82,28 +84,16 @@ export const Post = (props) => {
                     </Box>
                 </Box>
             </Link>
-            {props.user?.id === props.post.author ? null : <Like post={props.post} />}
-            {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
-            {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
-            {props.user?.id !== props.post.author ? null : 
-                <PopupState variant="popover" popupId="demoMenu">
-                    {(popupState) => (
-                        <React.Fragment>
-                            <Button variant="outlined" {...bindTrigger(popupState)}>
-                                <b>...</b>
-                            </Button>
-                            <Menu {...bindMenu(popupState)}>
-                                <MenuItem onClick={() => window.location.href=`/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
-                                <MenuItem onClick={popupState.close}>
-                                    Delete Post
-                                </MenuItem>
-                            </Menu>
-                        </React.Fragment>
-                    )}
-                </PopupState>
-            }
-                
-            {props.user?.id === props.post.author ? null : <CommentsModal open={open} setOpen={setOpen} post={props.post} />}
+            <Grid container sx={{ maxWidth: "24rem", marginX: "auto" }}>
+                {props.user?.id === props.post.author ? null : <Grid item xs><Like post={props.post} /></Grid>}
+                {props.user?.id === props.post.author ? null : <Grid item xs><Repost post={props.post} /></Grid>}
+                {props.user?.id === props.post.author ? null : <Grid item xs><Bookmark post={props.post} /></Grid>}
+                {props.user?.id === props.post.author ? null : <Grid item xs><CommentsModal open={open} setOpen={setOpen} post={props.post} /></Grid>}
+                {props.user?.id === props.post.author ? <Grid item xs><EditIcon onClick={() => window.location.href = `/posts/${props.post.id}/edit`} color="primary" sx={{ cursor: "pointer" }} /></Grid> : null}
+                {props.user?.id === props.post.author || props.user?.user?.is_admin ? <Grid item xs><DeleteIcon color="primary" sx={{ cursor: "pointer" }} /></Grid> : null}
+
+
+            </Grid>
         </Box>
 
     </>
