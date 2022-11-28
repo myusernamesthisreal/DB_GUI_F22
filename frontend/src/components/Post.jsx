@@ -100,7 +100,7 @@ export const Post = (props) => {
                                 ...
                             </Button>
                             <Menu {...bindMenu(popupState)}>
-                                <MenuItem onClick={<EditPost post={props.post}/>}>Edit Post</MenuItem>
+                                <MenuItem onClick={() => window.location.href=`/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
                                 <MenuItem onClick={popupState.close}>
                                     Delete Post
                                 </MenuItem>
