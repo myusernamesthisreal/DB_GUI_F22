@@ -80,8 +80,8 @@ export const Post = (props) => {
                             </Button>
                             <Menu {...bindMenu(popupState)}>
                                 <MenuItem onClick={() => window.location.href = `/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
-                                <MenuItem onClick={<DeletePost post={props.post} />}>
-                                    Delete Post
+                                <MenuItem>
+                                    <DeletePost open={open} setOpen={setOpen} post={props.post} />
                                 </MenuItem>
                             </Menu>
                         </React.Fragment>
