@@ -30,7 +30,7 @@ export const Post = (props) => {
 
     useEffect(() => {
         if (screenWidth < 450) {
-            setDisplayedCategories(props.post?.categories?.slice(0,3))
+            setDisplayedCategories(props.post?.categories?.slice(0, 3))
         } else {
             setDisplayedCategories(props.post?.categories);
         }
@@ -43,11 +43,12 @@ export const Post = (props) => {
                     <PushPinIcon sx={{ mt: "0.5rem", ml: "1rem", mr: "0.5rem" }} /><h3 style={{ marginTop: "0.5rem", marginBottom: "0px" }}>Pinned Post</h3>
                 </Box>}
                 <Box sx={{ display: "flex" }}>
-                    <ListItem alignItems="flex-start" sx={{minWidth: "260px"}}>
-                        <ListItemAvatar>
-                            <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
-                        </ListItemAvatar>
-
+                    <ListItem alignItems="flex-start" sx={{ minWidth: "260px" }}>
+                        <Link style={{ textDecoration: "none", color: "inherit" }} to={`/users/${props.post.author}`}>
+                            <ListItemAvatar>
+                                <Avatar src="https://i.imgur.com/KNE5lGg.jpg" />
+                            </ListItemAvatar>
+                        </Link>
                         <ListItemText
                             primary={
                                 <React.Fragment>
@@ -78,9 +79,8 @@ export const Post = (props) => {
                             }
                         />
                     </ListItem>
-                    <Box sx={{ marginTop: '0.5rem', zIndex:"50" }}>
+                    <Box sx={{ marginTop: '0.5rem', zIndex: "50" }}>
                         {!!props.user?.user?.is_admin && <Pin post={props.post} />}
-
                     </Box>
                 </Box>
             </Link>
