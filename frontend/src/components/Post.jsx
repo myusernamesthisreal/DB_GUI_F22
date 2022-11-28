@@ -15,7 +15,6 @@ import { handleOpen, handleClose, style } from 'material-ui-popup-state/hooks';
 import { Like } from './Likes';
 import { Repost } from './Repost';
 import { EditPost } from './EditPost';
-import { DeletePost } from './DeletePost';
 import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
@@ -71,40 +70,17 @@ export const Post = (props) => {
             {props.user?.id === props.post.author ? null : <Like post={props.post} />}
             {props.user?.id === props.post.author ? null : <Repost post={props.post} />}
             {props.user?.id === props.post.author ? null : <Bookmark post={props.post}/>}
-            {props.user?.id !== props.post.author ? null : <Button aria-describedby={props.post.id} variant="contained" onClick={props.handleClick}>
-                    ...
-                </Button>
-            }
-            {props.user?.id !== props.post.author ? null : 
-                <Popover
-                    id={props.post.id}
-                    open={open}
-                    anchorReference={props.post.anchorEl}
-                    onClose={props.handleClose}
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right'
-                    }}
-                >
-                    <Typography sx={{ p: 2 }}>
-                        <EditPost post={props.post}>Edit Post</EditPost>
-                        <DeletePost post={props.post}>Delete Post</DeletePost>
-                    </Typography>
-                </Popover>
-
-                
-            }
             {props.user?.id !== props.post.author ? null : 
                 <PopupState variant="popover" popupId="demoMenu">
                     {(popupState) => (
                         <React.Fragment>
                             <Button variant="outlined" {...bindTrigger(popupState)}>
-                                ...
+                                <b>...</b>
                             </Button>
                             <Menu {...bindMenu(popupState)}>
-                                <MenuItem onClick={<EditPost post={props.post}/>}>Edit Post</MenuItem>
+                                <MenuItem onClick={() => window.location.href=`/posts/${props.post.id}/edit`}>Edit Post</MenuItem>
                                 <MenuItem onClick={popupState.close}>
-                                    <DeletePost post={props.post}>Delete Post</DeletePost>
+                                    Delete Post
                                 </MenuItem>
                             </Menu>
                         </React.Fragment>
