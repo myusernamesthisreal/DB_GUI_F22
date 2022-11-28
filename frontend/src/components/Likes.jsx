@@ -34,7 +34,7 @@ export function Like(props) {
     */
 
     return <>
-        <Button 
+        <Button sx={{minWidth: "4rem"}}
             onClick={handleLikes} color="primary" >
             {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
         </Button>
