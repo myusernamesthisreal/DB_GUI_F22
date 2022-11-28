@@ -112,6 +112,19 @@ export class Api {
         return res;
     }
 
+    async updatePost(body, categories) {
+        const data = { body, categories };
+        const res = await fetch(`${this.url}/post`, {
+            method: "PATCH",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
     async getAllCatgories() {
         try {
             const res = await fetch(`${this.url}/categories`, {
