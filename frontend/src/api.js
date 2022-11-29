@@ -426,18 +426,18 @@ export class Api {
     //delete post
     async deletePost(id) {
         try {
-            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+            const res = await fetch(`${this.url}/posts/${id}`, {
                 method: "DELETE",
                 credentials: "include"
             });
-            return await res.json();
+            return res;
         } catch (e) {
             console.error(e)
             return e;
         }
     }
 
-    
+
     //get posts for user of given id
     async getUserPost(id) {
         try {
