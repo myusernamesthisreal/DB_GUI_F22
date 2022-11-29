@@ -17,9 +17,10 @@ const style = {
     p: 4,
 };
 
-export const DeletePost = ({ open, setOpen, post }) => {
+export const DeletePost = ({ post }) => {
     const [errorMsg, setErrorMsg] = useState("");
     const [alertOpen, setAlertOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const screenWidth = useWindowWidth();
 
 
@@ -27,8 +28,10 @@ export const DeletePost = ({ open, setOpen, post }) => {
 
     //need to send in the post as well
     const handleDeletePost = async () => {
-        const req = await api.deletePost(post.id);
-        if (req.success) {
+        const req = await api.deletePost(post?.id);
+        const data = await req.json();
+
+        if (data.success) {
             setOpen(false);
             window.location.reload(false);
         }
