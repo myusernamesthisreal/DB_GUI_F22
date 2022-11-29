@@ -24,12 +24,17 @@ export const Comment = ({ post, comment, user }) => {
                         primary={
                             <React.Fragment>
                                 <Box display="flex">
-                                    <Typography variant="body2">
-                                        {`@${user?.username}`}
-                                    </Typography>
-                                    <Box justifyContent={"space-between"} sx={{width:"50%"}}></Box>
+                                    <Box display="block">
+                                        <Typography>
+                                            {comment.authordisplayname}
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            {`@${user?.username}`}
+                                        </Typography>
+                                    </Box>
+                                    <Box justifyContent={"space-between"} sx={{ width: "69%" }}></Box>
                                     <Typography
-                                        sx={{ overflow: "hidden", textAlign:"right" }}
+                                        sx={{ overflow: "hidden", textAlign: "right" }}
                                         component="span"
                                         variant="body2"
                                     >
