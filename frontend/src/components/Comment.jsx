@@ -32,7 +32,7 @@ export const Comment = ({ post, comment, user }) => {
                                             {`@${user?.username}`}
                                         </Typography>
                                     </Box>
-                                    <Box justifyContent={"space-between"} sx={{ width: "69%" }}></Box>
+                                    <Box justifyContent={"space-between"} sx={{ flexGrow: 1 }}></Box>
                                     <Typography
                                         sx={{ overflow: "hidden", textAlign: "right" }}
                                         component="span"
