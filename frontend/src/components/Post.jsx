@@ -4,10 +4,9 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { ListItem, ListItemAvatar, ListItemText, Chip, Grid } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { Like } from './Likes';
 import { Repost } from './Repost';
-
+import { DeletePost } from './DeletePost';
 import { Link } from "react-router-dom";
 import { CommentsModal } from './CommentsModal';
 import { Bookmark } from './Bookmark'
@@ -94,9 +93,7 @@ export const Post = (props) => {
                 {props.user?.id === props.post.author ? null : <Grid item xs><Bookmark post={props.post} /></Grid>}
                 {props.user?.id === props.post.author ? null : <Grid item xs><CommentsModal open={open} setOpen={setOpen} post={props.post} /></Grid>}
                 {props.user?.id === props.post.author ? <Grid item xs><EditIcon onClick={() => window.location.href = `/posts/${props.post.id}/edit`} color="primary" sx={{ cursor: "pointer" }} /></Grid> : null}
-                {props.user?.id === props.post.author || props.user?.user?.is_admin ? <Grid item xs><DeleteIcon color="primary" sx={{ cursor: "pointer" }} /></Grid> : null}
-
-
+                {props.user?.id === props.post.author || props.user?.user?.is_admin ? <Grid item xs><DeletePost post={props.post} /></Grid> : null}
             </Grid>
         </Box>
 
