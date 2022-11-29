@@ -430,14 +430,14 @@ export class Api {
                 method: "DELETE",
                 credentials: "include"
             });
-            return await res.json();
+            return res;
         } catch (e) {
             console.error(e)
             return e;
         }
     }
 
-    
+
     //get posts for user of given id
     async getUserPost(id) {
         try {
