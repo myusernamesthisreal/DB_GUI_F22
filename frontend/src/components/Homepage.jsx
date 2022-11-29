@@ -65,6 +65,7 @@ export function Homepage(props) {
     if (loaded)
         return (
             <>
+                {screenWidth <= 450 && <Button variant="contained" sx={{ width: "60%", marginTop: "2rem" }} onClick={handlePostClick}>Post</Button>}
                 <Box sx={{ display: "flex", marginTop: "1rem" }} >
                     {screenWidth > 450 ? <Box sx={{ marginLeft: "2rem" }}>
                         <Button variant="contained" sx={{ width: "100%", marginBottom: "1rem" }} onClick={handlePostClick}>Post</Button>
