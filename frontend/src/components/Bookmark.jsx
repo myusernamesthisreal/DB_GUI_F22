@@ -12,14 +12,11 @@ export const Bookmark = ({ post }) => {
         const req = await api.bookmark(post.id);
         if (req.success) {
             setBookmarked(!bookmarked);
-        } 
+        }
     }
 
 
     return <>
-        <Button
-            onClick={handleBookmarks} color="primary" > 
-            {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-        </Button>
+        {bookmarked ? <BookmarkIcon sx={{ cursor: "pointer" }} onClick={handleBookmarks} color="primary" /> : <BookmarkBorderIcon sx={{ cursor: "pointer" }} onClick={handleBookmarks} color="primary" />}
     </>
 }

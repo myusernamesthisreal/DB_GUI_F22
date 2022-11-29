@@ -77,7 +77,10 @@ export function Homepage(props) {
                     </Box> : null}
                     <Box sx={{ display: "block", width: "100%" }}>
                         {
-                            posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                            posts.filter((p) => p.is_pinned).map((post, index) => <Post key={index} post={post} user={props.user} />)
+                        }
+                        {
+                            posts.filter((p) => !p.is_pinned).map((post, index) => <Post key={index} post={post} user={props.user} />)
                         }
                     </Box>
                 </Box>
