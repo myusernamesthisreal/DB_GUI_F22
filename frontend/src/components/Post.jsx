@@ -83,7 +83,7 @@ export const Post = (props) => {
                 </Box>
                 <Box sx={{ paddingBottom: "1rem" }}>
                     <Box sx={{ overflow: "hidden", textOverflow: "ellipsis", textAlign: "start", marginLeft: "4.5rem" }}> {props.post.body} </Box>
-                    <Box display="flex" sx={{justifyContent:"left", paddingLeft: "4.4rem"}}>
+                    <Box display="flex" sx={{justifyContent:"left", paddingLeft: "4.4rem", marginTop: "0.5rem"}}>
                         {displayedCategories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
                     </Box>
                 </Box>
