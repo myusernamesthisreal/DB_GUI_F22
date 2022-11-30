@@ -25,7 +25,7 @@ export const Post = (props) => {
 
         const tzOffset = new Date().getTimezoneOffset() * 60000;
         setTime(new Date(t - tzOffset).toLocaleString("en-us"));
-    }, []);
+    }, [props?.post?.timestamp]);
 
     useEffect(() => {
         if (screenWidth < 450) {
