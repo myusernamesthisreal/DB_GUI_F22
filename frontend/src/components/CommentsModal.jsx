@@ -74,7 +74,7 @@ export const CommentsModal = ({ open, setOpen, post }) => {
                 <Typography>
                     <TextField label="comment" type="standard" fullWidth="true" onChange={(e) => setText(e.target.value)} />
                 </Typography>
-                <Button variant="outlined" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleNewComment}>Submit</Button>
+                <Button variant="contained" size="small" sx={{ mt: "2rem", mr: "1rem" }} onClick={handleNewComment}>Submit</Button>
             </Box>
         </Modal>
     </>

@@ -24,32 +24,29 @@ export const Comment = ({ post, comment, user }) => {
                     <ListItemText
                         primary={
                             <React.Fragment>
-                                <Box display="flex">
-                                    <Box display="block">
-                                        <Typography>
-                                            {comment.authordisplayname}
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            {`@${user?.username}`}
-                                        </Typography>
-                                    </Box>
-                                    <Box justifyContent={"space-between"} sx={{ width: "69%" }}></Box>
-                                    <Typography
-                                        sx={{ overflow: "hidden", textAlign: "right" }}
-                                        component="span"
-                                        variant="body2"
-                                    >
-                                        {time ? new Date(time).toLocaleString("en-us") : null}
+                                <Box display="block">
+                                    <Typography>
+                                        {comment.authordisplayname}
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        {`@${user?.username}`}
                                     </Typography>
                                 </Box>
                             </React.Fragment>}
                         secondary={
                             <React.Fragment>
-                                <Box sx={{ overflow: "hidden" }}> {comment.body} </Box>
+                                <Typography
+                                    sx={{ overflow: "hidden", textAlign: "right" }}
+                                    component="span"
+                                    variant="body2"
+                                >
+                                    {time ? new Date(time).toLocaleString("en-us") : null}
+                                </Typography>
                             </React.Fragment>
                         }
                     />
                 </ListItem>
+                <Box sx={{ overflow: "hidden", textOverflow: "ellipsis", textAlign:"start", marginLeft: "4.5rem", marginBottom: "1rem"}}> {comment.body} </Box>
             </Link>
             <DeleteComment comment={comment} />
         </Box>

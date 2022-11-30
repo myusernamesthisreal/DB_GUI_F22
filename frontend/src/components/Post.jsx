@@ -71,17 +71,23 @@ export const Post = (props) => {
                                         variant="body2"
                                     >
                                         {time ? new Date(time).toLocaleString("en-us") : null}
-                                    </Typography> --
-                                    <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}> {props.post.body} </Box>
-                                    {displayedCategories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
+                                    </Typography>
                                 </React.Fragment>
                             }
                         />
                     </ListItem>
+
                     <Box sx={{ marginTop: '0.5rem', zIndex: "50" }}>
                         {!!props.user?.user?.is_admin && <Pin post={props.post} />}
                     </Box>
                 </Box>
+                <Box sx={{ paddingBottom: "1rem" }}>
+                    <Box sx={{ overflow: "hidden", textOverflow: "ellipsis", textAlign: "start", marginLeft: "4.5rem" }}> {props.post.body} </Box>
+                    <Box display="flex" sx={{justifyContent:"left", paddingLeft: "4.4rem", marginTop: "0.5rem"}}>
+                        {displayedCategories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
+                    </Box>
+                </Box>
+
             </Link>
             <Grid container sx={{ maxWidth: "24rem", marginX: "auto" }}>
                 {props.user?.id === props.post.author ? null : <Grid item xs><Like post={props.post} /></Grid>}
