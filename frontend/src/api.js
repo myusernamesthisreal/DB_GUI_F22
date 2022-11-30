@@ -8,41 +8,31 @@ export class Api {
 
     async signup(username, password) {
         const body = { username, password };
-        try {
-            const res = await fetch(`${this.url}/users`,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                })
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return e;
-        }
+        const res = await fetch(`${this.url}/users`,
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+        return res;
     }
 
     async login(username, password) {
         const body = { username, password };
-        try {
-            const res = await fetch(`${this.url}/login`,
-                {
-                    method: "POST",
-                    body: JSON.stringify(body),
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
+        const res = await fetch(`${this.url}/login`,
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                }
 
-                })
-            return await res.json();
-        } catch (e) {
-            console.error(e);
-            return e;
-        }
+            })
+        return res;
     }
 
     async checkUser() {
@@ -83,6 +73,19 @@ export class Api {
         }
     }
 
+    async getPostComments(postId) {
+        try {
+            const res = await fetch(`${this.url}/posts/${postId}/comments`, {
+                method: "GET",
+                credentials: "include",
+            })
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+            return e;
+        }
+    }
+
     async getUser(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}`, {
@@ -98,20 +101,41 @@ export class Api {
 
     async makePost(body, categories) {
         const data = { body, categories };
-        try {
-            const res = await fetch(`${this.url}/posts`, {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            });
-            return await res.json();
-        } catch (e) {
-            console.error(e)
-            return e;
-        }
+        const res = await fetch(`${this.url}/posts`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
+    async updatePost(id, body, categories) {
+        const data = { body, categories };
+        const res = await fetch(`${this.url}/posts/${id}`, {
+            method: "PATCH",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
+    async pinPost(id, pinned) {
+        const data = { pinned };
+        const res = await fetch(`${this.url}/posts/${id}`, {
+            method: "PATCH",
+            credentials: "include",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
     }
 
     async getAllCatgories() {
@@ -155,7 +179,7 @@ export class Api {
         }
     }
 
-    //get posts liked by a user
+    //get posts liked by a user of given id
     async getLikedPosts(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/likes`, {
@@ -246,6 +270,20 @@ export class Api {
         try {
             const res = await fetch(`${this.url}/users/${id}/follow`, {
                 method: "POST",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //follow a user
+    async toggleFollow(id) {
+        try {
+            const res = await fetch(`${this.url}/users/${id}/follows`, {
+                method: "PATCH",
                 credentials: "include"
             });
             return await res.json();
@@ -369,7 +407,52 @@ export class Api {
         }
     }
 
-    async getUserPost(id) { //get posts for user id
+
+        //edit post calls
+    // edit post
+    async patchPost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/edit`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //delete post
+    async deletePost(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return res;
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //delete comment
+    async deleteComment(id) {
+        try {
+            const res = await fetch(`${this.url}/comments/${id}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return res;
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get posts for user of given id
+    async getUserPost(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/posts`, {
                 method: "GET",
@@ -382,7 +465,22 @@ export class Api {
         }
     }
 
-    async getUserSaves(id) { //get saved posts for user id
+    //get post by post id
+    async getPostById(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}`, {
+                method: "GET",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+
+    //get saved posts for user of given id
+    async getUserSaves(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/saves`, {
                 method: "GET",
@@ -395,7 +493,8 @@ export class Api {
         }
     }
 
-    async getUserFollowers(id) { //get followers for user id
+    //get followers for user of given id
+    async getUserFollowers(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/followers`, {
                 method: "GET",
@@ -408,7 +507,8 @@ export class Api {
         }
     }
 
-    async getUserFollowing(id) { //get following for user id
+    //get following for user of given id
+    async getUserFollowing(id) {
         try {
             const res = await fetch(`${this.url}/users/${id}/following`, {
                 method: "GET",
@@ -435,4 +535,49 @@ export class Api {
             return e;
         }
     }
+
+    //update displayname of current user
+    async updateDisplayName(displayName) {
+        const body = { displayName };
+        try {
+            const res = await fetch(`${this.url}/displayname`, {
+                method: "PUT",
+                credentials: "include",
+                body: JSON.stringify(body),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+            return res;
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
+    async addComment(comment, id) {
+        const body = { comment };
+        const res = await fetch(`${this.url}/posts/${id}/comments`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        return res;
+    }
+
+    //bookmark post
+    async bookmark(id) {
+        try {
+            const res = await fetch(`${this.url}/posts/${id}/saves`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            return await res.json();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
 }

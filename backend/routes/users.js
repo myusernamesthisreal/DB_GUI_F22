@@ -5,8 +5,8 @@ const promisify = require("util").promisify;
 
 module.exports =
   /**
-   * @param {import("express").Application} app 
-   * @param {import("winston").Logger} logger 
+   * @param {import("express").Application} app
+   * @param {import("winston").Logger} logger
    */
   (app, logger) => {
     const query = promisify(pool.query).bind(pool);
@@ -122,13 +122,14 @@ module.exports =
       async (req, res) => {
         try {
           const user = await jwt.verifyToken(req);
-          console.log("User: ", user);
+          delete user.password;
           if (user) {
             res.status(200).send({
               message: "Token is valid",
               success: true,
               username: user.username,
               id: user.id,
+              user,
             })
           }
           else {
@@ -162,6 +163,7 @@ module.exports =
       async (req, res) => {
         try {
           const user = await jwt.verifyToken(req);
+          delete user.password;
           if (user.is_admin) {
             res.status(200).send({
               admin: true,
@@ -169,6 +171,7 @@ module.exports =
               success: true,
               username: user.username,
               id: user.id,
+              user,
             })
           }
           else {
@@ -178,6 +181,7 @@ module.exports =
               success: true,
               username: user.username,
               id: user.id,
+              user,
             })
           }
         } catch (e) {
@@ -206,6 +210,7 @@ module.exports =
         try {
           const user = await jwt.verifyToken(req);
           const { displayName } = req.body;
+          if (!displayName) throw new Error("Display name cannot be empty");
           const queryResult = await query(
             "UPDATE db.users SET displayname = ? WHERE id = ?",
             [displayName, user.id]
@@ -220,6 +225,11 @@ module.exports =
           if (e.message === "Invalid token") {
             res.status(401).send({
               message: "Unauthorized",
+              success: false,
+            })
+          } else if (e.message === "Display name cannot be empty") {
+            res.status(400).send({
+              message: e.message,
               success: false,
             })
           } else
@@ -262,9 +272,27 @@ module.exports =
        * @param {import('express').Response} res
        */
       async (req, res) => {
+        let authenticated = false;
+        try {
+          const user = await jwt.verifyToken(req);
+          authenticated = user.id;
+        } catch (e) { }
         try {
           const queryResult = await query("SELECT id, username, displayname, is_admin FROM db.users WHERE id = ?", [req.params.id]);
           if (queryResult.length === 0) throw new Error("User not found");
+
+          if (authenticated && authenticated !== req.params.id) {
+            const followsQueryResult = await query("SELECT follows.* FROM db.follows WHERE src = ? AND dst = ?", [authenticated, req.params.id]);
+            if (followsQueryResult.length > 0) {
+              queryResult[0].following = true;
+            }
+            else {
+              queryResult[0].following = false;
+            }
+          } else {
+            queryResult[0].following = false;
+          }
+
           res.status(200).send({
             message: "User fetched successfully",
             success: true,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Api } from "../api";
 import { Post } from "./";
 import { Button, Box, FormGroup, FormControlLabel, Typography, Checkbox } from "@mui/material";
-import { useWindowWidth } from "@react-hook/window-size"
+import { useWindowWidth } from "@react-hook/window-size";
 
 export function Homepage(props) {
 
@@ -12,6 +12,7 @@ export function Homepage(props) {
     const [allPosts, setAllPosts] = useState([]);
     const [categories, setCategories] = useState([]);
     const screenWidth = useWindowWidth();
+    // const screenWidth = 555;
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
     const [checked, setChecked] = useState({});
@@ -64,8 +65,9 @@ export function Homepage(props) {
     if (loaded)
         return (
             <>
-                <Box sx={{ display: "flex", marginTop: "1rem" }}>
-                    {screenWidth > 420 ? <Box sx={{ marginLeft: "2rem" }}>
+                {screenWidth <= 450 && <Button variant="contained" sx={{ width: "60%", marginTop: "2rem" }} onClick={handlePostClick}>Post</Button>}
+                <Box sx={{ display: "flex", marginTop: "1rem" }} >
+                    {screenWidth > 450 ? <Box sx={{ marginLeft: "2rem" }}>
                         <Button variant="contained" sx={{ width: "100%", marginBottom: "1rem" }} onClick={handlePostClick}>Post</Button>
                         <Typography sx={{ color: "black", fontSize: 24, fontWeight: "bold", textAlign: "left" }}>
                             Filter:
@@ -76,7 +78,10 @@ export function Homepage(props) {
                     </Box> : null}
                     <Box sx={{ display: "block", width: "100%" }}>
                         {
-                            posts.map((post, index) => <Post key={index} post={post} user={props.user} />)
+                            posts.filter((p) => p.is_pinned).map((post, index) => <Post key={index} post={post} user={props.user} />)
+                        }
+                        {
+                            posts.filter((p) => !p.is_pinned).map((post, index) => <Post key={index} post={post} user={props.user} />)
                         }
                     </Box>
                 </Box>

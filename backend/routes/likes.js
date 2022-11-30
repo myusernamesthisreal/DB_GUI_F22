@@ -144,6 +144,7 @@ module.exports = function routes(app, logger) {
         const queryResult = await query("SELECT author FROM db.posts WHERE id = ?", [id]);
         if (queryResult.length === 0)
           throw new Error("Post not found");
+        console.log(queryResult[0].author, user.id);
         if (queryResult[0].author === user.id)
           throw new Error("Cannot like your own post");
         const likeResult = await query("SELECT id FROM db.likes WHERE post = ? AND user = ?", [id, user.id]);
@@ -197,16 +198,56 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
+      try {
+        const user = await jwt.verifyToken(req);
+        authenticated = user.id;
+      } catch (e) { }
       try {
         const { id } = req.params;
         const queryResult = await query("SELECT id FROM db.users WHERE id = ?", [id]);
         if (queryResult.length === 0)
           throw new Error("User not found");
-        const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [id]);
+        const likesQuery = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = posts.author WHERE likes.user = ? ORDER BY posts.timestamp DESC", [id]);
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        const repostsResult = await query("SELECT post FROM reposts WHERE user = ?", [authenticated]);
+        const reposts = repostsResult.map(repost => repost.post);
+
+        const savesResult = await query("SELECT post FROM saves WHERE user = ?", [authenticated]);
+        const saves = savesResult.map(save => save.post);
+
+        let postsWithLikes = likesQuery;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            post.reposted = reposts.includes(post.id);
+            post.saved = saves.includes(post.id);
+            return post;
+          })
+        }
+        else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            post.reposted = false;
+            post.saved = false;
+            return post;
+          })
+        }
+
+        let withCategories = postsWithLikes;
+
+        withCategories = withCategories.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
+        })
         res.status(200).send({
           message: "Likes fetched",
           success: true,
-          likes,
+          likes: withCategories,
         })
       } catch (e) {
         logger.error("Error in GET /users/:id/likes: ", e);
@@ -232,13 +273,53 @@ module.exports = function routes(app, logger) {
      * @param {import('express').Response} res
      */
     async (req, res) => {
+      let authenticated = false;
       try {
         const user = await jwt.verifyToken(req);
-        const likes = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = likes.user WHERE users.id = ?", [user.id]);
+        authenticated = user.id;
+      } catch (e) { }
+      try {
+        const user = await jwt.verifyToken(req);
+        const likesQuery = await query("SELECT posts.*, users.username AS authorname, users.displayname AS authordisplayname FROM likes JOIN posts ON likes.post = posts.id JOIN users ON users.id = posts.author WHERE likes.user = ? ORDER BY posts.timestamp DESC", [user.id]);
+        const categoryResult = await query("SELECT posts.*, GROUP_CONCAT(DISTINCT categoryname SEPARATOR ',') AS categories FROM posts JOIN categories ON posts.id = categories.post GROUP BY posts.id");
+
+        const likesResult = await query("SELECT post FROM likes WHERE user = ?", [authenticated]);
+        const likes = likesResult.map(like => like.post);
+
+        const repostsResult = await query("SELECT post FROM reposts WHERE user = ?", [authenticated]);
+        const reposts = repostsResult.map(repost => repost.post);
+
+        const savesResult = await query("SELECT post FROM saves WHERE user = ?", [authenticated]);
+        const saves = savesResult.map(save => save.post);
+
+        let postsWithLikes = likesQuery;
+        if (authenticated) {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = likes.includes(post.id);
+            post.reposted = reposts.includes(post.id);
+            post.saved = saves.includes(post.id);
+            return post;
+          })
+        }
+        else {
+          postsWithLikes = postsWithLikes.map(post => {
+            post.liked = false;
+            post.reposted = false;
+            post.saved = false;
+            return post;
+          })
+        }
+
+        let withCategories = postsWithLikes;
+
+        withCategories = withCategories.map(post => {
+          post.categories = categoryResult.find(p => p.id === post.id)?.categories.split(",") ?? [];
+          return post;
+        })
         res.status(200).send({
           message: "Likes fetched",
           success: true,
-          likes,
+          likes: withCategories,
         })
       } catch (e) {
         logger.error("Error in GET /users/likes: ", e);

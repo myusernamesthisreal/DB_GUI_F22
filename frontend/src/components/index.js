@@ -10,6 +10,14 @@ export * from './UserPosts'
 export * from './UserFollowing'
 export * from './UserFollowers'
 export * from './UserSaves'
+export * from './UserLikes'
 export * from './Follows';
 export * from './Repost'
 export * from './Homepage';
+export * from "./Post";
+export * from "./PostPage";
+export * from './EditPost';
+export * from './DeletePost';
+export * from './DeleteComment';
+export * from './Bookmark';
+export * from './FollowButton';
