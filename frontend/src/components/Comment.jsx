@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, ListItem, ListItemAvatar, ListItemText, Typography, Avatar } from '@mui/material';
 import { Link } from "react-router-dom"
+import { DeleteComment } from './DeleteComment';
 
 export const Comment = ({ post, comment, user }) => {
     const [time, setTime] = useState("");
@@ -50,6 +51,8 @@ export const Comment = ({ post, comment, user }) => {
                     />
                 </ListItem>
             </Link>
+            <DeleteComment comment={comment} />
         </Box>
+
     </>
 }

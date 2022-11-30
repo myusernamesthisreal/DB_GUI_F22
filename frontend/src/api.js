@@ -437,6 +437,19 @@ export class Api {
         }
     }
 
+    //delete comment
+    async deleteComment(id) {
+        try {
+            const res = await fetch(`${this.url}/comments/${id}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            return res;
+        } catch (e) {
+            console.error(e)
+            return e;
+        }
+    }
 
     //get posts for user of given id
     async getUserPost(id) {

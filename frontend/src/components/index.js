@@ -18,5 +18,6 @@ export * from "./Post";
 export * from "./PostPage";
 export * from './EditPost';
 export * from './DeletePost';
+export * from './DeleteComment';
 export * from './Bookmark';
 export * from './FollowButton';
