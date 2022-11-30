@@ -81,9 +81,11 @@ export const Post = (props) => {
                         {!!props.user?.user?.is_admin && <Pin post={props.post} />}
                     </Box>
                 </Box>
-                <Box sx={{paddingBottom: "1rem"}}>
-                <Box sx={{ overflow: "hidden", textOverflow: "ellipsis", textAlign:"start", marginLeft: "4.5rem" }}> {props.post.body} </Box>
-                {displayedCategories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
+                <Box sx={{ paddingBottom: "1rem" }}>
+                    <Box sx={{ overflow: "hidden", textOverflow: "ellipsis", textAlign: "start", marginLeft: "4.5rem" }}> {props.post.body} </Box>
+                    <Box display="flex" sx={{justifyContent:"left", paddingLeft: "4.4rem"}}>
+                        {displayedCategories.map((category, index) => <Chip sx={{ marginRight: "0.5rem", marginTop: "0.5rem" }} label={`${category}`} />)}
+                    </Box>
                 </Box>
 
             </Link>
